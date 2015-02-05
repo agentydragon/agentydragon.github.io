@@ -46,16 +46,18 @@ a paragraph or two, some project links and contact info. No JavaScript,
 minimal CSS.
 
 <figure>
-    <xsl:template name="web-link">
-      <xsl:param name="href" />
-      <xsl:param name="text" />
-      <a class="icon-arrow-right">
-        <xsl:attribute name="href">
-          <xsl:value-of select="$href" />
-        </xsl:attribute>
-        <xsl:value-of select="$text" />
-      </a>
-    </xsl:template>
+```xml
+<xsl:template name="web-link">
+  <xsl:param name="href" />
+  <xsl:param name="text" />
+  <a class="icon-arrow-right">
+    <xsl:attribute name="href">
+      <xsl:value-of select="$href" />
+    </xsl:attribute>
+    <xsl:value-of select="$text" />
+  </a>
+</xsl:template>
+```
 
 <div>XSLT 101: Linking stuff.</div>
 </figure>

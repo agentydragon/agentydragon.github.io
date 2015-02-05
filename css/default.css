@@ -69,6 +69,11 @@ p {
 	text-align: justify;
 }
 
+pre {
+	border-top: 1px solid #9a3f4f;
+	border-bottom: 1px solid #9a3f4f;
+}
+
 pre code {
 	display: block;
 	padding: .5em;

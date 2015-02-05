@@ -8,9 +8,9 @@ This is probably the 5th or 6th iteration of my website. Every about 2 years
 or so, I find a new shiny and I decide to completely rewrite it - and do
 it right this time.
 
-Two iterations back, I had a website with a huge background image, a cool
+Two iterations back, I had a website with a huge background image and a cool
 MVC backend written in PHP with [Nette Framework](http://nette.org),
-which was all the rage back then, when I was about midway through high school.
+which was all the rage back when I was midway through high school.
 The site was hosted on `http://mpokorny.eu`, which I sincerely thought
 was a good domain back then. The website showed the various
 small websites I built and it listed like 83 programming languages I vaguely
@@ -98,7 +98,7 @@ a static site generator in Haskell. They have a neat
 on how to use it. I'll just try to get it running without breaking
 everything. If all goes well, it will eventually force me to learn
 my homeomorphic endofunctors, abadon inferior software development
-practices like imperative programming, and eventually archieve enlightenment.
+practices like imperative programming, and archieve enlightenment.
 
 <blockquote>"Real men just upload their important stuff on ftp, and
 let the rest of the world mirror it!" --

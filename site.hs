@@ -6,7 +6,7 @@ import Hakyll
 
 config :: Configuration
 config = defaultConfiguration {
-  deployCommand = "rsync -avz -e ssh ./_site/ rny.cz:/srv/http/default"
+  deployCommand = "rsync -avz -e ssh ./_site/ rny.cz:/srv/http/rny.cz/default"
 }
 
 --------------------------------------------------------------------------------

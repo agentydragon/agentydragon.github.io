@@ -63,6 +63,11 @@ minimal CSS.
 A single-page personal website is, of course, something XSLT is absolutely
 not the right tool for. Doesn't matter, learned something.
 
+I was also lucky enough to grab the `rny.cz` domain, which lets me use the
+`pok@rny.cz` mail address, which kind of looks like my last name.
+On the other hand, an unexpected downside is that I need to spell it letter
+by letter most of the time.
+
 This time, I decided that I will finally do things right. It will be
 a moderately simple website like one of those programming blogs that
 the cool people have (no tongue-in-cheek intended). And I shall post new

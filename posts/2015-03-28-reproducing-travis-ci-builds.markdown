@@ -24,8 +24,8 @@ cd travis-build
 # Grab the Vagrantfile from GitHub
 wget https://raw.githubusercontent.com/travis-ci/travis-cookbooks/master/Vagrantfile
 
-# Boot up the machine
-vagrant up
+# Boot up a machine (64-bit Ubuntu 12.04 Precise, in this case)
+vagrant up precise64
 
 # Great success!
 vagrant ssh

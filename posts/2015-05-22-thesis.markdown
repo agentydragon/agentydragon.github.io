@@ -1,0 +1,45 @@
+---
+title: Just finished my thesis
+---
+
+Against all procrastination, I finished my bachelor's thesis in time. Huzzah!
+
+It's about how to make dictionaries fast in the main memory of a real computer.
+CPUs are slower than RAMs, so in order to have a fast data structure, you need
+to access main memory as little as possible, and your program needs to be
+friendly to the many caches between the CPU and RAM.
+
+If you'd like to have a look, the source code of the thesis is at
+[https://github.com/MichalPokorny/thesis.git](https://github.com/MichalPokorny/thesis.git).
+Aside from TeX, it's a bunch of data structures implemented in ye olde C.
+If you prefer not building it yourself, you can [read it
+here](/static/thesis.pdf).
+
+There are basically two kinds of dictionaries: ordered and unordered.
+The difference is basically the same as between C++ `std::map`
+and `std::hash_map`: while unordered dictionaries allow only
+reading the value for a key, inserting a pair and deleting a pair,
+ordered dictionaries also let you query for the previous smaller and
+next larger stored key of a given key.
+
+When you just need an unordered dictionary, probably the most common
+choice is one of the many variants of a hash table. I had a look at open
+addressing with linear probing and cuckoo hashing. Both have interesting
+properties.
+
+Ordered dictionaries you usually implement via some kind of a tree,
+frequently a binary one. Trees usually either have a balancing scheme
+(like AVL or red-black trees, or B-trees), or they are self-adjusting.
+The most well-known self-adjusting data structure is a splay tree.
+
+Splay trees in particular are interesting, since they can specialize
+their structure to the access pattern you use. If you access a few elements
+very often, splay trees will keep them high up in the tree, and the accesses
+will be pretty fast. In some use cases, this makes splay trees are faster than
+balanced binary search trees.
+
+I also had a look at something called a cache-oblivious B-tree, which is
+basically a B-tree that automagically optimizes to whatever memory hierarchy
+you have, even if you don't know that in advance. The data structure is somewhat
+more complicated than simple B-trees, but surprisingly, it's very close in
+speed to hand-tuned B-trees, which is pretty neat.

@@ -62,4 +62,11 @@ I'll probably turn this snippet into a mini-script.
 Unfortunately, you need to use a rooted phone and the `su` part:
 otherwise, you'll get back a Parcel with a permission complaint.
 
+And, just as I finished my search, I found
+[this interesting blog post](http://ktnr74.blogspot.com/2014/09/calling-android-services-from-adb-shell.html),
+where the author describes a better way of getting at the service codes
+than wild probing: apparently if you know your Android version and the service
+name you want, you can find an AIDL (Android Interface Definition Language)
+with the service description on [https://android.googlesource.com/](https://android.googlesource.com/).
+
 YMMV. Cheers.

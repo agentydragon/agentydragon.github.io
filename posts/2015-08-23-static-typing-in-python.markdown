@@ -27,7 +27,7 @@ something like this:
 
 <figure>
 ```python
-from typing import List, NamedTuple
+from typing import Any, List, NamedTuple
 
 Account = NamedTuple('Account', [('name', str), ('balance', int),
 				 ('notes', List[Any]])
@@ -58,7 +58,7 @@ this:
 
 <figure>
 ```python
-from typing import List, NamedTuple
+from typing import Any, List, NamedTuple
 
 Account = NamedTuple('Account', [('name', str), ('balance', int),
 				 ('notes', List[Any]])

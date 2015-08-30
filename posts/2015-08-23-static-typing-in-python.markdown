@@ -61,7 +61,7 @@ this:
 from typing import Any, List, NamedTuple
 
 Account = NamedTuple('Account', [('name', str), ('balance', int),
-				 ('notes', List[Any]])
+				 ('notes', List[Any])])
 
 def apply_promotion(amount: int, accounts: Iterable[Account],
                     *notes: Any) -> bool: ...

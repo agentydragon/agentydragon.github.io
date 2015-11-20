@@ -139,6 +139,52 @@ Dropbox is not perfect. Dropbox's Linux client is a pain to use when you don't
 have a system tray - you can't get to the GUI. You have to spend a lot of time
 making the initial backup (which is no fault of Dropbox's).
 
+More?
+---
+
+There are more things I may want to simplify one day, but where I didn't find
+the switch beneficial enough yet.
+
+Through I threw out the appointments, I still have my `NOTES.txt` file.
+One possible replacement might be Google Keep, but I don't like the desktop
+GUI too much and it takes more clicks to add a new note - right now, I just
+add a note using an XMonad `appendFilePrompt` bound to a keyboard shortcut.
+
+In my 3rd year of high school (oh my god, that's four years ago...),
+I started using XMonad. It's glorious in many ways: speed, amount of
+customization possible, stability and geekiness factor.
+On the other hand, many programs don't play well with it - especially Java GUIs
+and ssh X-forwarded applications sometimes get confused and render nothing.
+Full-screen games in Wine interact weirdly with a tiling WM. Many packages
+assume that every system has a system tray, so you can't interact well with
+them when their tray icons don't render anywhere (examples:
+NetworkManager's applet, Dropbox, Skype).
+I'm thinking it might be worth it to instead stop being a hipster and start
+using Gnome or KDE like everybody else.
+
+I have an encrypted partition. It's possible to use the computer without
+mounting it, but I keep sensitive data there, like my SSH keys, confidental
+info, Bitcoin wallets, and so on. My original idea was having two scripts:
+`cryptomount` and `cryptounmount`. The first one prompts for a password,
+mounts the partition and starts services that depend on it, and the latter
+one does the inverse. Unfortunately, over time I started using the partition
+more and more, so I had it mounted most of the time. I got sloppy and the
+system became less usable without having the partition mounted. Programs get
+confused when their configuration is in a broken symlink pointing to an
+unmounted partition.
+I'm thinking about full-disk encryption. It's a bit slower, but just as secure
+and it would make my set of personal scripts much simpler. It also
+wouldn't allow a mode of operation where your computer is usable, but
+anything sensitive is unavailable.
+Changing the partition layout of my laptop and encrypting it would also
+probably need at least a day of my time. I'm not sure if it's worth it.
+
+I'm thinking about installing Windows into dual-boot again. It's easier
+to run Starcraft smoothly. When I need to develop some C# in Visual Studio,
+I wouldn't need any silly VMs or remote desktops.
+However, same as with the encrypted partition, I'm not as fond of repartitioning
+and installing as I was in high school.
+
 <hr />
 
 Overall, I lost some customizations, but I gained a lot in value that I would

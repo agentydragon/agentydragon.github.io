@@ -110,3 +110,15 @@ a {
 a:visited {
 	color: #580003;
 }
+
+#articles article:first-child {
+	margin-top: 0em;
+	padding-top: 0em;
+	border-top: 0;
+}
+
+#articles article {
+	margin-top: 10em;
+	padding-top: 10em;
+	border-top: 1px solid #eee;
+}

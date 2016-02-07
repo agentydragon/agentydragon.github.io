@@ -40,7 +40,7 @@ the Charles uni dorm with a random guy. We didn't have much in common or talk
 much, but he wasn't the worst roommate I ever had.
 I spent most of my days working on my bachelor's thesis next to my advisor,
 [MJ](http://mj.ucw.cz), at the Faculty of Applied Mathematics. It was fun and
-I learned a interesting things about data structures.
+I learned a lot of interesting things about data structures.
 I was elated not only because I managed to finish the thesis at all, but
 also because both MJ and my opponent were impressed by the quality.
 

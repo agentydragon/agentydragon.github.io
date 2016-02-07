@@ -63,3 +63,6 @@ Also:
 <div style="font-weight: bold;">
 WE WON THE HACKATHON!!! HOOORAY!!!!1111
 </div>
+
+We also won the *Best Hack in Gaming/VR* award (judged by Improbable) and
+*Bloomberg's Favorite Hack*.

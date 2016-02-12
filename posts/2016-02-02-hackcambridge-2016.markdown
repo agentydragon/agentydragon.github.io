@@ -2,10 +2,10 @@
 title: HackCambridge 2016
 ---
 
-Last weekend, I went to [HackCambridge](https://hackcambridge.com) with Petr to
-hack on things. Some things could be organized a bit better (like the WiFi at
-the main venue being hilariously broken), but we ended up having a lot of fun,
-like catching up with my homies from Dropbox.
+Last weekend, I went to [HackCambridge](https://hackcambridge.com) with
+[Petr](http://hudecekpetr.cz) to hack on things. Some things could be organized
+a bit better (like the WiFi at the main venue being hilariously broken), but we
+ended up having a lot of fun, like catching up with my homies from Dropbox.
 
 We built a cool game. It's called [*The Deadlock Empire*](https://deadlockempire.github.io)
 and it lets you *slay dragons and learn concurrency* - what could me more
@@ -35,7 +35,7 @@ If you feel bored by how simple the first challenges are, scroll down
 a bit. The *Deadlock Empire* quest at the bottom should keep you busy for a
 while :)
 
-I think it took us around 18 hours of actual work to write *The Dragon Empire*:
+I think it took us around 18 hours of actual work to write *The Deadlock Empire*:
 both of us had a bit of shut-eye early morning and we didn't have enough time
 by the end to start working on the really ambitious features, so the last few
 hours were just a commit here and there, fixing up a font or an obscure bug.

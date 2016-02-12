@@ -166,7 +166,7 @@ our preference.
   it is. Adventure, fighting the Big Bad Man, and hacking current tech for good
   and bad. I also read *Homeland*, but I didn't find it nearly as good.
 * *Harry Potter and the Methods of Rationality* by Eliezer Yudkowsky,
-  independently recommended to me by [Petr Hudeček](http://petrhudecek.cz/) and
+  independently recommended to me by [Petr Hudeček](http://hudecekpetr.cz/) and
   Ondra Vadinský. This is the most epic fan-fiction I ever read.
   Eliezer Yudkowsky is a researcher working on artificial intelligence and
   rationality and he runs a rationalist community called

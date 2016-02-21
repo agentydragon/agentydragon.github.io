@@ -21,7 +21,8 @@ bachelor's thesis](/posts/2015-05-22-thesis.html) and I played the old Starcraft
 games used to be really hard...)
 I met a lot of interesting people at Google. My supervisor and team leader,
 Rich, was great, and today he is the exact image I have in my head when
-I hear "senior software engineer".
+I hear "senior software engineer" - a highly experienced and competent leader
+by example with an impressive knowledge of the wider context of the project.
 From my team, I most fondly remember chatting with Clement, Julien, Aurélien,
 Wiktor, Amaury, Philo, Nohemi and James. In dilligent code reviews, Mathias
 taught me how little I know about C++ and what it means to be deeply ashamed

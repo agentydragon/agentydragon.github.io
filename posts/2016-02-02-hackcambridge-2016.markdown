@@ -5,7 +5,8 @@ title: HackCambridge 2016
 Last weekend, I went to [HackCambridge](https://hackcambridge.com) with
 [Petr](http://hudecekpetr.cz) to hack on things. Some things could be organized
 a bit better (like the WiFi at the main venue being hilariously broken), but we
-ended up having a lot of fun, like catching up with my homies from Dropbox.
+ended up having a lot of fun. Luckily, a bunch of my homies from Dropbox
+happen to study in Cambridge and it was great to catch up with them.
 
 We built a cool game. It's called [*The Deadlock Empire*](https://deadlockempire.github.io)
 and it lets you *slay dragons and learn concurrency* - what could me more

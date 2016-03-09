@@ -21,11 +21,18 @@ Feel free to shoot me a message about anything!
 
 I am on GitHub as [MichalPokorny](https://github.com/MichalPokorny).
 
-I also have a [LinkedIn account][linkedin] and a [Facebook account][facebook]
-(through I don't use those very much -- if you need a quick response, an e-mail
-has a better chance).
+I also have a [LinkedIn account][linkedin] and a [Facebook account][facebook].
+I only use LinkedIn for people I worked with and I only use Facebook for people
+I consider my friends. If you try to connect with me or add me as a friend
+and I have no idea who you are, I'm really sorry to say this, but unfortunately
+I'll probably ignore you. I do not mean this personally and this does not mean
+that I do not want to be your friend. In general, I want people to be my
+friends. It's just my personal preference in how I use social networks. If you
+send me a connection request and I ignore it, I will probably feel guilty about
+it.
 
-I use GPG - [here's my public key](/static/pubkey.gpg).
+If you'd like to tell me a secret,
+[here's my GPG public key](/static/pubkey.gpg).
 
 I try to be a generalist. Some stuff I do or did before:
 

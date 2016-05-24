@@ -8,7 +8,7 @@ to look at this a few years from now and recall how past me thought about
 things. You may now stop procrastinating and go work (you know you should).
 
 A human life is roughly like 80-90 years long (Google says 78.08 for Czech
-Rebublic). That may not sound all that short; you can get a lot of fun done
+Republic). That may not sound all that short; you can get a lot of fun done
 in that time. However, consider the following:
 
 <figure>

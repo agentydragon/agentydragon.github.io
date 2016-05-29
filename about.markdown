@@ -31,6 +31,12 @@ friends. It's just my personal preference in how I use social networks. If you
 send me a connection request and I ignore it, I will probably feel guilty about
 it.
 
+From time to time, I hunt for geocaches.
+
+<a href="https://www.geocaching.com/profile/?guid=8011109d-8913-415c-9272-3e82426f3835" target="_blank">
+<img src="https://img.geocaching.com/stats/img.aspx?txt=Ooooh,+shiny!&uid=8011109d-8913-415c-9272-3e82426f3835&bg=1" alt="Profile for prvak" />
+</a>
+
 If you'd like to tell me a secret,
 [here's my GPG public key](/static/pubkey.gpg).
 

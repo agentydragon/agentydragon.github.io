@@ -10,7 +10,7 @@ title: About
 
 Hi!
 
-I'm Michal Pokorný, a 22-years-old "software" "engineer" from Czech Republic.
+I'm Michal Pokorný, a 23-years-old "software" "engineer" from Czech Republic.
 
 I'm studying a master's in AI at the [Faculty of Mathematics and Physics][mff]
 of the Charles University in Prague.
@@ -20,6 +20,9 @@ My personal e-mail is `pok@rny.cz`.
 Feel free to shoot me a message about anything!
 
 I am on GitHub as [MichalPokorny](https://github.com/MichalPokorny).
+
+I am an [effective altruist][ea] ([Czech][ea-cz]) and I currently earn to give.
+You can take a look at my donations on [My Giving at Giving What We Can][my-giving].
 
 I also have a [LinkedIn account][linkedin] and a [Facebook account][facebook].
 I only use LinkedIn for people I worked with and I only use Facebook for people
@@ -53,7 +56,10 @@ I try to be a generalist. Some stuff I do or did before:
 I help organize [KSP][ksp] -- a computer science seminar for high school
 students by Charles University.
 
+[ea]: https://www.effectivealtruism.org/
+[ea-cz]: http://www.efektivni-altruismus.cz/
 [mff]: http://www.mff.cuni.cz/
 [linkedin]: https://linkedin.com/in/mpokornymff
 [facebook]: https://facebook.com/prvak
 [ksp]: https://ksp.mff.cuni.cz/
+[my-giving]: https://www.givingwhatwecan.org/igivedisplay?publicid=11360&publicauth=600761404

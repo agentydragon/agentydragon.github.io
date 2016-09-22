@@ -52,6 +52,10 @@ echo "---- CUT ----" >> $SLOC_LOGFILE
 echo $DATE >> $SLOC_LOGFILE
 cloc /home/prvak/master/code >> $SLOC_LOGFILE
 ```
+The lines-of-code counting is done by the
+[cloc](https://github.com/AlDanial/cloc) tool
+([AlDanial/cloc](https://github.com/AlDanial/cloc) on GitHub). In Arch Linux,
+you can install it by running `pacman -S cloc`.
 
 Then, in `~/misc/sloc-count-to-log.py`, I have a simple script that changes the
 format of the lines-of-count logfile:

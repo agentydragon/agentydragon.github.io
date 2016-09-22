@@ -53,8 +53,8 @@ I try to be a generalist. Some stuff I do or did before:
  * I also wrote a few desktop things in Java and C#. I'm a bit more competent
    in the latter.
 
-I help organize [KSP][ksp] -- a computer science seminar for high school
-students by Charles University.
+Between 2012 and 2016, I helped organize [KSP][ksp] -- a computer science
+seminar for high school students by Charles University.
 
 [ea]: https://www.effectivealtruism.org/
 [ea-cz]: http://www.efektivni-altruismus.cz/

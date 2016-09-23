@@ -11,7 +11,7 @@ To help me answer those, I'm gathering data about it using a cron script that
 logs the number of pages of my the PDF of my thesis and the number of lines of
 code I've written every hour.
 
-This is a technique I copied from a video the excellent screencast series
+This is a technique I copied from a video from the excellent screencast series
 [Destroy All Software](https://www.destroyallsoftware.com/screencasts).
 The author uses it in several videos. One variant of this data collection idea
 he uses is going over the Git history of a project and collecting data

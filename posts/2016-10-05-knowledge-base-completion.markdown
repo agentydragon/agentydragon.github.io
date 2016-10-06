@@ -5,12 +5,12 @@ title: Knowledge base completion
 *This blog post is mirrored on [my personal homepage](http://rny.cz/posts/2016-10-05-knowledge-base-completion.html),
 and also soon on eClub's blog.*
 
-My name is Michal and I came to [eClub Prague](https://eclubprague.com/) to write an awesome master's thesis.
-I am interested in applications of AI and ML and I sought the mentorship of
+My name is Michal and I came to [eClub Prague](https://eclubprague.com/) to work on an awesome master's thesis.
+I am interested in AI and ML applications and I sought the mentorship of
 [Petr Baudiš aka Pasky](http://pasky.or.cz/). The project we settled on for me is
 researching *knowledge base completion*.
 
-So, you may have head of knowledge bases. *Knowledge bases*, also known as
+You may already know something about knowledge bases. *Knowledge bases*, also known as
 *knowledge graphs*, are basically knowledge represented as graphs: vertices are
 entities (e.g., <code>Patricia Churchland</code>, <code>neurophilosophy</code>,
 <code>University of Oxford</code>) and edges are relations between
@@ -36,7 +36,8 @@ print the labels of nodes they point at." Look:
 <div>How Google uses knowledge bases</div>
 </figure>
 
-[Google's Knowledge Graph](https://en.wikipedia.org/wiki/Knowledge_Graph) is based on [Freebase](https://developers.google.com/freebase/) ([wiki](https://en.wikipedia.org/wiki/Freebase)), which is now frozen,
+[Google's Knowledge Graph](https://en.wikipedia.org/wiki/Knowledge_Graph) is based on
+[Freebase](https://developers.google.com/freebase/) ([wiki](https://en.wikipedia.org/wiki/Freebase)), which is now frozen,
 but its data is still publicly available. Other knowledge bases include [DBpedia](http://wiki.dbpedia.org/),
 which is created by automatically parsing Wikipedia articles, and [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page),
 which is maintained by an army of volunteers with too much free time on their
@@ -87,7 +88,8 @@ them stuck. For example:
    There are algorithms that look for such patterns (and more complex ones)
    in the incomplete knowledge graph and then use these patterns on the same
    graph to assign likelihoods to missing relations.
-   One is called PRA, another one SFE. Matt Gardner has [an implementation of
+   One is called PRA (*Path Ranking Algorithm*), another one SFE (*Subgraph
+   Feature Extraction*). Matt Gardner has [an implementation of
    both](https://matt-gardner.github.io/pra/).
  * *Embeddings.* This means that we invent a space with, say, 50 dimensions,
    and somehow represent entities and relations within that space. We choose
@@ -105,13 +107,32 @@ them stuck. For example:
    who <code>is sibling of</code> who!
 
 In my thesis, I plan to replicate the architecture of Google's Knowledge Vault
-([paper](https://www.cs.ubc.ca/~murphyk/Papers/kv-kdd14.pdf), [wiki](https://en.wikipedia.org/wiki/Knowledge_Vault)). Knowledge Vault is a system that starts with Google's
-Knowledge Graph. Then, you train relation extractors from webpages, mine for
-graph patterns using PRA, and you also run an embedding algorithm.
-Each of these different approaches gives you probability estimates
-for new facts, and you train a new classifier that merges them into one
-unified estimate.
-Why is that useful? Because the indiviual algorithms have complementary
+([paper](https://www.cs.ubc.ca/~murphyk/Papers/kv-kdd14.pdf), [wiki](https://en.wikipedia.org/wiki/Knowledge_Vault)).
+
+Google created Knowledge Vault, because they wanted to build a knowledge graph
+even bigger than *The* Knowledge Graph.
+
+The construction of Knowledge Vault takes Knowledge Graph as its input, and
+uses three different algorithms to infer probabilities for new relations.
+One of these algorithms *extracts new relations from webpages*. The second one
+uses PRA to predict new edges from graph patterns. The third one learns an
+embedding of Knowledge Graph and predicts new relations from this embedding.
+
+Each of these different approaches yields its own probability estimates
+for new facts.
+The final step is training a new classifier that takes these estimates and
+merges them into one unified probability estimate.
+
+Finally, you take all the predicted relations and their probability estimates,
+you store them, and you have your own Knowledge Vault. Unlike the input
+knowledge graph, this output is probabilistic: for each <code>Subject</code>,
+<code>Relation</code>, <code>Object</code> triple, we also store the estimated
+probability of that triple being true. The output is much larger than the input
+graph, because it needs to store many edges that weren't in the original
+knowledge graph.
+
+Why is this useful? Because the indiviual algorithms (extraction from text,
+graph pattern mining and embeddings) have complementary
 strengths and weaknesses, so combining them gets you a system that can
 predict more facts.
 
@@ -120,15 +141,15 @@ predict more facts.
 <div>Simplified Knowledge Vault architecture</div>
 </figure>
 
-My system will be open-source and will extend Wikidata. The repository
+My system is open-source and extends Wikidata. The repository
 is at <https://github.com/MichalPokorny/master>.
 
-So far, I have been getting infrastructure set up. A week back, I finally
+So far, I have been setting up my infrastructure. A week back, I finally
 got the first version of my pipeline, with the stupidest algorithm and
 the smallest data I could use, running and predicting end-to-end!
 
-The system generated 116 predictions with an estimated probability higher than 0.5.
-Samples include:
+The system generated 116 predictions with an estimated probability higher than
+0.5. Samples include:
 
 | Subject                          | Relation                  | Object           | Probability | Is this fact true? |
 |----------------------------------|---------------------------|------------------|-------------|--------------------|

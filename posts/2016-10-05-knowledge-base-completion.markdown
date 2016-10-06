@@ -108,7 +108,7 @@ In my thesis, I plan to replicate the architecture of Google's Knowledge Vault
 ([paper](https://www.cs.ubc.ca/~murphyk/Papers/kv-kdd14.pdf), [wiki](https://en.wikipedia.org/wiki/Knowledge_Vault)). Knowledge Vault is a system that starts with Google's
 Knowledge Graph. Then, you train relation extractors from webpages, mine for
 graph patterns using PRA, and you also run an embedding algorithm.
-Each of these different approaches gives you estimated probability estimates
+Each of these different approaches gives you probability estimates
 for new facts, and you train a new classifier that merges them into one
 unified estimate.
 Why is that useful? Because the indiviual algorithms have complementary

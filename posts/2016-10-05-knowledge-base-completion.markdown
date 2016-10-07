@@ -2,8 +2,8 @@
 title: Knowledge base completion
 ---
 
-*This blog post is mirrored on [my personal homepage](http://rny.cz/posts/2016-10-05-knowledge-base-completion.html),
-and also soon on eClub's blog.*
+*This blog post is mirrored on [on eClub's
+blog](https://eclubprague.com/blog/knowledge-base-completion/).*
 
 My name is Michal and I came to [eClub Prague](https://eclubprague.com/) to work on an awesome master's thesis.
 I am interested in AI and ML applications and I sought the mentorship of

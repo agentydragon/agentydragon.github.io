@@ -6,7 +6,10 @@ As some of you might know, yours truly along with my friends
 [Jirka Nádvorník][jirka] and Radim Lacina founded the [Czech Association for
 Effective Altruism][caea] a few months back.
 [Dan Hnyk][dan] is not an official member yet, but he's doing a lion's share
-of the work.
+of the work. We were also very lucky to bring along Honza, who used to work
+on fundraising at the [Forum 2000 foundation](http://www.forum2000.cz/)
+and who is helping us with many areas we had little experience with before
+he came onboard.
 Our goals are to establish an EA community in Czech Republic and to be
 the hub of its long-term viability.
 

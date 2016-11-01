@@ -47,8 +47,8 @@ of a dog ([they cost 32,400 GBP apiece to train][dog-train]). If you give $3500 
 the [Against Malaria Foundation][amf], you *will*, on expectation, ***save
 someone's life***, and ***that is a pessimistic estimate*** (it only counts
 *infants who would die of malaria infection that will not die thanks to
-an installed malaria net*, not older children saved from infection, or
-prevented suffering from malaria attacks).
+an installed insecticide-laced mosquito net*, not older children saved from
+infection, or prevented suffering from malaria attacks).
 
 So, it matters a great deal that you *put your resources where they have as
 much effect as possible*. When you're looking for ways to transport yourself to

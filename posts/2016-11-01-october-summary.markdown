@@ -3,9 +3,9 @@ title: October summary, mostly on EA efforts
 ---
 
 As some of you might know, yours truly along with my friends
-[Jirka Nádvorník](jirka) and Radim Lacina founded the [Czech Association for
-Effective Altruism](caea) a few months back.
-[Dan Hnyk](dan) is not an official member yet, but he's doing a lion's share
+[Jirka Nádvorník][jirka] and Radim Lacina founded the [Czech Association for
+Effective Altruism][caea] a few months back.
+[Dan Hnyk][dan] is not an official member yet, but he's doing a lion's share
 of the work.
 Our goals are to establish an EA community in Czech Republic and to be
 the hub of its long-term viability.
@@ -14,9 +14,9 @@ Executive summary:
 
  * Effective altruism in Czech Republic is doing well. We have a medium-term
    plan around movement growth.
- * [EAGxPrague](eagxprague) is happening on December 10 and you are encouraged
-   to apply ([Czech application](application-cz), [English
-   application](application-en)) and *please* report your experience and
+ * [EAGxPrague][eagxprague] is happening on December 10 and you are encouraged
+   to apply ([Czech application][application-cz], [English
+   application][application-en]) and *please* report your experience and
    feedback (the more verbose the better) to [prague@eaglobalx.org](mailto:prague@eaglobalx.org)
  * I encourage you to seek answers to certain questions by using surveys and
    basic statistics. It's fun, easy and powerful.
@@ -30,7 +30,7 @@ Executive summary:
 Effective altruism
 ==
 
-If you haven't heard about [Effective Altruism](ea) yet, it is a philosophy and
+If you haven't heard about [Effective Altruism][ea] yet, it is a philosophy and
 social movement, which aims to 1) do good, and 2) do it as efficiently as
 possible. You yourself probably try to good in your own life: you probably help
 people close to you, and you might sometimes do an altruistic thing for someone
@@ -40,8 +40,8 @@ some clothing you no longer need to someone who does, and so on.
 Early EAs have observed one very important and somewhat counterintuitive fact:
 *it matters a great lot where do you put your resources*. If you give $3500 to
 a charity that trains guide dogs for the blind, it will train roughly one tenth
-of a dog ([they cost 32,400 GBP apiece to train](dog-train)). If you give $3500 to
-the [Against Malaria Foundation](amf), you *will*, on expectation, ***save
+of a dog ([they cost 32,400 GBP apiece to train][dog-train]). If you give $3500 to
+the [Against Malaria Foundation][amf], you *will*, on expectation, ***save
 someone's life***, and ***that is a pessimistic estimate*** (it only counts
 *infants who would die of malaria infection that will not die thanks to
 an installed malaria net*, not older children saved from infection, or
@@ -82,7 +82,8 @@ only caveat being that you will probably never meet said saved human. Which
 the victim's death no less real*. Only less emotionally salient *to you*.)
 
 So, step one. It matters a lot what you do with your resources if your goal is
-to help others.
+to help others. (Actually, it matters a lot what you do with your resources *if
+you have any particular goal at all*.)
 
 Step two (at least for me) is: If it's THIS easy to help others, *how the hell
 isn't Effective Altruism a global project with 50 years of history and
@@ -96,7 +97,7 @@ X times over if [some immature narcissist in charge](https://www.donaldjtrump.co
 pushes the button one day, risk of bioterrorism, and I could go on for another
 hour.
 
-Read [Doing Good Better](doing-good-better). The eminent philosopher Will
+Read [Doing Good Better][doing-good-better]. The eminent philosopher Will
 MacAskill gives the topic the attention it deserves.
 
 I hereby swear that if I ever find myself writing a short intro to EA again,
@@ -108,17 +109,17 @@ Our plan
 Please excuse me if the previous paragraphs have been just me preaching to
 the choir. I have been very vocal about my support of EA among my friends.
 
-The first step in the [Czech Association for Effective Altruism](caea)'s plan
-is organizing [EAGxPrague 2016](eagxprague) - the first conference on effective
+The first step in the [Czech Association for Effective Altruism][caea]'s plan
+is organizing [EAGxPrague 2016][eagxprague] - the first conference on effective
 altruism in Czech Republic. We are cooperating with the [Centre for Effective
-Altruism](cea) to make it happen, and the cooperation is so fruitful I wouldn't
+Altruism][cea] to make it happen, and the cooperation is so fruitful I wouldn't
 hesitate to claim it added a degree of magnitude to our expected impact.
-It will be on *December 10, 2016* in [*Paralelní Polis*](pp).
+It will be on *December 10, 2016* in [*Paralelní Polis*][pp].
 
 My role is currently Director of the CAEA and Event Director of EAGxPrague 2016.
 
 Yesterday, we finished every necessary preparation and we have just opened
-applications ([in Czech](application-cz), [in English](application-en)).
+applications ([in Czech][application-cz], [in English][application-en]).
 If you'd like to find out about how can you contribute to making the world
 better and if you're fairly close to Prague, I *highly encourage you to apply*.
 We would be happy to meet you and talk.
@@ -172,7 +173,7 @@ I have a few observations I'd like to share.
 Doing quick research
 ==
 
-I have never worked on organizing a big event before, or doing anything
+I have never worked on organizing a big event before, or did anything
 entrepreurial-like or product-like.
 
 One tool I have never used before, but that I'm starting to really enjoy using,
@@ -274,12 +275,12 @@ Other pieces of information we have are:
    an event invitation by 3 people on Facebook. 15 people came there, we
    collected their e-mails and they were enthusiastic about the EAGxPrague
    idea.
- * The [LessWrong Group Prague on Facebook](lw-fb) has 97 members. I'd guess
+ * The [LessWrong Group Prague on Facebook][lw-fb] has 97 members. I'd guess
    about 10 or so people come to most meetups.
- * The [Czech EA group on Facebook](czech-ea-fb) has 55 members. There's
+ * The [Czech EA group on Facebook][czech-ea-fb] has 55 members. There's
    not too much intersection with the LW group.
- * Our venue, [Paralelní Polis](pp), will promote the event on [their Facebook
-   page](pp-fb), which has ~11K likes.
+ * Our venue, [Paralelní Polis][pp], will promote the event on [their Facebook
+   page][pp-fb], which has ~11K likes.
 
 Our hive-mind's estimates were that we could, optimistically, get about 80
 people to attend. I am fairly certain this is a number that's based
@@ -293,7 +294,7 @@ information.
 Planning
 ==
 
-The most important tool [CEA](cea) gave us was a clear framework to use to plan
+The most important tool [CEA][cea] gave us was a clear framework to use to plan
 the goals of our conference, choose our target audience based on the goals,
 choose a program that would fit and attract the target audience, and so on.
 This transformed our fuzzy confused thinking into a clear picture where it's
@@ -313,14 +314,20 @@ Personal status update
 ==
 
 In the last ~2 weeks, I have been getting lots of self-esteem boosts, mostly I'd
-guess from how well things are going for me work-wise and conference-wise.
+guess from how well things are going for me work-wise and conference-wise
+and thanks to some instances of unexpected acceptance, which had a soothing
+therapeutic effect. My psychiatrist also recently doubled my citalopram to 40 mg
+a day.
+
 Unfortunately, in the last few days, I realized I made a huge mistake that
 caused people I really care about a lot of pain, and that I had to fix it.
 Now, I hate myself A) because I made the mistake in the first place,
-B) because I hurt people by making the mistake, and C) because the mistake
+B) because I hurt people by making the mistake, C) because the mistake
 was probably just rooted in me trying to use other people to boost my
-self-esteem and fear of abadonment. At least that would be my interpretation.
-My depression came back really hard in the last few days.
+self-esteem and fear of abadonment, D) because I was too much of a coward
+to even own up to my mistake and apparently subconsciously tried to shift
+responsibility. At least that would be my interpretation. My depression came
+back really hard in the last few days.
 
 I have a few pieces of advise I want to give others who might be in a similar
 position as me, that is, confusion about personal relationships:
@@ -329,21 +336,22 @@ position as me, that is, confusion about personal relationships:
  * Never say anything like "I like you" or "I love you" or perform any actions
    associated with affection or love unless you are **absolutely sure** you
    are expressing your sincere emotion and that the message being broadcasted
-   and the message being received are both true.
+   and the message being received are both as accurate as possible.
  * Never lie about your feelings to people you care about. Lying doesn't always
    feel like lying. Sometimes it just feels like a little pause before you
    say something, or a word you say while slightly twisting its meaning
-   inside your head.
+   inside your head. Or it may be an action that carries an implicit meaning
+   you may not realize.
  * Others may understand your emotions better than you yourself do. I haven't
    done that, but if you feel confused about what do you feel, you may try
    asking your friends. You may not notice verbal or behavioral clues you
-   yourself broadcast.
+   yourself broadcast, and others might.
 
 The level of how OK I am depends on how much do I think about how stupid,
 hurtful, abadoned, unacceptable and unlovable I am, and how much do I think
 about the chances of that ever getting better. Right now, my level of OK-being
-fluctuates between "too devastated to get up" and "so immersed in exciting work
-that everything looks fine".
+fluctuates between "too devastated to get up from the floor" and "so immersed
+in exciting work that everything looks fine".
 I'm not sure how long will this last, but I might be
 somewhat-acceptably-OK-most-of-the-time again in a few weeks.
 
@@ -363,4 +371,4 @@ Until next time. Onwards!
 [lw-fb]: https://www.facebook.com/groups/835029216562521/
 [czech-ea-fb]: https://www.facebook.com/groups/efektivnialtruismuscz/
 [pp-fb]: https://www.facebook.com/vejdiven/
-
+[cea]: https://www.centreforeffectivealtruism.org/

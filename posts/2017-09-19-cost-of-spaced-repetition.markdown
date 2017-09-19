@@ -340,4 +340,5 @@ This means **0.69 seconds per day** in the first year, and a total of
 * Learning a new keyboard shortcut is worth it if it will save me
   0.7 seconds per day over the following year. (Or 250 seconds in total).
 * My German deck, which has 26 241 cards, would take roughly a whooping
-  **1822 hours** over the next year. That's a full **227 workdays**. 
+  **1822 hours** over the next year. That's a full **227 workdays**.
+* Rai has an Anki problem.

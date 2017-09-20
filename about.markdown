@@ -10,9 +10,10 @@ title: About
 
 Hi!
 
-I'm Michal Pokorný, a 23-years-old "software" "engineer" from Czech Republic.
+I'm Michal Pokorný, a 24-years-old "software" "engineer" from Czech Republic.
 
-I'm studying a master's in AI at the [Faculty of Mathematics and Physics][mff]
+I work at Google Zurich and might some day get around to finishing
+a master's in AI at the [Faculty of Mathematics and Physics][mff]
 of the Charles University in Prague.
 <!-- TODO: stredni skola? -->
 

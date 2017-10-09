@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>~agentydragon/On Protocol Buffers</title>
+		<link href="http://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../css/default.css">
+		<link rel="stylesheet" type="text/css" href="../css/syntax.css">
+		<link rel="favourite icon" type="image/png" href="../images/favicon.png">
+	</head>
+	<body>
+		<!-- Just keeps content in place. -->
+		<header>
+			<a href="../" class="logo">~agentydragon/</a>
+
+			<a href="../">Home</a>
+			<a href="../archive.html">Archive</a>
+			<a href="../about.html">About</a>
+		</header>
+
+		<header id="fixed_header">
+			<a href="../" class="logo">~agentydragon/</a>
+
+			<a href="../">Home</a>
+			<a href="../archive.html">Archive</a>
+			<a href="../about.html">About</a>
+		</header>
+
+		<div id="content">
+			<h1>On Protocol Buffers</h1>
+
+			<div id="articles">
+			<div class="info">
+    Posted on 2015-02-05
+</div>
+
+<p>In the end of February, I’m finishing my 6 month internship at Google Paris. Google is very big on engineering. If you need to perform some task, it is very likely the task has been solved before. In fact, your problem usually has about 6 solutions in the codebase, and by Murphy’s law, 5 of them don’t fit your requirements in subtle ways and the sixth is deprecated. Its sole maintainer left Google back when Internet Explorer was a real browser. Have fun writing solution number seven.</p>
+<p>On the other hand, Google employs heroes and the basic infrastructure is full of masterpieces of engineering. Today, I want to talk about <a href="https://developers.google.com/protocol-buffers/">Protocol Buffers</a>.</p>
+<p>Protocol Buffers (also <em>protobufs</em> or just <em>protos</em>) are a storage format conceptually similar to JSON, YAML or XML. Every protocol buffer has a type called a “message”. Message definitions live in <code>.proto</code> files:</p>
+<pre><code>package goliath.monetization.surveillance;
+
+message Person {
+  optional int32 id = 1;
+  required string name = 2;
+  optional string occupation = 3;
+
+  enum Country {
+    USA = 1;
+    CANADA = 2;
+    BRAZIL = 3;
+    EUROPE = 4;
+  }
+
+  message Address {
+    optional string city = 1;
+    optional Country country = 2;
+  }
+  repeated Address address = 4;
+}</code></pre>
+<p>Protocol buffers are everywhere. The packets Google’s RPC framework sends contain protocol buffers. Protocol buffers are commonly used as library API types. Google databases (e.g. BigTable, SSTable) are usually designed to store byte-strings and protocol buffers are the byte-string representation of structured data.</p>
+<p>The “default” serialization format of protocol buffers is binary. It’s basically a list of <code>(tag, value)</code> pairs. A field declaration like <code>optional Address address = 3;</code> means that the <code>address</code> field will use the tag <code>3</code>.</p>
+<p>Protocol buffers also have a nice human-readable text format, which looks a little bit like JSON. For example, a <code>goliath.monetization.surveillance.Person</code> proto can be represented as:</p>
+<pre><code>id: 42
+name: &quot;Steve Jobs&quot;
+address { city: &quot;Cupertino&quot; }
+address { country: USA }</code></pre>
+<p>You can use protocol buffers from a wide variety of programming languages, but the main Google languages (C++, Java, Python and Go) have best support. For any given language, the <code>protoc</code> compiler munches <code>.proto</code> files and generates code in your language that lets you manipulate the messages.</p>
+<p>C++ code using protocol buffers might look like this (adapted from an <a href="https://code.google.com/p/protobuf/">official example</a>):</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&quot;goliath/monetization/surveillance/person.pb.h&quot;</span>
+
+Person person;
+person.set_id(<span class="dv">123</span>);
+person.set_name(<span class="st">&quot;Bob&quot;</span>);
+Person::Address* address = person.add_address();
+address-&gt;set_country(Person::Country::EUROPE);
+
+<span class="co">// Store the person in the binary format.</span>
+fstream out(<span class="st">&quot;person.pb&quot;</span>, ios::out | ios::binary | ios::trunc);
+person.SerializeToOstream(&amp;out);
+out.close();
+
+<span class="co">// And much later...</span>
+
+Person person;
+fstream in(<span class="st">&quot;person.pb&quot;</span>, ios::in | ios::binary);
+<span class="cf">if</span> (!person.ParseFromIstream(&amp;in)) {
+  cerr &lt;&lt; <span class="st">&quot;Failed to parse person.pb.&quot;</span> &lt;&lt; endl;
+  exit(<span class="dv">1</span>);
+}
+
+cout &lt;&lt; <span class="st">&quot;ID: &quot;</span> &lt;&lt; person.id() &lt;&lt; endl;
+cout &lt;&lt; <span class="st">&quot;name: &quot;</span> &lt;&lt; person.name() &lt;&lt; endl;
+<span class="cf">for</span> (<span class="at">const</span> Person::Address&amp; address : person.address()) {
+  <span class="cf">if</span> (address.has_city()) {
+    cout &lt;&lt; <span class="st">&quot;city: &quot;</span> &lt;&lt; address.city() &lt;&lt; endl;
+  }
+}</code></pre></div>
+<h2>
+Why I love Protocol Buffers
+</h2>
+<h3>
+Protocol Buffers are language-agnostic
+</h3>
+<p>You can read, write and manipulate Protocol Buffers in many popular languages. You can do the same thing with JSON, YAML or XML, but your libraries will differ between languages. You may need to translate from a library representation of the serialization format into something you can easily manipulate. For example, your XML parser might not let you add nodes to a document.</p>
+<p>On the other hand, Protocol Buffers generated code provides the same functions across all languages. Whenever it makes sense, the same concepts have the same name. Reading a <code>name</code> is not <code>string name = XmlGetContent(XmlFindTag(dom, &quot;name&quot;));</code> in C++ and <code>name = dom.find('//name').content</code> in Ruby. It’s <code>string name = person.name();</code> in C++, <code>name = person.name</code> in Ruby or Python, and so on.</p>
+<h3>
+Protocol Buffers have a schema and are reasonably type-safe
+</h3>
+<p>Your language will help you write correct code. You cannot possibly assign anything to an undefined field by mistake. The generated code will not let you do this.</p>
+<p>In contrast, JSON or YAML are basically totally untyped dictionaries. It’s very easy to forget a nesting level in an expression like <code>response[&quot;address&quot;][&quot;city&quot;]</code> (the address is actually an array, oops). You can write run-time checkers, but you will need to write them again for every language your code communicates with.</p>
+<h3>
+Protocol Buffers are pure data
+</h3>
+<p>If your Ruby app receives a “<code>Person</code>” from a JSON service, it will probably end up parsing the JSON into its own Ruby POD representation of a <code>Person</code>.</p>
+<p>With protocol buffers, you automatically get this POD representation.</p>
+<p>The generated code cannot be extended (unless you try really hard). This forces you to separate business logic from data storage, which is a good thing.</p>
+<h3>
+Protocol Buffers are compact and fast
+</h3>
+<p>The binary serialization format is compact - for example, numbers and enums are stored in binary and field names are not stored in the protocol buffer. Remember, we have integer tags.</p>
+<p>Protocol buffers are also fast. In C++, every message is represented as a separate class and encoding and decoding can be optimized by the compiler. No reflection is needed when manipulating protocol buffers. (However, you still have a descriptor of every compiled-in protocol buffer available at runtime.)</p>
+<h3>
+Protocol Buffers are language-agnostic API definitions as code
+</h3>
+<p>The API of your library or binary can be defined as a <code>.proto</code> file. Once you specify some way of communicating with your code (for example HTTP, Unix stdin, etc.), you can define the details of your API in a single <code>.proto</code> file.</p>
+<p>Your users are in no way bound to your choice of language – they just use generated code for their language. You can also <em>change your entire implementation</em>, including the language, while keeping the same <code>.proto</code> API definition. This is especially useful in large systems – machine-readable API definitions let your computer help you maintain services and clients compatible.</p>
+<p>You can include <code>proto</code> files, so you can reuse common API elements.</p>
+<h3>
+Protocol Buffers can be future-proof
+</h3>
+<p>You can freely change names of protocol buffer fields and messages. Any binary protocol buffers you may have in your big database will still be readable - as long as tag values keep referring to the same things.</p>
+<p>As shown in the <code>.proto</code> example above, protocol buffer fields must be either <code>optional</code>, or <code>required</code>. Marking a field as <code>required</code> affects the storage format of your message.</p>
+<p><code>optional</code> fields are optional. If we add a <code>optional string street = 3;</code> into <code>Address</code>, all <code>Address</code> messages created by previously existing code will still be readable.</p>
+<p>If a serialized protocol buffer refers to a tag number not declared in the <code>.proto</code>, it’s not an error. Therefore, old binaries will be capable of running on addresses with streets, even if the <code>street</code> field was not present in the <code>.proto</code> at compilation time.</p>
+<h3>
+Embracing change
+</h3>
+<p>We can gracefully add and remove optional fields as messages are repurposed. Let’s make the decision that we will be tracking <code>Person</code> occupations in a shiny new database called <code>JobStore</code>, so the <code>Person.occupation</code> field now stores duplicate information.</p>
+<p>To keep our code DRY, we want to remove <code>Person.occupation</code>.</p>
+<p>First, we will add a comment for humans to make sure every user is informed that they shouldn’t write new code depending on the field we are deprecating:</p>
+<pre><code>message Person {
+  ...
+  // Deprecated - occupations are now stored in JobStore.
+  optional string occupation = 3 [deprecated=true];
+  ...
+}</code></pre>
+<p>The next step is to change any readers of the <code>occupation</code> field to instead get the occupation from <code>JobStore</code>:</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">string IsPlumber(<span class="at">const</span> Person&amp; person) {
+  <span class="cf">return</span> person-&gt;occupation() == <span class="st">&quot;plumber&quot;</span>;
+}
+
+<span class="co">// Becomes:</span>
+string IsPlumber(<span class="at">const</span> Person&amp; person) {
+  <span class="cf">return</span> JobStore::FindOccupation(person.id) == JobStore::PLUMBER;
+}</code></pre></div>
+<p>After we kill all readers of the field, we can start removing writers of the field:</p>
+<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> LoadBob(Person* person) {
+  person-&gt;set_id(<span class="dv">15</span>);
+  person-&gt;set_name(<span class="st">&quot;Bob&quot;</span>);
+  <span class="co">// person-&gt;set_occupation(&quot;chief plumbing officer&quot;);</span>
+}</code></pre></div>
+<p>When there are no more references to <code>occupation</code> in code, we can remove the field from the <code>.proto</code>. We need to keep a comment that no future fields can use the tag number <code>3</code>. If a future field accidentally uses this tag number for a different purpose, we may not get an error - any strings in tag number <code>3</code> will be interpreted as the new field, because protocol buffers do not store any type information aside from tag numbers.</p>
+<p>A tombstone left by a dead field may look like this:</p>
+<pre><code>message Person {
+  optional int32 id = 1;
+  required string name = 2;
+  // 3 is deprecated.
+
+  enum Country { ... }
+  ...
+}</code></pre>
+<p>Note that this procedure would not work if the <code>occupation</code> field was initially marked as <code>required</code>, because <code>required</code> changes the binary serialization format. You would need to stop using the <code>Person</code> message altogether to get rid of the no longer required field.</p>
+<p>When we wish to add a new field to a message, we can just add it as optional (or repeated) and make new code deal with cases when this new field is missing.</p>
+<p>This “future safety” is an important feature of protocol buffers. In a Google-scale codebase, some protocol buffers may be used by hundreds of users across multiple products. Because you can gradually add or remove support for fields, changes can be performed in small, manageable chunks. There is no 1200-line “cleanup commit” that changes 1000 files everywhere from AdWords to YouTube - every affected piece of code can be adjusted in an isolated change.</p>
+<p>For further reading about Protocol Buffers, you can have a look at the <a href="https://developers.google.com/protocol-buffers/">documentation</a> or at the GitHub source at <a href="https://github.com/google/protobuf/">google/protobuf</a>. Wikipedia also has a <a href="http://en.wikipedia.org/wiki/Protocol_Buffers">neat article</a>.</p>
+
+			</div>
+			<hr class="clearfix">
+		</div>
+
+		<footer>
+			<p>
+				The <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a>
+				license applies unless otherwise specified.
+			</p>
+
+			<p>
+				Site proudly generated by
+				<a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+			</p>
+		</footer>
+
+		<!-- Google Analytics tracking -->
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-17386731-5', 'auto');
+			ga('send', 'pageview');
+		</script>
+	</body>
+</html>

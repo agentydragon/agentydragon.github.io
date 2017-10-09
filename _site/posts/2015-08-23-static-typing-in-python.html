@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>~agentydragon/Static typing in Python</title>
+		<link href="http://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../css/default.css">
+		<link rel="stylesheet" type="text/css" href="../css/syntax.css">
+		<link rel="favourite icon" type="image/png" href="../images/favicon.png">
+	</head>
+	<body>
+		<!-- Just keeps content in place. -->
+		<header>
+			<a href="../" class="logo">~agentydragon/</a>
+
+			<a href="../">Home</a>
+			<a href="../archive.html">Archive</a>
+			<a href="../about.html">About</a>
+		</header>
+
+		<header id="fixed_header">
+			<a href="../" class="logo">~agentydragon/</a>
+
+			<a href="../">Home</a>
+			<a href="../archive.html">Archive</a>
+			<a href="../about.html">About</a>
+		</header>
+
+		<div id="content">
+			<h1>Static typing in Python</h1>
+
+			<div id="articles">
+			<div class="info">
+    Posted on 2015-08-23
+</div>
+
+<p>This summer, I am interning at Dropbox in San Francisco. So far, the most awesome Dropbox event I attended was <a href="https://blogs.dropbox.com/dropbox/2015/08/hack-week-2015/">the 2015 Hack Week</a>, which consists of everyone basically dropping their usual job and doing whatever they want. So yeah, it’s pretty awesome.</p>
+<p>I went totally out of my element and joined a bunch of excellent engineers working to make static typing work in Python 2.</p>
+<p>Python 3 lets you optionally annotate your functions with argument and return types. This was defined in <a href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a>. The type system is gradual (i.e., you can gradually convert an untyped program to a typed one, module by module) and fairly strong. Aside from co-authoring the PEP with Dropbox superengineer-in-chief Guido van Rossum, our team leader <a href="http://www.cl.cam.ac.uk/~jal82/">Jukka Lehtosalo</a> developed the first actual working type checker for Python: <a href="http://mypy-lang.org/">MyPy</a>.</p>
+<p>Most of Dropbox is written in Python 2, through a switch to Python 3 is something everyone wants (and some other Hack Week projects made some very impressive steps in that direction). First, we had to figure out how to annotate existing code with PEP 484-like annotations. We ended up with something like this:</p>
+<figure>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> typing <span class="im">import</span> Any, List, NamedTuple
+
+Account <span class="op">=</span> NamedTuple(<span class="st">'Account'</span>, [(<span class="st">'name'</span>, <span class="bu">str</span>), (<span class="st">'balance'</span>, <span class="bu">int</span>),
+				 (<span class="st">'notes'</span>, List[Any]])
+
+<span class="kw">def</span> apply_promotion(amount, accounts, <span class="op">*</span>notes):
+    <span class="co"># type: (int, Iterable[Account], *Any) -&gt; bool</span>
+    <span class="co"># Previous line declares function argument types and return type.</span>
+
+    <span class="cf">for</span> account <span class="kw">in</span> accounts:
+        account.balance <span class="op">+=</span> amount
+	account.notes.extend(notes)
+
+    <span class="cf">return</span> <span class="bu">len</span>(accounts) <span class="op">&gt;</span> <span class="dv">0</span></code></pre></div>
+<div>
+Python 2 with type annotations (please excuse the contrived example)
+</div>
+</figure>
+<p>Then we hacked on MyPy until it gave us a clean compile on a small piece of Dropbox’s codebase. This involved hunting for bugs in MyPy’s understanding of Python 2, annotating existing Dropbox code, and (which I was doing most of the time) teaching MyPy about non-Dropbox modules.</p>
+<p>PEP 484 lets you separate your actual code from its type annotations. The type annotations may be stored separately in a <code>.pyi</code> file (the <code>i</code> probably stands for “interface”). A <code>.pyi</code> file for the above example might look like this:</p>
+<figure>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> typing <span class="im">import</span> Any, List, NamedTuple
+
+Account <span class="op">=</span> NamedTuple(<span class="st">'Account'</span>, [(<span class="st">'name'</span>, <span class="bu">str</span>), (<span class="st">'balance'</span>, <span class="bu">int</span>),
+				 (<span class="st">'notes'</span>, List[Any])])
+
+<span class="kw">def</span> apply_promotion(amount: <span class="bu">int</span>, accounts: Iterable[Account],
+                    <span class="op">*</span>notes: Any) <span class="op">-&gt;</span> <span class="bu">bool</span>: ...</code></pre></div>
+<div>
+The <code>.pyi</code> for the example above. Note the <code>...</code> replacing the method body.
+</div>
+</figure>
+<p>To let MyPy know about the type information known to be true about non-annotated libraries, the MyPy repo (<code>https://github.com/JukkaL/mypy</code>) contains a directory called <code>stubs/</code>, which contains <code>.pyi</code> files corresponding to various modules. We had to add many builtin Python 2 modules, and also several external libraries (our selected piece of Dropbox code to annotate depended on those).</p>
+<p>Overall, the project was a great success: we got a mostly clean typecheck on a chunk of Dropbox’s codebase interacting with several external libraries. We found, and the more knowledgeable engineers also fixed, several issues with the Python 2 parser of MyPy and added a few other features we found useful (e.g., attempting to parse types from existing docstrings). We generated and/or wrote stubs for quite a bunch of libraries, which should make it much easier to use MyPy for Python 2 in the future.</p>
+<p><a href="http://mypy-lang.org">Check out MyPy</a>, it’s awesome!</p>
+
+			</div>
+			<hr class="clearfix">
+		</div>
+
+		<footer>
+			<p>
+				The <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a>
+				license applies unless otherwise specified.
+			</p>
+
+			<p>
+				Site proudly generated by
+				<a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+			</p>
+		</footer>
+
+		<!-- Google Analytics tracking -->
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-17386731-5', 'auto');
+			ga('send', 'pageview');
+		</script>
+	</body>
+</html>

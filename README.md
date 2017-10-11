@@ -9,4 +9,6 @@ To build:
 To push:
 
     $ ./site deploy
-    $ git subtree push --prefix _site origin gh-pages
+    $ git subtree push --prefix _site origin master
+
+TODO(prvak): Fix deployCommand in site.hs once rny.cz is a 301 redirect

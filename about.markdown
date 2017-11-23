@@ -61,7 +61,7 @@ seminar for high school students by Charles University.
 [ea-cz]: http://www.efektivni-altruismus.cz/
 [mff]: http://www.mff.cuni.cz/
 [github]: https://github.com/agentydragon
-[linkedin]: https://linkedin.com/in/mpokornymff
+[linkedin]: https://linkedin.com/in/agentydragon
 [facebook]: https://facebook.com/agentydragon
 [ksp]: https://ksp.mff.cuni.cz/
 [my-giving]: https://www.givingwhatwecan.org/igivedisplay?publicid=11360&publicauth=600761404

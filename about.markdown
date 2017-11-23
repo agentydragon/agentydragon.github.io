@@ -41,9 +41,6 @@ From time to time, I hunt for geocaches.
 <img src="https://img.geocaching.com/stats/img.aspx?txt=Ooooh,+shiny!&uid=8011109d-8913-415c-9272-3e82426f3835&bg=1" alt="Profile for prvak" />
 </a>
 
-If you'd like to tell me a secret,
-[here's my GPG public key](/static/pubkey.gpg).
-
 I try to be a generalist. Some stuff I do or did before:
 
  * Web stuff. In the distant past, I used PHP, then Ruby (on Rails and off),

@@ -2,7 +2,6 @@ My homepage. Everything is CC BY-NC-SA 3.0.
 
 To build:
 
-    $ stack install hakyll --resolver lts-10.9
     $ stack build
     $ stack exec site build
 

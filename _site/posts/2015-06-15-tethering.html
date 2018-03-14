@@ -43,21 +43,21 @@
 <ul>
 <li>Numbers 4 and 5 seem to describe some aspects of the available mobile networks.
 <pre>
-  # service call connectivity 4
-  Result: Parcel(
-0x00000000: 00000000 00000001 00000000 00000008 '................'
-0x00000010: 00000006 006f006d 00690062 0065006c '....m.o.b.i.l.e.'
-0x00000020: 00000000 00000005 00530048 00500044 '........H.S.D.P.'
-0x00000030: 00000041 00000009 004f0043 004e004e 'A.......C.O.N.N.'
-0x00000040: 00430045 00450054 00000044 00000009 'E.C.T.E.D.......'
-0x00000050: 004f0043 004e004e 00430045 00450054 'C.O.N.N.E.C.T.E.'
-0x00000060: 00000044 00000000 00000001 00000000 'D...............'
-0x00000070: 00000009 00690073 004c006d 0061006f '....s.i.m.L.o.a.'
-0x00000080: 00650064 00000064 00000008 006e0069 'd.e.d.......i.n.'
-0x00000090: 00650074 006e0072 00740065 00000000 't.e.r.n.e.t.....')
-  # (similar for 5)
-  </pre></li>
-<li>6 is apparently <code>setWifiEnabled</code>. Calling <code>service call connectivity 6   i32 1</code> calls <code>setWifiEnabled(true)</code>. Looks useful.</li>
+# service call connectivity 4
+Result: Parcel(
+  0x00000000: 00000000 00000001 00000000 00000008 '................'
+  0x00000010: 00000006 006f006d 00690062 0065006c '....m.o.b.i.l.e.'
+  0x00000020: 00000000 00000005 00530048 00500044 '........H.S.D.P.'
+  0x00000030: 00000041 00000009 004f0043 004e004e 'A.......C.O.N.N.'
+  0x00000040: 00430045 00450054 00000044 00000009 'E.C.T.E.D.......'
+  0x00000050: 004f0043 004e004e 00430045 00450054 'C.O.N.N.E.C.T.E.'
+  0x00000060: 00000044 00000000 00000001 00000000 'D...............'
+  0x00000070: 00000009 00690073 004c006d 0061006f '....s.i.m.L.o.a.'
+  0x00000080: 00650064 00000064 00000008 006e0069 'd.e.d.......i.n.'
+  0x00000090: 00650074 006e0072 00740065 00000000 't.e.r.n.e.t.....')
+# (similar for 5)
+</pre></li>
+<li>6 is apparently <code>setWifiEnabled</code>. Calling <code>service call connectivity 6 i32 1</code> calls <code>setWifiEnabled(true)</code>. Looks useful.</li>
 <li>9 is <code>stopUsingNetworkFeature</code>.</li>
 <li>10 is <code>requestRouteToHost</code>.</li>
 <li>13 is <code>getMobileDataEnabled</code>.</li>

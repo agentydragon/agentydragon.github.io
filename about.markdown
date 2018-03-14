@@ -38,7 +38,7 @@ it.
 From time to time, I hunt for geocaches.
 
 <a href="https://www.geocaching.com/profile/?guid=8011109d-8913-415c-9272-3e82426f3835" target="_blank">
-<img src="https://img.geocaching.com/stats/img.aspx?txt=Ooooh,+shiny!&uid=8011109d-8913-415c-9272-3e82426f3835&bg=1" alt="Profile for prvak" />
+<img src="https://img.geocaching.com/stats/img.aspx?txt=Ooooh,+shiny!&uid=8011109d-8913-415c-9272-3e82426f3835&bg=1" alt="Geocaching badge" />
 </a>
 
 I try to be a generalist. Some stuff I do or did before:

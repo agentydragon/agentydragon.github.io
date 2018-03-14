@@ -40,20 +40,20 @@
 <p>Python 3 lets you optionally annotate your functions with argument and return types. This was defined in <a href="https://www.python.org/dev/peps/pep-0484/">PEP 484</a>. The type system is gradual (i.e., you can gradually convert an untyped program to a typed one, module by module) and fairly strong. Aside from co-authoring the PEP with Dropbox superengineer-in-chief Guido van Rossum, our team leader <a href="http://www.cl.cam.ac.uk/~jal82/">Jukka Lehtosalo</a> developed the first actual working type checker for Python: <a href="http://mypy-lang.org/">MyPy</a>.</p>
 <p>Most of Dropbox is written in Python 2, through a switch to Python 3 is something everyone wants (and some other Hack Week projects made some very impressive steps in that direction). First, we had to figure out how to annotate existing code with PEP 484-like annotations. We ended up with something like this:</p>
 <figure>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> typing <span class="im">import</span> Any, List, NamedTuple
-
-Account <span class="op">=</span> NamedTuple(<span class="st">'Account'</span>, [(<span class="st">'name'</span>, <span class="bu">str</span>), (<span class="st">'balance'</span>, <span class="bu">int</span>),
-				 (<span class="st">'notes'</span>, List[Any]])
-
-<span class="kw">def</span> apply_promotion(amount, accounts, <span class="op">*</span>notes):
-    <span class="co"># type: (int, Iterable[Account], *Any) -&gt; bool</span>
-    <span class="co"># Previous line declares function argument types and return type.</span>
-
-    <span class="cf">for</span> account <span class="kw">in</span> accounts:
-        account.balance <span class="op">+=</span> amount
-	account.notes.extend(notes)
-
-    <span class="cf">return</span> <span class="bu">len</span>(accounts) <span class="op">&gt;</span> <span class="dv">0</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="im">from</span> typing <span class="im">import</span> Any, List, NamedTuple</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">Account <span class="op">=</span> NamedTuple(<span class="st">'Account'</span>, [(<span class="st">'name'</span>, <span class="bu">str</span>), (<span class="st">'balance'</span>, <span class="bu">int</span>),</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">				 (<span class="st">'notes'</span>, List[Any]])</a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6"><span class="kw">def</span> apply_promotion(amount, accounts, <span class="op">*</span>notes):</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">    <span class="co"># type: (int, Iterable[Account], *Any) -&gt; bool</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">    <span class="co"># Previous line declares function argument types and return type.</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">    <span class="cf">for</span> account <span class="kw">in</span> accounts:</a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">        account.balance <span class="op">+=</span> amount</a>
+<a class="sourceLine" id="cb1-12" data-line-number="12">	account.notes.extend(notes)</a>
+<a class="sourceLine" id="cb1-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14">    <span class="cf">return</span> <span class="bu">len</span>(accounts) <span class="op">&gt;</span> <span class="dv">0</span></a></code></pre></div>
 <div>
 Python 2 with type annotations (please excuse the contrived example)
 </div>
@@ -61,13 +61,13 @@ Python 2 with type annotations (please excuse the contrived example)
 <p>Then we hacked on MyPy until it gave us a clean compile on a small piece of Dropbox’s codebase. This involved hunting for bugs in MyPy’s understanding of Python 2, annotating existing Dropbox code, and (which I was doing most of the time) teaching MyPy about non-Dropbox modules.</p>
 <p>PEP 484 lets you separate your actual code from its type annotations. The type annotations may be stored separately in a <code>.pyi</code> file (the <code>i</code> probably stands for “interface”). A <code>.pyi</code> file for the above example might look like this:</p>
 <figure>
-<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">from</span> typing <span class="im">import</span> Any, List, NamedTuple
-
-Account <span class="op">=</span> NamedTuple(<span class="st">'Account'</span>, [(<span class="st">'name'</span>, <span class="bu">str</span>), (<span class="st">'balance'</span>, <span class="bu">int</span>),
-				 (<span class="st">'notes'</span>, List[Any])])
-
-<span class="kw">def</span> apply_promotion(amount: <span class="bu">int</span>, accounts: Iterable[Account],
-                    <span class="op">*</span>notes: Any) <span class="op">-&gt;</span> <span class="bu">bool</span>: ...</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="im">from</span> typing <span class="im">import</span> Any, List, NamedTuple</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">Account <span class="op">=</span> NamedTuple(<span class="st">'Account'</span>, [(<span class="st">'name'</span>, <span class="bu">str</span>), (<span class="st">'balance'</span>, <span class="bu">int</span>),</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">				 (<span class="st">'notes'</span>, List[Any])])</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="kw">def</span> apply_promotion(amount: <span class="bu">int</span>, accounts: Iterable[Account],</a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">                    <span class="op">*</span>notes: Any) <span class="op">-&gt;</span> <span class="bu">bool</span>: ...</a></code></pre></div>
 <div>
 The <code>.pyi</code> for the example above. Note the <code>...</code> replacing the method body.
 </div>

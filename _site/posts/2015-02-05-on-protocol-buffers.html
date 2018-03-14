@@ -67,35 +67,35 @@ address { city: &quot;Cupertino&quot; }
 address { country: USA }</code></pre>
 <p>You can use protocol buffers from a wide variety of programming languages, but the main Google languages (C++, Java, Python and Go) have best support. For any given language, the <code>protoc</code> compiler munches <code>.proto</code> files and generates code in your language that lets you manipulate the messages.</p>
 <p>C++ code using protocol buffers might look like this (adapted from an <a href="https://code.google.com/p/protobuf/">official example</a>):</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="pp">#include </span><span class="im">&quot;goliath/monetization/surveillance/person.pb.h&quot;</span>
-
-Person person;
-person.set_id(<span class="dv">123</span>);
-person.set_name(<span class="st">&quot;Bob&quot;</span>);
-Person::Address* address = person.add_address();
-address-&gt;set_country(Person::Country::EUROPE);
-
-<span class="co">// Store the person in the binary format.</span>
-fstream out(<span class="st">&quot;person.pb&quot;</span>, ios::out | ios::binary | ios::trunc);
-person.SerializeToOstream(&amp;out);
-out.close();
-
-<span class="co">// And much later...</span>
-
-Person person;
-fstream in(<span class="st">&quot;person.pb&quot;</span>, ios::in | ios::binary);
-<span class="cf">if</span> (!person.ParseFromIstream(&amp;in)) {
-  cerr &lt;&lt; <span class="st">&quot;Failed to parse person.pb.&quot;</span> &lt;&lt; endl;
-  exit(<span class="dv">1</span>);
-}
-
-cout &lt;&lt; <span class="st">&quot;ID: &quot;</span> &lt;&lt; person.id() &lt;&lt; endl;
-cout &lt;&lt; <span class="st">&quot;name: &quot;</span> &lt;&lt; person.name() &lt;&lt; endl;
-<span class="cf">for</span> (<span class="at">const</span> Person::Address&amp; address : person.address()) {
-  <span class="cf">if</span> (address.has_city()) {
-    cout &lt;&lt; <span class="st">&quot;city: &quot;</span> &lt;&lt; address.city() &lt;&lt; endl;
-  }
-}</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="pp">#include </span><span class="im">&quot;goliath/monetization/surveillance/person.pb.h&quot;</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">Person person;</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">person.set_id(<span class="dv">123</span>);</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">person.set_name(<span class="st">&quot;Bob&quot;</span>);</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">Person::Address* address = person.add_address();</a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">address-&gt;set_country(Person::Country::EUROPE);</a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9"><span class="co">// Store the person in the binary format.</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">fstream out(<span class="st">&quot;person.pb&quot;</span>, ios::out | ios::binary | ios::trunc);</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">person.SerializeToOstream(&amp;out);</a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">out.close();</a>
+<a class="sourceLine" id="cb3-13" data-line-number="13"></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">// And much later...</span></a>
+<a class="sourceLine" id="cb3-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">Person person;</a>
+<a class="sourceLine" id="cb3-17" data-line-number="17">fstream in(<span class="st">&quot;person.pb&quot;</span>, ios::in | ios::binary);</a>
+<a class="sourceLine" id="cb3-18" data-line-number="18"><span class="cf">if</span> (!person.ParseFromIstream(&amp;in)) {</a>
+<a class="sourceLine" id="cb3-19" data-line-number="19">  cerr &lt;&lt; <span class="st">&quot;Failed to parse person.pb.&quot;</span> &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb3-20" data-line-number="20">  exit(<span class="dv">1</span>);</a>
+<a class="sourceLine" id="cb3-21" data-line-number="21">}</a>
+<a class="sourceLine" id="cb3-22" data-line-number="22"></a>
+<a class="sourceLine" id="cb3-23" data-line-number="23">cout &lt;&lt; <span class="st">&quot;ID: &quot;</span> &lt;&lt; person.id() &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb3-24" data-line-number="24">cout &lt;&lt; <span class="st">&quot;name: &quot;</span> &lt;&lt; person.name() &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb3-25" data-line-number="25"><span class="cf">for</span> (<span class="at">const</span> Person::Address&amp; address : person.address()) {</a>
+<a class="sourceLine" id="cb3-26" data-line-number="26">  <span class="cf">if</span> (address.has_city()) {</a>
+<a class="sourceLine" id="cb3-27" data-line-number="27">    cout &lt;&lt; <span class="st">&quot;city: &quot;</span> &lt;&lt; address.city() &lt;&lt; endl;</a>
+<a class="sourceLine" id="cb3-28" data-line-number="28">  }</a>
+<a class="sourceLine" id="cb3-29" data-line-number="29">}</a></code></pre></div>
 <h2>
 Why I love Protocol Buffers
 </h2>
@@ -146,20 +146,20 @@ Embracing change
   ...
 }</code></pre>
 <p>The next step is to change any readers of the <code>occupation</code> field to instead get the occupation from <code>JobStore</code>:</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp">string IsPlumber(<span class="at">const</span> Person&amp; person) {
-  <span class="cf">return</span> person-&gt;occupation() == <span class="st">&quot;plumber&quot;</span>;
-}
-
-<span class="co">// Becomes:</span>
-string IsPlumber(<span class="at">const</span> Person&amp; person) {
-  <span class="cf">return</span> JobStore::FindOccupation(person.id) == JobStore::PLUMBER;
-}</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb5-1" data-line-number="1">string IsPlumber(<span class="at">const</span> Person&amp; person) {</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">  <span class="cf">return</span> person-&gt;occupation() == <span class="st">&quot;plumber&quot;</span>;</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">}</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">// Becomes:</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">string IsPlumber(<span class="at">const</span> Person&amp; person) {</a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">  <span class="cf">return</span> JobStore::FindOccupation(person.id) == JobStore::PLUMBER;</a>
+<a class="sourceLine" id="cb5-8" data-line-number="8">}</a></code></pre></div>
 <p>After we kill all readers of the field, we can start removing writers of the field:</p>
-<div class="sourceCode"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> LoadBob(Person* person) {
-  person-&gt;set_id(<span class="dv">15</span>);
-  person-&gt;set_name(<span class="st">&quot;Bob&quot;</span>);
-  <span class="co">// person-&gt;set_occupation(&quot;chief plumbing officer&quot;);</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="dt">void</span> LoadBob(Person* person) {</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">  person-&gt;set_id(<span class="dv">15</span>);</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">  person-&gt;set_name(<span class="st">&quot;Bob&quot;</span>);</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">  <span class="co">// person-&gt;set_occupation(&quot;chief plumbing officer&quot;);</span></a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">}</a></code></pre></div>
 <p>When there are no more references to <code>occupation</code> in code, we can remove the field from the <code>.proto</code>. We need to keep a comment that no future fields can use the tag number <code>3</code>. If a future field accidentally uses this tag number for a different purpose, we may not get an error - any strings in tag number <code>3</code> will be interpreted as the new field, because protocol buffers do not store any type information aside from tag numbers.</p>
 <p>A tombstone left by a dead field may look like this:</p>
 <pre><code>message Person {

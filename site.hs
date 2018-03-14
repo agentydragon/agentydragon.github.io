@@ -20,7 +20,7 @@ main = hakyllWith config $ do
     route idRoute
     compile compressCssCompiler
 
-  match "CNAME" do
+  match "CNAME" $ do
     route idRoute
     compile copyFileCompiler
 

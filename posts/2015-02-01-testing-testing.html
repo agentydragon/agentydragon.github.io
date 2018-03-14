@@ -47,16 +47,16 @@ What errors look like in an old Nette app
 <p>I like to return to old source code. It’s like looking into the mind of an earlier me, and it’s interesting to recall the thoughts that shaped the code into how it remained. Of course, it’s less pleasant when it breaks and it’s 4:17 AM and someone’s losing their head over people getting <code>500 Server Error</code>’s when logging into an old PHP system you wrote 6 years ago without any tests or documentation. Even indentation discipline would be too much to ask for. Michael’s old self should spend a few hours configuring his editor, whatever it was. Probably Kate, if I remember correctly. But I digress.</p>
 <p>When I wrote the last version of my website, I did it because I wanted to try this <a href="http://en.wikipedia.org/wiki/XSLT">XSLT</a> thingie. It’s basically a templating functional language stored in XML. I had attended a talk on XSLT by <a href="http://www.kosek.cz/">Jirka Kosek</a> and I liked how it can be used to elegantly transform static data into many representations. This can be useful if you use XML as the “master data format” of everything you need to present. Of course, there’s the “XML is horrible” meme and everything, but it has some nice ideas. I decided to have a single-page website without bells and whistles, just a paragraph or two, some project links and contact info. No JavaScript, minimal CSS.</p>
 <figure>
-<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;xsl:template</span><span class="ot"> name=</span><span class="st">&quot;web-link&quot;</span><span class="kw">&gt;</span>
-  <span class="kw">&lt;xsl:param</span><span class="ot"> name=</span><span class="st">&quot;href&quot;</span> <span class="kw">/&gt;</span>
-  <span class="kw">&lt;xsl:param</span><span class="ot"> name=</span><span class="st">&quot;text&quot;</span> <span class="kw">/&gt;</span>
-  <span class="kw">&lt;a</span><span class="ot"> class=</span><span class="st">&quot;icon-arrow-right&quot;</span><span class="kw">&gt;</span>
-    <span class="kw">&lt;xsl:attribute</span><span class="ot"> name=</span><span class="st">&quot;href&quot;</span><span class="kw">&gt;</span>
-      <span class="kw">&lt;xsl:value-of</span><span class="ot"> select=</span><span class="st">&quot;$href&quot;</span> <span class="kw">/&gt;</span>
-    <span class="kw">&lt;/xsl:attribute&gt;</span>
-    <span class="kw">&lt;xsl:value-of</span><span class="ot"> select=</span><span class="st">&quot;$text&quot;</span> <span class="kw">/&gt;</span>
-  <span class="kw">&lt;/a&gt;</span>
-<span class="kw">&lt;/xsl:template&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode xml"><code class="sourceCode xml"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">&lt;xsl:template</span><span class="ot"> name=</span><span class="st">&quot;web-link&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">  <span class="kw">&lt;xsl:param</span><span class="ot"> name=</span><span class="st">&quot;href&quot;</span> <span class="kw">/&gt;</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="kw">&lt;xsl:param</span><span class="ot"> name=</span><span class="st">&quot;text&quot;</span> <span class="kw">/&gt;</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">  <span class="kw">&lt;a</span><span class="ot"> class=</span><span class="st">&quot;icon-arrow-right&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">    <span class="kw">&lt;xsl:attribute</span><span class="ot"> name=</span><span class="st">&quot;href&quot;</span><span class="kw">&gt;</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">      <span class="kw">&lt;xsl:value-of</span><span class="ot"> select=</span><span class="st">&quot;$href&quot;</span> <span class="kw">/&gt;</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">    <span class="kw">&lt;/xsl:attribute&gt;</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">    <span class="kw">&lt;xsl:value-of</span><span class="ot"> select=</span><span class="st">&quot;$text&quot;</span> <span class="kw">/&gt;</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">  <span class="kw">&lt;/a&gt;</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="kw">&lt;/xsl:template&gt;</span></a></code></pre></div>
 <div>
 XSLT 101: Linking stuff.
 </div>

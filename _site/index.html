@@ -33,6 +33,24 @@
 			<div id="articles">
 			
 	<article>
+	<h3>2018-03-24 - <a href="./posts/2018-03-24-fixing-chrome-zoom.html">When I use my touchpad to scroll and then press Ctrl, Chrome starts zooming in/out. How to fix that?</a></h3>
+	<p>This has been plaguing me for a few days (I just got a new Lenovo X1 Yoga laptop), and I think I now figured it out. The Synaptics touchpad driver has a <code>CoastingSpeed</code> option (see <a href="http://manpages.ubuntu.com/manpages/xenial/man4/synaptics.4.html">man 4 synaptics</a>).</p>
+<p>The issue is that when I start two-finger scrolling on a webpage, the driver interprets that to mean “oh and when I take my fingers off the touchpad, please continue scrolling for a few more seconds in the same direction, while slowing down until you stop scrolling”.</p>
+<p>Guess what? When you press Ctrl in Chrome and the touchpad driver keeps sending the “ooh we’re scrolling!” message, Chrome starts changing the font size, which is what “Ctrl + scroll” does.</p>
+<p>Quoting from the manual:</p>
+<p>Your finger needs to produce this many scrolls per second in order to start coasting. The default is 20 which should prevent you from starting coasting unintentionally. 0 disables coasting. Property: “Synaptics Coasting Speed”</p>
+<p>I found a command at <a href="https://help.ubuntu.com/community/SynapticsTouchpad">the Ubuntu community wiki article about Synaptics touchpads</a> which disables this: <code>synclient CoastingSpeed=0</code>. But I guess that won’t stay between restarts.</p>
+<p>I’ll add this to a new file in <code>/etc/X11/xorg.conf.d/99-custom.conf</code>:</p>
+<pre><code>Section &quot;InputClass&quot;
+  # Disable annoying &quot;zoom after two-finger scroll&quot; in Chrome.
+  Identifier &quot;touchpad disable coasting&quot;
+  MatchDriver &quot;synaptics&quot;
+  Option &quot;CoastingSpeed&quot; &quot;0&quot;
+EndSection</code></pre>
+<p>If it doesn’t work, I guess I’ll update this…</p>
+	</article>
+
+	<article>
 	<h3>2018-03-21 - <a href="./posts/2018-03-21-triage.html">Triage</a></h3>
 	<p>I am tired and feel like I shouldn’t go to sleep yet. The Soylent thing has been working only very very slowly. I assume the first few days were just losing the contents of my bowels and now I just want to keep it up. Maybe in the hope that it will remove the habit of snacking when I feel stressed/bad.</p>
 <p>The thing about feeling stressed at work has gotten a little bit better. But somehow I don’t feel that much like I’m winning.</p>
@@ -828,66 +846,6 @@ Simplified Knowledge Vault architecture
 <p>It’s basically a logistic regression over a bag of words. The dataset are 10 000 Wikipedia articles about persons. My task now is to use smarter algorithms to get better results, adding other algorithms (graph patterns and embeddings), running over a larger dataset and fleshing out the architecture.</p>
 <p>I’d enjoy talking at length about the various design choices and cool tools I’m using, but I was told 1 A4 page would be quite enough, so I’ll cut my proselytization short just about now.</p>
 <p>Let’s get back to work. Have a fine day, and may your values be optimally satisfied!</p>
-	</article>
-
-	<article>
-	<h3>2016-09-22 - <a href="./posts/2016-09-22-tracking-thesis-progress.html">Tracking thesis progress</a></h3>
-	<p>I’m currently writing my master’s thesis. I’d like to have some idea of how to answer questions like: How well am I doing this week? Have I been stalled for some time? How fast can I write when I’m in the zone? How long until I’m finished?</p>
-<p>To help me answer those, I’m gathering data about it using a cron script that logs the number of pages of my the PDF of my thesis and the number of lines of code I’ve written every hour.</p>
-<p>This is a technique I copied from a video from the excellent screencast series <a href="https://www.destroyallsoftware.com/screencasts">Destroy All Software</a>. The author uses it in several videos. One variant of this data collection idea he uses is going over the Git history of a project and collecting data ex post by checking out every historic revision and running a data collection script over it.</p>
-My use of this technique lets me produce a pretty graph that looks like this:
-<figure>
-<img src="./static/2016-09-22-thesis-tracking-graph.png">
-</figure>
-<p>Other really nice uses of this technique include asking:</p>
-<ul>
-<li>How many tests were failing in each revision?</li>
-<li>Which authors commited how many lines of code, over time?</li>
-<li>How has the speed of a POST request to <code>/clients/create</code> evolved over time? Which changes affected it positively and negatively?</li>
-<li>How has the speed of my website’s rendering evolved over time?</li>
-</ul>
-<p>My crontab line looks like this:</p>
-<pre><code>0 * * * * log-pagecount</code></pre>
-<p>The <code>log-pagecount</code> script in question is dead simple:</p>
-<pre><code>#!/bin/bash
-set -e
-
-cd /home/prvak/master/text
-make &gt;/dev/null
-COUNT=`pdfinfo /home/prvak/master/text/thesis.pdf | grep Pages: | cut -d\  -f11`
-DATE=`date +%Y%m%d%H%M`
-echo $DATE $COUNT &gt;&gt; /home/prvak/misc/master-pagecount-log.log
-
-SLOC_LOGFILE=/home/prvak/misc/master-sloc-log.log
-echo &quot;---- CUT ----&quot; &gt;&gt; $SLOC_LOGFILE
-echo $DATE &gt;&gt; $SLOC_LOGFILE
-cloc /home/prvak/master/code &gt;&gt; $SLOC_LOGFILE</code></pre>
-<p>The lines-of-code counting is done by the <a href="https://github.com/AlDanial/cloc">cloc</a> tool (<a href="https://github.com/AlDanial/cloc">AlDanial/cloc</a> on GitHub). In Arch Linux, you can install it by running <code>pacman -S cloc</code>.</p>
-<p>Then, in <code>~/misc/sloc-count-to-log.py</code>, I have a simple script that changes the format of the lines-of-count logfile:</p>
-<pre><code>#!/usr/bin/python
-with open('master-sloc.tsv', 'w') as f:
-    for line in open('master-sloc-log.log'):
-        line = line.strip()
-        if line.startswith('SUM'):
-            f.write(&quot;%s %s\n&quot; % (date, line.split(' ')[-1]))
-        if line.startswith('2016'):
-            date = line</code></pre>
-<p>Then, I have this Gnuplot script in <code>~/misc/plot-thesis-stats.gnuplot</code>:</p>
-<pre><code>set datafile separator ' '
-set xdata time
-set y2tics
-set timefmt &quot;%Y%m%d%H%M&quot;
-set key right bottom
-plot \
-	&quot;master-pagecount-log.log&quot; u 1:2 w lines axes x1y1 title &quot;Pages&quot;, \
-	&quot;master-sloc.tsv&quot; u 1:2 w lines axes x1y2 title &quot;SLOC&quot;</code></pre>
-<p>To see the pretty graph, I do this:</p>
-<pre><code>~ $ cd ~/misc
-~/misc $ gnuplot
-(...)
-gnuplot&gt; load 'plot-thesis-stats.gnuplot'</code></pre>
-<p>I have enjoyed procrastinating by writing this post more than looking at my script munching away training samples for my classifiers.</p>
-<p>Enjoy!</p>
 	</article>
 
 

@@ -17,7 +17,7 @@ a master's in AI at the [Faculty of Mathematics and Physics][mff]
 of the Charles University in Prague.
 <!-- TODO: stredni skola? -->
 
-You can find me on Telegram as [@agentydragon][telegram].
+You can find me on Telegram as [agentydragon][telegram].
 My personal e-mail is `agentydragon@gmail.com`.
 Feel free to shoot me a message about anything!
 

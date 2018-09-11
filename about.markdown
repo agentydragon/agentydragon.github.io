@@ -10,7 +10,7 @@ title: About
 
 Hi!
 
-I'm Michal Pokorný, a 24-years-old "software" "engineer" from Czech Republic.
+I'm Michal Pokorný, a 25-years-old "software" "engineer" from Czech Republic.
 
 I work at Google Zurich and might some day get around to finishing
 a master's in AI at the [Faculty of Mathematics and Physics][mff]
@@ -19,22 +19,21 @@ of the Charles University in Prague.
 
 You can find me on Telegram as [agentydragon][telegram].
 My personal e-mail is `agentydragon@gmail.com`.
-Feel free to shoot me a message about anything!
 
 I am on GitHub as [agentydragon][github].
 
 I am an [effective altruist][ea] ([Czech][ea-cz]) and I currently earn to give.
 You can take a look at my donations on [My Giving at Giving What We Can][my-giving].
+(If the link is broken, it means CEA still didn't fix their new shiny site
+after their org ate GWWC. My apologies. I guess they are working on it.)
 
 I also have a [LinkedIn account][linkedin] and a [Facebook account][facebook].
 I only use LinkedIn for people I worked with and I only use Facebook for people
 I consider my friends. If you try to connect with me or add me as a friend
-and I have no idea who you are, I'm really sorry to say this, but unfortunately
-I'll probably ignore you. I do not mean this personally and this does not mean
-that I do not want to be your friend. In general, I want people to be my
-friends. It's just my personal preference in how I use social networks. If you
-send me a connection request and I ignore it, I will probably feel guilty about
-it.
+and I have no idea who you are, I'll probably ignore the request. I do not mean
+this personally and this does not mean that I do not want to be your friend. In
+general, I want people to be my friends. It's just my preference in how I use
+social networks.
 
 From time to time, I hunt for geocaches.
 

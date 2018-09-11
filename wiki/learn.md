@@ -33,6 +33,8 @@ Statistics and methodology
 * Kolmogorov-Smirnov test
 * Theoretical construct
 * What is “hazard ratio”?
+* Kurtosis
+* Bonferoni adjustment (on P-values)
 
 Computer science
 ==

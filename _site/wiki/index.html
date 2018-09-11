@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<title>~agentydragon/Reproducing Travis CI builds</title>
+		<title>~agentydragon/Rai's wiki</title>
 		<link href="http://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet" type="text/css">
 		<link href="http://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" type="text/css" href="../css/default.css">
@@ -30,28 +30,10 @@
 		</header>
 
 		<div id="content">
-			<h1>Reproducing Travis CI builds</h1>
+			<h1>Rai's wiki</h1>
 
 			<div id="articles">
-			<div class="info">
-    Posted on 2015-03-28
-</div>
-
-<p>I’m currently writing <a href="https://github.com/MichalPokorny/thesis">my bachelor thesis</a> and one of the tools I’m using is <a href="https://travis-ci.org/">Travis CI</a>. In my opinion, continuous integration is great even for small projects like my thesis. Getting bugged over broken tests forces me to eventually fix them. (And setting up Travis CI can be a good exercise in procrastination.)</p>
-<p>I had some problems. The default build environment is Ubuntu Precise (12.04) and it has a slightly old version GCC, which <a href="https://stackoverflow.com/questions/22111549/travis-ci-with-clang-3-4-and-c11">doesn’t support C11 (or C++11)</a>. I also managed to get the option order for GCC wrong for some time, which broke my build in a way I couldn’t reproduce on my own machine.</p>
-<p>Fortunately, Travis CI provides specifications of their build environment on their GitHub (<a href="https://github.com/travis-ci/travis-cookbooks">travis-ci/travis-cookbooks</a>). To boot your own Travis VM, just install <code>vagrant</code>, and:</p>
-<pre><code>mkdir travis-build
-cd travis-build
-
-# Grab the Vagrantfile from GitHub
-wget https://raw.githubusercontent.com/travis-ci/travis-cookbooks/master/Vagrantfile
-
-# Boot up a machine (64-bit Ubuntu 12.04 Precise, in this case)
-vagrant up precise64
-
-# Great success!
-vagrant ssh</code></pre>
-
+			<p><a href="learn.html">Things to learn</a></p>
 			</div>
 			<hr class="clearfix">
 		</div>

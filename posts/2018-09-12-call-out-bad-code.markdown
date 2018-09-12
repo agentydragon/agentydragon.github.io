@@ -16,7 +16,7 @@ if it will require a bunch of boilerplate (maybe it would necessiate adding
 a new module)?
 
 It's often a question of "do I pay the bigger upfront cost now, or do I make
-future-me front it". hese days I often work in a really big codebase, where
+future-me front it". These days I often work in a really big codebase, where
 there ends up being a bunch of those.
 
 My review tip for copy-pasted code

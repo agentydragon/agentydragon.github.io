@@ -35,6 +35,9 @@ Statistics and methodology
 * What is “hazard ratio”?
 * Kurtosis
 * Bonferoni adjustment (on P-values)
+* F-distribution
+* Student's t-distribution
+* Chi-squared distribution
 
 Computer science
 ==
@@ -43,12 +46,20 @@ Machine learning and AI
 ===
 
 * Tensorflow
+  * TFX
+  * Probability
 * Boltzmann machines
 * Xavier initialization
 * Batch normalization
 * ReLUs
 * Adam
 * RMSprop
+* Kernel methods
+* Bayesian statistics
+* Support vector machines
+* Deep belief networks and how to greedily train them
+* Deep Boltzmann machines
+* LSTMs
 
 Computer stuff cool kids use
 ===

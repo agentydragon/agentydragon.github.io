@@ -60,6 +60,7 @@ Machine learning and AI
 * Deep belief networks and how to greedily train them
 * Deep Boltzmann machines
 * LSTMs
+* t-SNE
 
 Computer stuff cool kids use
 ===

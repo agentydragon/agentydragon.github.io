@@ -64,6 +64,7 @@ Machine learning and AI
 * Deep Boltzmann machines
 * LSTMs
 * t-SNE
+* Message-passing neural network
 
 Computer stuff cool kids use
 ===

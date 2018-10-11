@@ -38,6 +38,9 @@ Statistics and methodology
 * F-distribution
 * Student's t-distribution
 * Chi-squared distribution
+* Samuelson optimization
+* Arrow-Debreu lattice state-space
+* Kelly's method (for allocations)
 
 Computer science
 ==
@@ -82,6 +85,13 @@ Finance
 ==
 
 * Black-Scholes equation
+* Measures of money supply (M0 ... M4)
+
+Rationalist signalling
+==
+
+* Connection theory charting
+* Immunity to change mapping (by Kegan)
 
 Other hacks
 ==

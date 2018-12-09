@@ -20,7 +20,9 @@ Math
 ==
 
 * Laplace transform
-* Fourier transform
+* Signal processing
+  * Fourier transform
+  * Gabor wavelet transform
 
 Statistics and methodology
 ===

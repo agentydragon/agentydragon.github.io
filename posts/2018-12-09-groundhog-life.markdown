@@ -1,5 +1,5 @@
 ---
-title: Groundhog Life: a cute, but eventually frustrating game that can't be won
+title: "Groundhog Life: a cute, but eventually frustrating game you can't win"
 ---
 
 Take-aways up front:

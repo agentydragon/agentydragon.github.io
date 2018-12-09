@@ -43,6 +43,7 @@ Statistics and methodology
 * Samuelson optimization
 * Arrow-Debreu lattice state-space
 * Kelly's method (for allocations)
+* T-statistic
 
 Computer science
 ==

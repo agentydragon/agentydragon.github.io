@@ -8,3 +8,10 @@ To build:
 To push:
 
     $ git subtree push --prefix _site origin master
+
+To convert a Jupyter notebook into Markdown:
+
+```
+sudo apt install jupyter-nbconvert
+jupyter-nbconvert --to markdown --template basic <...>.ipynb
+```

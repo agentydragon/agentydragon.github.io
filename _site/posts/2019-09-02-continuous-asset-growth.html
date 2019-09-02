@@ -67,14 +67,14 @@
 <p>I am probably rediscovering Financial Mathematics 101 ¯\_(ツ)_/¯</p>
 <h1 id="the-questions">The questions</h1>
 <ul>
-<li>The <strong>“how much” question</strong>: <em>I want to pay myself <span class="math inline">$1000</span>. My stocks grow 4% per year. How much money do I need?</em></li>
-<li>The <strong>“how long until” question</strong>: <em>I have $ $100 000 $ and save $ $3000 $ per month. How long until I have the $ $306 000$ that you said I need?</em></li>
+<li>The <strong>“how much” question</strong>: <em>I want to pay myself 1000 USD. My stocks grow 4% per year. How much money do I need?</em></li>
+<li>The <strong>“how long until” question</strong>: <em>I have 100 000 USD and save 3000 USD per month. How long until I have 200 000 USD?</em></li>
 </ul>
 <h1 id="first-shot">First shot</h1>
 <p>Previously the tool’s model was very basic, and answered the two questions as follows:</p>
 <ul>
-<li><em>I want to pay myself <span class="math inline">$1000</span>. My stocks grow 4% per year. How much money do I need?</em> Well, the 4% you get per year should cover the yearly costs, so $ $1000 / (1.04 ^ {1/12} - 1) $306 000 $.</li>
-<li><em>I have $ $100 000 $ and save $ $3000 $ per month. How long until I have the $ $306 000$ that you said I need?</em> That I modelled linearly, with just $ ($306000 - $100000) / ($3000/) 69 $.</li>
+<li><em>I want to pay myself 1000 USD per month. My stocks grow 4% per year. How much money do I need?</em> Well, the 4% you get per year should cover the yearly costs, so <span class="math inline">1000/(1.04<sup>1/12</sup> − 1) ≈ 306 000</span> USD.</li>
+<li><em>I have 100 000 USD and save 3000 USD per month. How long until I have the 306 000 USD that you said I need?</em> That I modelled linearly, with just $ (306000 - 100000) / (3000/) 69 $.</li>
 </ul>
 <h1 id="problems">Problems</h1>
 <h1 id="assuming-infinite-retirement-time">Assuming infinite retirement time</h1>
@@ -84,7 +84,7 @@
 <h1 id="stand-aside-i-know-differential-equations">Stand aside, I know differential equations!</h1>
 <p>Let’s model the depletion of your money as a function <span class="math inline"><em>f</em></span>, which will map number of years since retirement to the amount of money. You start with some initial amount <span class="math inline"><em>f</em>(0)</span>. If we pretend you withdraw the salary for a year and add interest once yearly, we’d get:</p>
 <p><br /><span class="math display"><em>f</em>(<em>x</em> + 1) = <em>f</em>(<em>x</em>) + <em>i</em> ⋅ <em>f</em>(<em>x</em>) − <em>c</em></span><br /></p>
-<p>Where <span class="math inline"><em>i</em></span> is the yearly interest rate and <span class="math inline"><em>c</em></span> are the yearly costs. In the example above, <span class="math inline"><em>i</em> = 0.04</span> and <span class="math inline"><em>c</em> = $12000</span>.</p>
+<p>Where <span class="math inline"><em>i</em></span> is the yearly interest rate and <span class="math inline"><em>c</em></span> are the yearly costs. In the example above, <span class="math inline"><em>i</em> = 0.04</span> and <span class="math inline"><em>c</em> = 12000</span> USD.</p>
 <p>Then:</p>
 <p><br /><span class="math display"><em>f</em>(<em>x</em> + 1) − <em>f</em>(<em>x</em>) = <em>i</em> ⋅ <em>f</em>(<em>x</em>) − <em>c</em></span><br /></p>
 <p>If we instead pretend that everything is continuous and squint, this looks like a differential equation:</p>
@@ -151,7 +151,7 @@ after 8 years, got: 24089.23078692297
 after 9 years, got: 12814.368806706276
 after 10 years, got: 1088.512347280921</code></pre>
 <p>Cool, it seems to be giving reasonable results. But our two questions were: <em>how much money do I need to pay myself a given salary</em> and <em>how long until I save up the money I need</em>.</p>
-<p>Let’s instead first solve the question of <em>if I have <span class="math inline">$100000</span> and spend <span class="math inline">$1000</span> per month, how long will it last me</em>.</p>
+<p>Let’s instead first solve another question: <em>if I have 100 000 USD and spend 1000 USD per month, how long will it last me</em>.</p>
 <p>For that, we just need to invert the familiar function:</p>
 <p><br /><span class="math display">$$
 f(x) = C \cdot (1+i)^{x} + \frac{c}{\log(1+i)}
@@ -165,13 +165,13 @@ $$</span><br /></p>
 <pre><code>x = (log(-c / (C * i_prime))) / i_prime
 print(x)</code></pre>
 <pre><code>10.090871103712766</code></pre>
-<p>Cool, this matches what the Python <span class="math inline"><em>f</em>(<em>x</em>)</span> predicted above - after 10 years, it was just dwindling at about <span class="math inline">$1088</span>.</p>
+<p>Cool, this matches what the Python <span class="math inline"><em>f</em>(<em>x</em>)</span> predicted above - after 10 years, it was just dwindling at about 1088 USD.</p>
 <h1 id="answering-the-how-long-question">Answering the <em>how long</em> question</h1>
-<p>To answer the question “if I now have <span class="math inline">$100000</span> collecting 4% interest per year and put in <span class="math inline">$1000</span> per month, how long until I have <span class="math inline">$306000</span>”, we can use the same procedure - just plug in a target <span class="math inline"><em>f</em>(<em>x</em>) = $306000</span> instead of zero and set a negative <span class="math inline"><em>c</em></span> to represent savings instead of costs. Details left as homework for the curious reader.</p>
+<p>To answer the question “if I now have 100 000 USD collecting 4% interest per year and put in 1000 USD per month, how long until I have 306 000 USD”, we can use the same procedure - just plug in a target <span class="math inline"><em>f</em>(<em>x</em>) = 306 000</span> instead of zero and set a negative <span class="math inline"><em>c</em></span> to represent savings instead of costs. Details left as homework for the curious reader.</p>
 <p>If you’re curious about the Go code, see <a href="https://github.com/agentydragon/worthy/commit/c48ded40640cda8e3851fd0b2a9512f95ae89997">this commit</a>.</p>
 <h1 id="answering-the-how-much-question">Answering the <em>how much</em> question</h1>
-<p>As a reminder, the “how much” question asks: <em>if I want to pay myself a salary of <span class="math inline">$1000</span> per month, how much money do I need</em>. Previously, I solved that with saying “the interest should cover all the costs”, which resulted in an investment that would last <em>forever</em> (a <em>perpetuity</em>). But now have a function that models an investment under conditions of withdrawing (or saving) money, and we can use that to model with a finite time horizon, and get a better estimate.</p>
-<p>Say that we know that we are 40 years old and want our money to run out on our 100th birthday. So, after <span class="math inline"><em>x</em> = 60</span> years of paying ourselves, say, <span class="math inline">$1000</span> per month (<span class="math inline"><em>c</em> = $12000</span>), we want to have <span class="math inline"><em>f</em>(<em>x</em>) = 0</span>. How much initial money <span class="math inline"><em>f</em>(0)</span> do we need for that stunt of precious timing?</p>
+<p>As a reminder, the “how much” question asks: <em>if I want to pay myself a salary of 1000 USD per month, how much money do I need</em>. Previously, I solved that with saying “the interest should cover all the costs”, which resulted in an investment that would last <em>forever</em> (a <em>perpetuity</em>). But now have a function that models an investment under conditions of withdrawing (or saving) money, and we can use that to model with a finite time horizon, and get a better estimate.</p>
+<p>Say that we know that we are 40 years old and want our money to run out on our 100th birthday. So, after <span class="math inline"><em>x</em> = 60</span> years of paying ourselves, say, 1000 USD per month (so the yearly costs <span class="math inline"><em>c</em> = 12000</span>), we want to have <span class="math inline"><em>f</em>(<em>x</em>) = 0</span>. How much initial money <span class="math inline"><em>f</em>(0)</span> do we need for that stunt of precious timing?</p>
 <p>Okay, from above, we know:</p>
 <p><br /><span class="math display">$$
 f(x) = C (1+i)^{x} + \frac{c}{i'} = \left(f(0) - \frac{c}{i'}\right) \cdot (1+i)^{x} + \frac{c}{i'}
@@ -195,7 +195,7 @@ f0 = (c/i_prime) * (1-(1+i)**(-x))
 print(f0)</code></pre>
 <pre><code>276876.0258210814</code></pre>
 <p>Cool!</p>
-<p>Recalling the numbers in the first section, the first algorithm which assumed an infinite horizon prescribed <span class="math inline">$306000</span> for that situation (“<span class="math inline">$1000</span> per month at 4% interest rate”). This more precise estimate cut <span class="math inline">$3000</span> from the number :)</p>
+<p>Recalling the numbers in the first section, the first algorithm which assumed an infinite horizon prescribed 306 000 USD for that situation (“1000 USD per month at 4% interest rate”). This more precise estimate cut 30 000 USD from the number :)</p>
 
 			</div>
 			<hr class="clearfix">

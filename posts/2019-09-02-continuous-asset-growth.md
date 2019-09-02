@@ -22,18 +22,18 @@ I am probably rediscovering Financial Mathematics 101 ¯\\\_(ツ)\_/¯
 The questions
 ===
 
-* The **"how much" question**: *I want to pay myself $\$1000$. My stocks grow 4% per year. How much money do I need?*
-* The **"how long until" question**: *I have $ \$100 000 $ and save $ \$3000 $ per month. How long until I have the $ \$306 000$ that you said I need?*
+* The **"how much" question**: *I want to pay myself 1000 USD. My stocks grow 4% per year. How much money do I need?*
+* The **"how long until" question**: *I have 100 000 USD and save 3000 USD per month. How long until I have 200 000 USD?*
 
 First shot
 ===
 
 Previously the tool's model was very basic, and answered the two questions as follows:
 
-* *I want to pay myself $\$1000$. My stocks grow 4% per year. How much money do I need?*
-  Well, the 4% you get per year should cover the yearly costs, so $ \$1000 / (1.04 ^ {1/12} - 1) \approx \$306 000 $.
-* *I have $ \$100 000 $ and save $ \$3000 $ per month. How long until I have the $ \$306 000$ that you said I need?*
-  That I modelled linearly, with just $ (\$306000 - \$100000) / (\$3000/\text{month}) \approx 69\ \text{months}$.
+* *I want to pay myself 1000 USD per month. My stocks grow 4% per year. How much money do I need?*
+  Well, the 4% you get per year should cover the yearly costs, so $1000 / (1.04 ^ {1/12} - 1) \approx306\ 000$ USD.
+* *I have 100 000 USD and save 3000 USD per month. How long until I have the 306 000 USD that you said I need?*
+  That I modelled linearly, with just $ (306000 - 100000) / (3000/\text{month}) \approx 69\ \text{months}$.
 
 Problems
 ===
@@ -59,7 +59,7 @@ $$
 f(x+1) = f(x) + i\cdot f(x) - c
 $$
 
-Where $i$ is the yearly interest rate and $c$ are the yearly costs. In the example above, $i=0.04$ and $c=\$12000$.
+Where $i$ is the yearly interest rate and $c$ are the yearly costs. In the example above, $i=0.04$ and $c=12000$ USD.
 
 Then:
 
@@ -176,7 +176,7 @@ for r in range(11):
 
 Cool, it seems to be giving reasonable results. But our two questions were: *how much money do I need to pay myself a given salary* and *how long until I save up the money I need*.
 
-Let's instead first solve the question of *if I have $\$100 000$ and spend $\$1000$ per month, how long will it last me*.
+Let's instead first solve another question: *if I have 100 000 USD and spend 1000 USD per month, how long will it last me*.
 
 For that, we just need to invert the familiar function:
 
@@ -202,12 +202,12 @@ print(x)
     10.090871103712766
 
 
-Cool, this matches what the Python $f(x)$ predicted above - after 10 years, it was just dwindling at about $\$1088$.
+Cool, this matches what the Python $f(x)$ predicted above - after 10 years, it was just dwindling at about 1088 USD.
 
 Answering the *how long* question
 ===
 
-To answer the question "if I now have $\$100000$ collecting 4% interest per year and put in $\$1000$ per month, how long until I have $\$306000$", we can use the same procedure - just plug in a target $f(x)=\$306000$ instead of zero and set a negative $c$ to represent savings instead of costs. Details left as homework for the curious reader.
+To answer the question "if I now have 100 000 USD collecting 4% interest per year and put in 1000 USD per month, how long until I have 306 000 USD", we can use the same procedure - just plug in a target $f(x)=306\ 000$ instead of zero and set a negative $c$ to represent savings instead of costs. Details left as homework for the curious reader.
 
 If you're curious about the Go code, see
 [this commit](https://github.com/agentydragon/worthy/commit/c48ded40640cda8e3851fd0b2a9512f95ae89997).
@@ -215,10 +215,10 @@ If you're curious about the Go code, see
 Answering the *how much* question
 ===
 
-As a reminder, the "how much" question asks: *if I want to pay myself a salary of $\$1000$ per month, how much money do I need*. Previously, I solved that with saying "the interest should cover all the costs", which resulted in an investment that would last *forever* (a *perpetuity*). But now have a function that models an investment under conditions of withdrawing (or saving) money, and we can use that to model with a finite time horizon, and get a better estimate.
+As a reminder, the "how much" question asks: *if I want to pay myself a salary of 1000 USD per month, how much money do I need*. Previously, I solved that with saying "the interest should cover all the costs", which resulted in an investment that would last *forever* (a *perpetuity*). But now have a function that models an investment under conditions of withdrawing (or saving) money, and we can use that to model with a finite time horizon, and get a better estimate.
 
 Say that we know that we are 40 years old and want our money to run out on our 100th birthday. So, after $x=60$ years
-of paying ourselves, say, $\$1000$ per month ($c=\$12000$), we want to have $f(x)=0$.
+of paying ourselves, say, 1000 USD per month (so the yearly costs $c=12000$), we want to have $f(x)=0$.
 How much initial money $f(0)$ do we need for that stunt of precious timing?
 
 Okay, from above, we know:
@@ -262,4 +262,4 @@ print(f0)
 
 Cool!
 
-Recalling the numbers in the first section, the first algorithm which assumed an infinite horizon prescribed $\$306000$ for that situation ("$\$1000$ per month at 4% interest rate"). This more precise estimate cut $\$3000$ from the number :)
+Recalling the numbers in the first section, the first algorithm which assumed an infinite horizon prescribed 306 000 USD for that situation ("1000 USD per month at 4% interest rate"). This more precise estimate cut 30 000 USD from the number :)

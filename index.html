@@ -52,6 +52,85 @@
 			<div id="articles">
 			
 	<article>
+	<h3>2019-11-25 - <a href="./posts/2019-11-25-my-anki-patterns.html">My Anki patterns</a></h3>
+	<p>I’ve used Anki for ~3 years, have 37k cards and did 0.5M reviews. I have learned some useful heuristics for using it effectively. I’ll borrow software engineering terminology and call heuristics for “what’s good” <em>patterns</em> and heuristics for “what’s bad” <em>antipatterns</em>. Cards with antipatterns are unnecessarily difficult to learn. I will first go over antipatterns I have noticed, and then share patterns I use, mostly to counteract the antipatterns. I will then throw in a grab-bag of things I’ve found useful to learn with Anki, and some miscellaneous tips.</p>
+<p>Alex Vermeer’s free book <a href="https://alexvermeer.com/anki-essentials/">Anki Essentials</a> helped me learn how to use Anki effectively, and I can wholeheartedly recommend it. I learned at least about the concept of interference from it, but I am likely reinventing other wheels from it.</p>
+<h1 id="antipatterns">Antipatterns</h1>
+<h2 id="interference">Interference</h2>
+<p>Interference occurs when trying to learn two cards together is harder than learning just one of them - one card <em>interferes</em> with learning another one. For example, when learning languages, I often confuse words which rhyme together or have a similar meaning (e.g., “vergeblich” and “erheblich” in German).</p>
+<p>Interference is bad, because you will keep getting those cards wrong, and Anki will keep showing them to you, which is frustrating.</p>
+<h2 id="ambiguity">Ambiguity</h2>
+<p>Ambiguity occurs when the front side of a card allows multiple answers, but the back side does not list all options. For example, if the front side of a English → German card says “great”, there are at least two acceptable answers: “großartig” and “gewaltig”.</p>
+<p>Ambiguity is bad, because when you review an ambiguous card and give the answer the card does not expect, you need to spend mental effort figuring out: “Do I accept my answer or do I go with Again?”</p>
+<p>You will spend this effort every time you review the card. When you (eventually, given enough time) go with Again, Anki will treat the card as lapsed for reasons that don’t track whether you are learning the facts you want to learn.</p>
+<p>If you try to “power through” and learn ambiguous cards, you will be learning factoids that are not inherent to the material you are learning, but just accidental due to how your notes and cards represent the material. If you learn to distinguish two ambiguous cards, it will often be due to some property such as how the text is laid out. You might end up learning “great (adj.) → großartig” and “great, typeset in boldface → gewaltig”, instead of the useful lesson of what actually distinguishes the words (“großartig” is “metaphorically great” as in “what a great sandwich”, whereas “gewaltig” means “physically great” as in “the Burj Khalifa is a great structure”).</p>
+<h3 id="vagueness">Vagueness</h3>
+<p>I carve out “vagueness” as a special case of ambiguity. Vague cards are cards where question the front side is asking is not clear. When I started using Anki, I often created cards with a trigger such as “Plato” and just slammed everything I wanted to learn about Plato on the back side: “Pupil of Socrates, Forms, wrote The Republic criticising Athenian democracy, teacher of Aristotle”.</p>
+<p>The issue with this sort of card is that if I recall just “Plato was a pupil of Socrates and teacher of Aristotle”, I would still give the review an Again mark, because I have not recalled the remaining factoids.</p>
+<p>Again, if you try to power through, you will have to learn “Plato → I have to recite 5 factoids”. But the fact that your card has 5 factoids on it is not knowledge of Greek philosophers.</p>
+<h1 id="patterns">Patterns</h1>
+<h2 id="noticing">Noticing</h2>
+<p>The first step to removing problems is knowing that they exist and where they exist. Learn to <strong>notice</strong> when you got an answer wrong for the wrong reasons.</p>
+<p>“I tried to remember for a minute and nothing came up” is a good reason. Bad reasons include the aforementioned interference, ambiguity and vagueness.</p>
+<h2 id="bug-tracking">Bug tracking</h2>
+<p>When you notice a problem in your Anki deck, you are often not in the best position to immediately fix it - for example, you might be on your phone, or it might take more energy to fix it than you have at the moment. So, create a way to <strong>track maintenance tasks</strong> to delegate them to future you, who has more energy and can edit the deck comfortably. Make it very easy to add a maintenance task.</p>
+<p>The way I do this is:</p>
+<ul>
+<li>I have a <strong>big document</strong> titled “Anki” with a structure mirroring my Anki deck hierarchy, with a list of problems for each deck. Unfortunately, adding things to a Google Doc on Android takes annoyingly many taps.</li>
+<li>So I also use <strong>Google Keep</strong>, which is more ergonomic, to store short notes marking a problem I notice. For example: “great can be großartig/gewaltig”. I move these to the doc later.</li>
+<li>I also use Anki’s note marking feature to note minor issues such as bad formatting of a card. I use Anki’s card browser later (with a “tag:marked” search) to fix those.</li>
+</ul>
+<p>I use the same system also for tracking what information I’d like to put into Anki at some point. (This mirrors the idea from the Getting Things Done theory that <em>your TODO list belong outside your mind</em>.)</p>
+<h2 id="distinguishers">Distinguishers</h2>
+<p>Distinguishers are one way I fight interference. They are <strong>cards that teach distinguishing interfering facts</strong>.</p>
+<p>For example: “erheblich” means “considerable” and “vergeblich” means “in vain”. Say I notice that when given the prompt “considerable”, I sometimes recall “vergeblich” instead of the right answer.</p>
+<p>When I get the card wrong, I notice the interference, and write down “erheblich/vergeblich” into my Keep. Later, when I organize my deck on my computer, I add a “distinguisher”, typically using Cloze deletion. For example, like this:</p>
+<p>{{c1::e}}r{{c1::h}}eblich: {{c2::considerable}}</p>
+<p>{{c1::ve}}r{{c1::g}}eblich: {{c2::in vain}}</p>
+<p>This creates two cards: one that asks me to assign the right English meaning to the German words, and another one that shows me two English words and the common parts of the German words (“_r_eblich”) and asks me to correctly fill in the blanks.</p>
+<p>This sometimes fixes interference. When I learn the disambiguator note and later need to translate the word “considerable” into German, I might still think of the wrong word (“vergeblich”) first. But now the word “vergeblich” is also a trigger for the distinguisher, so I will likely remember: “Oh, but wait, vergeblich can be confused with erheblich, and vergeblich means ‘in vain’, not ‘considerably’”. And I will more likely answer the formerly interfering card correctly.</p>
+<h2 id="constraints">Constraints</h2>
+<p>Constraints are useful against interference, ambiguity and vagueness.</p>
+<p>Starting from a question such as “What’s the German word for ‘great’”, we can add a constraint such as “… that contains the letter O”, or “… that does not contain the letter E”. The <strong>constraint makes the question have only one acceptable answer</strong> - artificially.</p>
+<p>Because constraints are artificial, I only use them when I can’t make a distinguisher. For example, when two German words are true synonyms, they cannot be distinguished based on nuances of their meaning.</p>
+<p>In Anki, you can annotate a Cloze with a hint text. I often put the constraint into it. I use a hint of “<sub>a</sub>” to mean “word that contains the letter A”, and other similar shorthands.</p>
+<h1 id="other-tips">Other tips</h1>
+<h2 id="redundancy">Redundancy</h2>
+<p>Try to create cards using a fact in multiple ways or contexts. For example, when learning a new word, include a couple of example sentences with the word. When learning how to conjugate a verb, include both the conjugation table, and sentences with examples of each conjugated form.</p>
+<h2 id="æsthethethics">Æsthethethics!</h2>
+<p>It’s easier to do something if you like it. I like having all my cards follow the same style, nicely typesetting my equations with <code>align*</code>, <code>\underbrace</code> etc.</p>
+<h2 id="clozes">Clozes!</h2>
+<p>Most of my early notes were just front-back and back-front cards. Clozes are often a much better choice, because they make entering the context and expected response more natural, in situations such as:</p>
+<ul>
+<li>Fill in the missing step in this algorithm</li>
+<li>Complete the missing term in this equation</li>
+<li>Correctly conjugate this verb in this sentence</li>
+<li>In a line of code such as <code>matplotlib.pyplot.bar(x, y, color='r')</code>, you can cloze out the name of the function, its parameters, and the effect it has.</li>
+</ul>
+<h2 id="datasets-i-found-useful">Datasets I found useful</h2>
+<ul>
+<li>Shortcut keys for every program I use frequently.
+<ul>
+<li>G Suite (Docs, Sheets, Keep, etc.)</li>
+<li>Google Colab</li>
+<li>Vim, Vimdiff</li>
+<li>Command-line programs (Git, Bash, etc.)</li>
+</ul></li>
+<li>Programming languages and libraries
+<ul>
+<li>Google’s technologies that have an open-source counterpart</li>
+<li>What’s the name of a useful function</li>
+<li>What are its parameters</li>
+</ul></li>
+<li>Unicode symbols (how to write 🐉, ←, …)</li>
+<li>People: first and last name ↔ photo (I am not good with names)</li>
+<li>English terms (spelling of “curriculum”, what is “cupidity”)</li>
+<li>NATO phonetic alphabet, for spelling things over the phone</li>
+<li>Mathematics (learned for fun), computer science</li>
+</ul>
+	</article>
+
+	<article>
 	<h3>2019-09-02 - <a href="./posts/2019-09-02-continuous-asset-growth.html">Model of continuous asset growth</a></h3>
 	<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2019-09-02-continuous-asset-growth.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" /></a></p>
 <p>FIRE stands for financial independence/early retirement. The point is to save and invest money, and pay yourself a salary from the interest, eventually becoming independent on other sources of inocme.</p>
@@ -504,113 +583,6 @@ EndSection</code></pre>
 <li>Before the Rationality Zurich meetup, I’ll unwind and think about whether there’s some cool thing we could be doing today.</li>
 </ul>
 <p>Intentions are entered into Complice, and I can look over them in the evening to see how things went.</p>
-	</article>
-
-	<article>
-	<h3>2018-03-13 - <a href="./posts/2018-03-13-i-need-a-new-system.html">I need a new system</a></h3>
-	<p>It’s now March 2018. I have been working at Google for a year. A few days after I started, my personal laptop broke, along with all my meticulously tuned personal infrastructure. I have procrastinated on getting a new one, mostly because I hoped I would fix it myself, or because I did not want to make a big purchase like that.</p>
-<p>There’s a lot of problems that keep bugging me and that I need to solve, and after that’s done and my head stops screaming bloody anxiety at me, there’s aspirations. I feel that I need a strategy. It’s useful to take a step back to think about what things are important, what’s working for me and what’s not working, and such. Over the last year I have had a few times where I picked up a piece of paper and started scribbling some strategical stuff on it, but it was always spare moments and not very connected to other such times. I would always start from scratch.</p>
-<p>That’s bad. I am obese and need to change that, and changing a thing like that can’t be done by getting a spark of inspiration one day, running on an agenty high for 10 hours, and then it’s fixed. I weigh 124 kg, which is very near my lifelong maximum. The Internet <a href="http://www.mayoclinic.org/healthy-lifestyle/weight-loss/in-depth/calories/art-20048065">says that you lose 1 pound of fat by burning 3500 kcal</a> (of course, not a figure to take seriously, goodness, I’m just doing a Fermi calculation here, leave me alone), so to get to my optimal weight of <a href="http://www.calculator.net/ideal-weight-calculator.html?ctype=metric&amp;cage=24&amp;csex=m&amp;cheightfeet=5&amp;cheightinch=10&amp;cheightmeter=187&amp;printit=0&amp;x=47&amp;y=17">let’s-say-78-kg</a>, I’d need to lose 353 500 kcal. The last 5 days I’ve been trying to attack the snacking habits through which I balooned to this weight by eating just a Soylent packet a day. A Soylent packet is 2082 kcal and my basal metabolic rate is 2300 kcal. At this rate, I would get down to 78 kg in… 4.4 years :/ (And that’s not accounting for the fact that BMR decreases the with weight. But on the other hand, I am not <em>completely</em> sessile.)</p>
-<p>A goal like this needs some system for coming back to the drawing board every now and then, learning from which things work and which don’t, safety nets for not losing hope and determination if I inevitably fall short at some point. And of course there’s other things in which I could use more wisdom/strategy.</p>
-<p>For example, at work. A thing which often happens is that I spend most of the day kind of switching between not-very-useful tasks, like some refactorings or minor features, and feel very frustrated when I get blocked. And I don’t often take a moment to step back to prioritize, and I recognize that if I want to optimize for promotions and recognition (which I do want, among other things), I have gotten myself into a trap.</p>
-<p>Or, happiness - optimizing for being happy, being with people I love.</p>
-<p>And when things I want conflict, without the opportunity to “detach” from the conflicted parts and allow for some higher-level strategy or prioritization, I just burn cycles feeling bad because of something I also do. Example: I want to move to the Bay, because I think I’ll like the rationalist and furry communities there, but I also feel scared of looking for a new team within Google or scoping for options outside. I want to work in AI safety (part of it is probably about feeling it’s a super high-prestige thing to do), but I also want to be rich and have an upwards career trajectory. And such stuff.</p>
-<p>And often, when I feel bad about something, I find myself walking through some conflict I have walked through many times before. Maybe I have walked through that conflict before even with a piece of paper and doing some kind of exercise to reduce internal conflict (like compassion with parts or internal double crux) but somehow that piece of paper is never anywhere to be found.</p>
-<p>So, I want a new system for strategical stuff and I want to turn it into a kind of keystone habit which I have. Let this post be a commitment that I want to flesh this out. I’m setting up a weekly 2-hour goal in Google Calendar called “Systems Maintenance”.</p>
-<h1 id="what-i-want-from-the-system">What I want from the system</h1>
-<p>I’ll try to put into words what I want from this system.</p>
-<p>I want the system to align my short-term wants (e.g., “I want a cupcake”) with my long-term goals (“I want to lose weight”).</p>
-<p>I want the system to track the really important things. I don’t want the system to track things just for the sake of tracking things, or just for the sake of “getting good-boy points for doing an agenty-looking thing”.</p>
-<p>If, on reflection, it turns out that a thing that I am doing because of the system is a thing I don’t really want to be doing, then sometimes that will be a fault of the system for picking that thing - not of me for not doing it.</p>
-<p>The system is <em>not</em> a system for losing weight or for tracking work.</p>
-<h1 id="some-specific-things-that-are-bugging-me-at-this-time">Some specific things that are bugging me at this time</h1>
-<p>Here’s a few candidates for things the system <em>might</em>, but also <em>might not</em> lead to me making some progress on. Here, I am deliberately using non-commital language. I am not going to say that I <em>absolutely have to</em> do something. I have found that commitment-mechanism-bombs are sometimes self-blackmail and end up to me causing violence to myself.</p>
-<p>But there’s a few ideas for things which often bug me. They do often bug me <em>now</em>, but that does not necessarily mean that dealing with them <em>directly on their own terms</em> is a good idea. Maybe some of them point at problems I actually on reflection want to address. Maybe some of them are distractions, to which the correct solution might be “just stop worrying about it” or “get some fancy antidepressant / do a mind hack to realize those things are not important”.</p>
-<ul>
-<li>Weight.</li>
-<li>Unfinished master’s thesis.</li>
-<li>I want a “feeling that I’m home” - a feeling like “I am safe, I won’t be hurt, things are fine and not fragile, I don’t have to try hard to fight off bad things”. This one feels important.</li>
-<li>More generally, long-term non-depressed mood.</li>
-<li>Stress at work. “I have no idea what’s going on higher-level. I am not in control. I feel like a small gear/pawn in a machine.”</li>
-<li>Feelings of being forced into things by myself.</li>
-<li>On the other hand, there is a specific thing which I’ve felt the last few days (though I’ve not always been feeling all that well), and which is associated with happiness and also productivity: something like “I can do this”, “things are actually okay”, “I am doing a good job”. “I have committed to a thing and look, I am actually making progress on it.”</li>
-</ul>
-<p>There’s also a few aspirational things in mind, which <em>might</em> be candidate goals, but <em>might</em> also be distractions which should be abandoned or shelved. Actually, now that I think about it, they’re mostly “maybe I want to work in AI safety research” and “maybe I want to do some serious EA-planning”. Right now, I’m mostly feeling like setting those aside and focusing on getting myself in order and feeling good without trying to string on specific goals like that.</p>
-<h1 id="sidenote-i-dont-think-i-want-to-be-religious-in-a-certain-sense">Sidenote: I don’t think I want to be religious in a certain sense</h1>
-<p>Relatedly, I’ve gotten somehow less certain about EA stuff - in particular, the role that I want it to play in my life. I have been a religious effective altruist (for a wide sociological take on religion). Independently of whether or not do I want to continue or discontinue some EA-type behaviors (like identifying as an EA, going to EA/rationality meetups, etc.), it’s not healthy to be too identified with a particular belief system.</p>
-<p>In my understanding, religions are community plus belief system plus value system. Hang out in the community, and you’re prone to soak up all the rest. And you may see your own (possibly implicit) value system and belief system come into conflict with that of the community. And if you don’t want to leave the community, maybe because you by now know few people outside of the in-group and because you (like me) are deeply pained by loneliness, the part of you which wants to do the right in-group signalling is going to fight the parts of you which want something else.</p>
-<p>Say that you identify as an EA and a rationalist and to get social points, the right thing to say is “I want to work on AI safety in the Bay Area”. That’s called a <em>load-bearing belief</em> by analogy with a load-bearing wall: if it comes down, you can lose a lot.</p>
-<p>And earlier this year, largely due to talking with a person highly critical of rationality/EA, I have become worried of the fact that I apparently have load-bearing beliefs about EA and rationality. Note that a belief being load-bearing does not imply that it’s <em>false</em>. (Though after reading <a href="http://elephantinthebrain.com/">The Elephant in the Brain</a>, I wouldn’t be surprised if there were some argument for why group-cohesion-beliefs would tend to be outlandish, honest-costly-signalling-something.) So I have become concerned that <em>I might be acting out some beliefs because they’re load-bearing for my need for community and acceptance</em>. I think what’s warranted is a gentle de-identification from the community, by mixing with more people who are not in it and diversifying, and a kind of retracing of my steps in how I came to do EA things.</p>
-<p>If I remember correctly, they came mostly from moments when I expanded my empathy over the suffering of all things, and wanted to make things okay, and I expect I will still prefer to try to make the world better on reexamination. But a sort of scary thing is that I think it would feel <em>bad</em> if I came to discover I don’t <em>really</em> care about making the world better.</p>
-<p>On the other hand, the general form of this reasoning is: “Huh. Maybe I don’t actually want X. And the thought ‘Maybe I don’t actually want X’ makes me feel bad. That’s a reason to re-examine whether I want X.” Substituting for “X” anything I care about will have the effect of making me doubt whether I actually do, and I’ve had this particular security hole exploited by the said person-critical-of-rationality/EA.</p>
-<p>Something for me to maybe think over when I feel like it. But after this writing-it-out, I don’t feel the need for doing anything in particular about it.</p>
-<p>Back to the system.</p>
-<h1 id="broad-failure-modes-i-want-the-system-to-avoid">Broad failure modes I want the system to avoid</h1>
-<p>I know about at least two failure modes I want to avoid.</p>
-<p>First, I want to avoid the failure mode where some bump makes the system fall apart.</p>
-<p>That is, I want the system to fail gracefully and recover. If part of me <em>wants</em> the system to fail for some reason, the means I should bring things into harmony not by forcing the part to behave, but by accomodating the system to meet the needs of all relevant parts.</p>
-<p>Second, I want to avoid the failure mode of “doing all the rationality techniques just so I can get the points for doing self-improvement”.</p>
-<p>After attending my CFAR workshop in May 2017, I fell into the second one. I’ve had a document with TAPs that I practiced every day. When I started using Complice, I picked ~5 goals and didn’t revise them, and felt bad when I stopped working on them. I want to put the system in place so I can be awesome. If I am doing self-improvement-type things just because I would feel bad if I would skip them, I have fallen into a trap.</p>
-<h1 id="specific-tools-that-could-figure-in-the-system-and-their-failure-modes">Specific tools that could figure in the system and their failure modes</h1>
-<h1 id="every-todo-system-that-grows-with-time-ends-in-bankrupcy">Every TODO system that grows with time ends in bankrupcy</h1>
-<p>Something that I guess maybe?? Miranda Dixon-Luinenburg might have remarked on in a document that I have no idea how to Google now (a document discussing productivity tools by some members of the CFAR alumni community) is that everything which looks like a TODO list or inbox is doomed to fail. My Google Inbox, my Google Keep and all the other places which I have used to try to keep track of tactical concerns have over time become full of items which I don’t want to address immediately, but also don’t want to shelve indefinitely. <strong><em>The system’s working memory has to stay constant-size over time.</em></strong> Not keeping the system’s working memory constant-size would lead to the second failure mode, in which obsolete tactical concerns end up dominating, and the system becomes a bother to keep running. The inevitable consequence is that some day, I would declare bankrupcy and start over from scratch.</p>
-<p>The thoughts which come to mind upon seeing this are:</p>
-<ul>
-<li>Zero is the limit of constant-size working memory. Perhaps just regularly reflecting would be better than trying to keep explicit track of all tactical concerns. Maybe my brain will automatically garbage-collect.</li>
-<li>On the other hand, the principle of Getting Things Done is that the brain does <em>not</em> automatically garbage-collect, and that putting “okay some day I should learn crotcheting” into a TODO list lets the brain be like “okay, now it’s in the TODO list and it won’t get lost, so I can stop thinking about it randomly at 2 in the morning”.</li>
-<li>A thing which could be good would be explicitly keeping just a few “live tactical concerns”, and keeping everything else in non-working memory. I’m thinking of a DAG growing to the right in time, and keeping a few of the leaf nodes as “working on this”. A thing I tried before my laptop went “lol I won’t turn on now” was storing my collection of personal notes in <a href="https://github.com/agentydragon/public-notes">a git repo</a>, so I could even safely <em>delete</em> from them without losing the things forever.</li>
-</ul>
-<h1 id="writing-things-down-is-useful">Writing things down is useful</h1>
-<p>Yep. It lets reasoning be explicit. When I write down my thoughts, I’m more likely to notice thinking going askew.</p>
-<p>Publishing things for other people to look at feels nice and works as a commitment mechanism slash reward signal. On the other hand, things I publish go through my social filter. Probably some balance to strike here.</p>
-<h1 id="too-much-automation-is-bad-but-i-also-want-the-system-be-my-own">Too much automation is bad, but I also want the system be my own</h1>
-<p>As I mentioned, I used to have a whole scaffolding of scripts on my old laptop which would do things like plot my net worth over time, try to mount and unmount an encrypted partition (mostly because of NSFW stuff in it), synchronize Anki decks with a human-readable Git repo of information, and such. And over time, this scaffolding tended to accumulate bugs, like when a service I was relying on changed its API.</p>
-<p>I like to program, but time spent programming the system is time not spent being object-level awesome.</p>
-<p>I have tried to reduce the custom scaffolding I used (partially out of necessity, because I just didn’t have access without a personal laptop), by supplementing with Keep and such, but I ended up not, for example, keeping up with writing my diary. The more I use general tools, the less will they fit my personal idea of ergonomy.</p>
-<p>Also: I’m a programmer and I love programming a nice system. That’s both a blessing and a trap.</p>
-<h1 id="taking-up-too-much-time-is-bad">Taking up too much time is bad</h1>
-<p>The system I had in place some time after CFAR accumulated more and more small things, which I would check off every day. The final version was something like: every morning, do a boot-up with a few free-text questions, pick up ~5 Complice daily tasks and maybe put in a few extra Complice goals. Every evening, do a self-improvement round which lasted probably more than 1 hour. It included practicing TAPs, a kind of Murphy-jitsuing around possible problems in my daily routine (a free-form text exercise) and checking in with some of my parts (also free-form text).</p>
-<p>I have kind of hard-committed into doing all of this daily, and when it crossed some threshold, I just stopped doing all of it at once.</p>
-<p>A way I could have avoided this would be keeping the “mandatory” part constant-time. And also having a looser schedule, in which I could easily spend, say, a whole evening reflecting and improving the routine (as opposed to having very little time and so not feeling like I have the time for meta-stuff, so just chugging along the overly long routine). And by <strong><em>coming into peace with the fact that there are 24 hours in a day, and that if my self-improvement routine takes 2 hours, those are 2 hours less of sleep or fun or whatever</em></strong>.</p>
-<p>That feels important. <strong><em>Time is a scarce resource.</em></strong></p>
-<h1 id="it-has-to-be-okay-to-stop-doing-some-things">It has to be okay to stop doing some things</h1>
-<p>If I have decided at some point that I want to, say, write a diary entry every day and I end up not doing that, that <strong><em>does not mean that I have failed</em></strong>. If I today decide that something is important, but tomorrow I no longer think it is, that’s <em>okay</em>. I <em>have the right to revise what is important</em> - in fact, revisions are <em>good</em> and <em>welcome</em>.</p>
-<p>At one point, I felt that I could change a bunch of bad habits by doing TAPs. But later, the TAP practice routine became very long, but I felt bad about the prospect of just saying “this is no longer the thing to be doing and so I will stop doing that”. A more productive and less conflict-producing way to look at it would be: “I am not feeling like doing this TAP routine, and that’s okay. I deserve rest.”</p>
-<p>Tactics are contingent on being useful.</p>
-<h1 id="summary">Summary</h1>
-<ul>
-<li>Need a new system
-<ul>
-<li>System to do good things</li>
-<li>System to keep me doing well and feeling well</li>
-<li>System to enact long-term plans</li>
-</ul></li>
-<li>Want system to recover from bumps in motivation/mood</li>
-<li>Specific possible goals:
-<ul>
-<li>Weight</li>
-<li>Unfinished master’s thesis</li>
-<li>Internal conflicts</li>
-<li>Feeling good</li>
-</ul></li>
-<li>Known antipatterns:
-<ul>
-<li>System becomes a boring chore</li>
-<li>System bloats over reasonable size</li>
-<li>System stops tracking what’s the thing to be doing</li>
-<li>Overly strict commitments</li>
-</ul></li>
-<li>Ideas to leverage:
-<ul>
-<li>Writing</li>
-<li>Automation, but not too much of it</li>
-<li>Time is a scarce resource</li>
-<li>Changes are good</li>
-</ul></li>
-</ul>
-<h1 id="wall-of-text-ends-here">Wall of text ends here</h1>
-<p>I have an idea of how could a software implementation of a part of the system look like for me - something like a versioned directed graph where nodes would be free text, ideas, tactical priorities, or resources like links to websites, or nodes grouping events or people. It would probably be very fun to implement. However, also time-consuming.</p>
-<p>I’ll let my thoughts sit in my mind, and my next action is to sit down in a few days and think some more.</p>
 	</article>
 
 

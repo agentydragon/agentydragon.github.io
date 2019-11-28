@@ -7,6 +7,26 @@ import Hakyll
 config :: Configuration
 config = defaultConfiguration
 
+myFeedConfiguration :: FeedConfiguration
+myFeedConfiguration = FeedConfiguration
+    { feedTitle       = "~agentydragon"
+    , feedDescription = "*agentydragon noises*"
+    , feedAuthorName  = "Rai"
+    , feedAuthorEmail = "agentydragon@gmail.com"
+    , feedRoot        = "http://agentydragon.com"
+    }
+
+type FeedRenderer =
+    FeedConfiguration
+    -> Context String
+    -> [Item String]
+    -> Compiler (Item String)
+feedCompiler :: FeedRenderer -> Compiler (Item String)
+feedCompiler renderer =
+    renderer myFeedConfiguration feedCtx
+        =<< fmap (take 10) . recentFirst
+        =<< loadAllSnapshots "posts/*" "content"
+
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyllWith config $ do
@@ -56,6 +76,14 @@ main = hakyllWith config $ do
         >>= loadAndApplyTemplate "templates/default.html" archiveCtx
         >>= relativizeUrls
 
+  create ["atom.xml"] $ do
+    route idRoute
+    compile (feedCompiler renderAtom)
+
+  create ["rss.xml"] $ do
+    route idRoute
+    compile (feedCompiler renderRss)
+
   match "index.html" $ do
     route idRoute
     compile $ do
@@ -74,3 +102,5 @@ main = hakyllWith config $ do
 --------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx = dateField "date" "%Y-%m-%d" `mappend` defaultContext
+
+feedCtx = postCtx `mappend` bodyField "description"

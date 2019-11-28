@@ -1,61 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<title>~agentydragon/Home</title>
-		<link href="http://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet" type="text/css">
-		<link href="http://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css">
-		<link rel="stylesheet" type="text/css" href="./css/default.css">
-		<link rel="stylesheet" type="text/css" href="./css/syntax.css">
-		<link rel="favourite icon" type="image/png" href="./images/favicon.png">
-		<link rel="alternate" type="application/rss+xml" title="RSS feed for agentydragon.com" href="./rss.xml">
-		<link rel="alternate" type="application/atom+xml" title="Atom feed for agentydragon.com" href="./atom.xml">
-		<!-- Dollars below doubled in template because of Hakyll. -->
-		<script type="text/javascript" async src="https://colab.research.google.com/static/mathjax/MathJax.js?config=default"></script>
-		<!--
-		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
-		<script type="text/x-mathjax-config">
-		  MathJax.Hub.Config({
-		    extensions: ["tex2jax.js"],
-		    jax: ["input/TeX", "output/HTML-CSS"],
-		    tex2jax: {
-		      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-		      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-		      processEscapes: true
-		    },
-		    "HTML-CSS": { fonts: ["TeX"] }
-		  });
-		</script>
-		-->
-	</head>
-	<body>
-		<!-- Just keeps content in place. -->
-		<header>
-			<a href="./" class="logo">~agentydragon/</a>
-
-			<a href="./">Home</a>
-			<a href="./archive.html">Archive</a>
-			<a href="./wiki/index.html">Wiki</a>
-			<a href="./about.html">About</a>
-		</header>
-
-		<header id="fixed_header">
-			<a href="./" class="logo">~agentydragon/</a>
-
-			<a href="./">Home</a>
-			<a href="./archive.html">Archive</a>
-			<a href="./wiki/index.html">Wiki</a>
-			<a href="./about.html">About</a>
-		</header>
-
-		<div id="content">
-			<h1>Home</h1>
-
-			<div id="articles">
-			
-	<article>
-	<h3>2019-11-25 - <a href="./posts/2019-11-25-my-anki-patterns.html">My Anki patterns</a></h3>
-	<p>I’ve used Anki for ~3 years, have 37k cards and did 0.5M reviews. I have learned some useful heuristics for using it effectively. I’ll borrow software engineering terminology and call heuristics for “what’s good” <em>patterns</em> and heuristics for “what’s bad” <em>antipatterns</em>. Cards with antipatterns are unnecessarily difficult to learn. I will first go over antipatterns I have noticed, and then share patterns I use, mostly to counteract the antipatterns. I will then throw in a grab-bag of things I’ve found useful to learn with Anki, and some miscellaneous tips.</p>
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>~agentydragon</title>
+        <link>http://agentydragon.com</link>
+        <description><![CDATA[*agentydragon noises*]]></description>
+        <atom:link href="http://agentydragon.com/rss.xml" rel="self"
+                   type="application/rss+xml" />
+        <lastBuildDate>Mon, 25 Nov 2019 00:00:00 UT</lastBuildDate>
+        <item>
+    <title>My Anki patterns</title>
+    <link>http://agentydragon.com/posts/2019-11-25-my-anki-patterns.html</link>
+    <description><![CDATA[<p>I’ve used Anki for ~3 years, have 37k cards and did 0.5M reviews. I have learned some useful heuristics for using it effectively. I’ll borrow software engineering terminology and call heuristics for “what’s good” <em>patterns</em> and heuristics for “what’s bad” <em>antipatterns</em>. Cards with antipatterns are unnecessarily difficult to learn. I will first go over antipatterns I have noticed, and then share patterns I use, mostly to counteract the antipatterns. I will then throw in a grab-bag of things I’ve found useful to learn with Anki, and some miscellaneous tips.</p>
 <p>Alex Vermeer’s free book <a href="https://alexvermeer.com/anki-essentials/">Anki Essentials</a> helped me learn how to use Anki effectively, and I can wholeheartedly recommend it. I learned at least about the concept of interference from it, but I am likely reinventing other wheels from it.</p>
 <h1 id="antipatterns">Antipatterns</h1>
 <h2 id="interference">Interference</h2>
@@ -129,12 +85,15 @@
 <li>English terms (spelling of “curriculum”, what is “cupidity”)</li>
 <li>NATO phonetic alphabet, for spelling things over the phone</li>
 <li>Mathematics (learned for fun), computer science</li>
-</ul>
-	</article>
-
-	<article>
-	<h3>2019-09-02 - <a href="./posts/2019-09-02-continuous-asset-growth.html">Model of continuous asset growth</a></h3>
-	<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2019-09-02-continuous-asset-growth.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" /></a></p>
+</ul>]]></description>
+    <pubDate>Mon, 25 Nov 2019 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2019-11-25-my-anki-patterns.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Model of continuous asset growth</title>
+    <link>http://agentydragon.com/posts/2019-09-02-continuous-asset-growth.html</link>
+    <description><![CDATA[<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2019-09-02-continuous-asset-growth.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
 <p>FIRE stands for financial independence/early retirement. The point is to save and invest money, and pay yourself a salary from the interest, eventually becoming independent on other sources of inocme.</p>
 <p>There is a relationship between:</p>
 <ul>
@@ -207,10 +166,10 @@ f_0 = 100000  # initial savings
 i = 0.04  # interest</code></pre>
 <pre><code>from math import log, exp
 i_prime = log(1+i)
-print(f'i_prime={i_prime}')
+print(f&#39;i_prime={i_prime}&#39;)
 
 C = f_0 - (c / i_prime)
-print(f'C={C}')
+print(f&#39;C={C}&#39;)
 
 def f(x):
   return C * (1+i) ** x + (c / i_prime)
@@ -275,12 +234,15 @@ f0 = (c/i_prime) * (1-(1+i)**(-x))
 print(f0)</code></pre>
 <pre><code>276876.0258210814</code></pre>
 <p>Cool!</p>
-<p>Recalling the numbers in the first section, the first algorithm which assumed an infinite horizon prescribed 306 000 USD for that situation (“1000 USD per month at 4% interest rate”). This more precise estimate cut 30 000 USD from the number :)</p>
-	</article>
-
-	<article>
-	<h3>2018-12-09 - <a href="./posts/2018-12-09-realistic-planning.html">It might be interesting to have a realistic planning system</a></h3>
-	<h1 id="theres-many-different-kinds-of-things-to-do">There’s many different kinds of things to do</h1>
+<p>Recalling the numbers in the first section, the first algorithm which assumed an infinite horizon prescribed 306 000 USD for that situation (“1000 USD per month at 4% interest rate”). This more precise estimate cut 30 000 USD from the number :)</p>]]></description>
+    <pubDate>Mon, 02 Sep 2019 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2019-09-02-continuous-asset-growth.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>It might be interesting to have a realistic planning system</title>
+    <link>http://agentydragon.com/posts/2018-12-09-realistic-planning.html</link>
+    <description><![CDATA[<h1 id="theres-many-different-kinds-of-things-to-do">There’s many different kinds of things to do</h1>
 <p>There’s a bunch of things I want or need to do, and they have different shapes.</p>
 <ul>
 <li>Some can be <em>finite sequences of actions</em>. Thing like this are for example “move to a new apartment”. You have actions like “get moving boxes”, “look into moving options”, “pack these things into this box”. You have dependencies like “you can only unpack if you have already moved the boxes to the new place”, or “you need to order the boxes online before packing them up”. When you finish all the tasks, you are <em>done</em>, and you can forget about the problem forever.</li>
@@ -321,12 +283,15 @@ print(f0)</code></pre>
 </ul>
 <h1 id="meh-too-hard.-i-got-other-stuff-to-do.">Meh, too hard. I got other stuff to do.</h1>
 <p>I guess getting any model halfway realistic would be too complicated, and I probably will keep using my bunch of ad-hoc heuristics to make decisions. I have way too many things that I want to do to spend the first couple years developing a planning algorithm rooted in psychological theory.</p>
-<p>A thing I used to do that might be useful to start doing again is having some time in which I try to optimize what I’m doing. It could bootstrap into more conscious/mindful action.</p>
-	</article>
-
-	<article>
-	<h3>2018-12-09 - <a href="./posts/2018-12-09-groundhog-life.html">Groundhog Life: a cute, but eventually frustrating game you can't win</a></h3>
-	<p>Take-aways up front:</p>
+<p>A thing I used to do that might be useful to start doing again is having some time in which I try to optimize what I’m doing. It could bootstrap into more conscious/mindful action.</p>]]></description>
+    <pubDate>Sun, 09 Dec 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-12-09-realistic-planning.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Groundhog Life: a cute, but eventually frustrating game you can't win</title>
+    <link>http://agentydragon.com/posts/2018-12-09-groundhog-life.html</link>
+    <description><![CDATA[<p>Take-aways up front:</p>
 <ul>
 <li>Yes, the game Groundhog Life can be won.</li>
 <li>However, if you want to win it, you have to either design a system for playing JavaScript games that does not depends on energy from the Sun, or you have to apply some serious astroengineering, because it sure looks like, by default, the Sun is going to be pretty cold at the point when you will win.</li>
@@ -344,21 +309,21 @@ N4IgJg9grgRgNgUwJIDsDGEC2CCCAXAGQQDcE4QAuUACwEsBzahAZzwFEAzDhNPW0tqQBOlAIwAGADQg
 <p>(That is an actual save after a whole lot of playing. The last one I made before I decided to cheat.)</p>
 <p>I have dug a little bit into the game’s source code. Turns out that the string is a “encoded URI component”-formatted LZM-compressed JSON blob. The compression is done by a package that is available as a NodeJS module. So:</p>
 <pre><code>#!/usr/bin/env node
-'use strict';
-const lzm = require('lz-string');
-const fs=require('fs');
+&#39;use strict&#39;;
+const lzm = require(&#39;lz-string&#39;);
+const fs=require(&#39;fs&#39;);
 console.info(lzm.decompressFromEncodedURIComponent(
-  fs.readFileSync('data', 'utf8')
+  fs.readFileSync(&#39;data&#39;, &#39;utf8&#39;)
 ));</code></pre>
 <p>Then, when you format the output JSON with <code>jshon</code>, it gets pretty straightforward. I went and changed <code>area_loopTrapexperience.loopTrapMultiplier</code> to <code>10000000000000000000000</code> (I’m not going to even bother counting the zeroes), and did the same to <code>area_constructPowerPlantexperience.loopTrapMultiplier</code>. You could use <code>jq</code> to do that. I just used Vim.</p>
 <p>Just for comparison. My loop trap multiplier in the “study mirrored ship” skill was just <strong>493.1</strong>. If it took me, say, 100 playthroughs to get to that point, getting to a value of 1000000000000000000000 would take 2e21 playthroughs, give or take a couple orders of magnitude. If a playthrough lasts me, say, 1 minute (I’m being really optimistic here), and one year has (being optimistic) 600000 minutes, if I’m counting correctly, it would take 3e15 years of continuous play to get to that value. <a href="https://en.wikipedia.org/wiki/Timeline_of_the_far_future">According to Wikipedia</a>, by that point Sun’s temperature will be below 5 degrees above absolute zero, and all planets will be detached from their orbits due to stars doing gravitational stuff to each others’ planetary systems. In addition to all the silly events before the 1-quintillion point.</p>
 <p>Okay. Then you do the reverse thing and make a save-game string from the changed JSON:</p>
 <pre><code>#!/usr/bin/env node
-'use strict';
-const lzm = require('lz-string');
-const fs=require('fs');
+&#39;use strict&#39;;
+const lzm = require(&#39;lz-string&#39;);
+const fs=require(&#39;fs&#39;);
 console.info(lzm.compressToEncodedURIComponent(
-  fs.readFileSync('x.json', 'utf8')
+  fs.readFileSync(&#39;x.json&#39;, &#39;utf8&#39;)
 ));</code></pre>
 <p>And… When you do that, and maximize laser gun, your laser gun will have an effectiveness of only about 7-8. I got to like 2.6 without cheating. So. After having been playing the game to the point where Sun’s light is a distant memory of what Humanity has become since its embryonic existence on Old Earth, you are now about 3-4x stronger against aliens.</p>
 <p>And it’s <em>still not enough to beat the damn game</em>.</p>
@@ -368,12 +333,15 @@ console.info(lzm.compressToEncodedURIComponent(
 <p>I’m putting this online so that when someone Googles for “Groundhog Life ending” or “how to finish Groundhog Life”, they will find this page, and know that if they want to do that, they’d better start sending tithes to the <a href="http://www.sens.org">Strategies for Engineered Negligible Senescence foundation</a>.</p>
 <h1 id="p.s.-a-review-and-advice-to-game-designers">P.S.: A review and advice to game designers</h1>
 <p>Groundhog Life is actually a cute game. I like how it takes a bit of strategizing to maximize some things.</p>
-<p>But by god, please, if you make a game, either make it obvious it’s unbeatable, or make it beatable with some indicator of progress. And if you do decide to make your game beatable, please make it beatable for humans in their current meat shells.</p>
-	</article>
-
-	<article>
-	<h3>2018-09-12 - <a href="./posts/2018-09-12-call-out-bad-code.html">Review heuristic: Call out bad code</a></h3>
-	<h1 id="code-health-tradeoffs-in-larger-codebases">Code health tradeoffs in larger codebases</h1>
+<p>But by god, please, if you make a game, either make it obvious it’s unbeatable, or make it beatable with some indicator of progress. And if you do decide to make your game beatable, please make it beatable for humans in their current meat shells.</p>]]></description>
+    <pubDate>Sun, 09 Dec 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-12-09-groundhog-life.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Review heuristic: Call out bad code</title>
+    <link>http://agentydragon.com/posts/2018-09-12-call-out-bad-code.html</link>
+    <description><![CDATA[<h1 id="code-health-tradeoffs-in-larger-codebases">Code health tradeoffs in larger codebases</h1>
 <p>When people program, they often need to make tradeoffs between what will fix the current problem quickly, and what will make for a healthy codebase. Examples of such a tradeoff is:</p>
 <p>I found a function which does almost what I want, but not quite. Do I wait for its maintainer to let me refactor it so I can reuse it, or do I just copy-paste? Or - if it’s just a 5-line chunk, do I extract it into a function if it will require a bunch of boilerplate (maybe it would necessiate adding a new module)?</p>
 <p>It’s often a question of “do I pay the bigger upfront cost now, or do I make future-me front it”. These days I often work in a really big codebase, where there ends up being a bunch of those.</p>
@@ -396,8 +364,8 @@ console.info(lzm.compressToEncodedURIComponent(
 <pre><code>void HandleFrobnicateRPC(const string&amp; foo, const string&amp; bar) {
   if (foo.empty()) {
     // NOTE: As of 2018-09-12, the Bazinator service calls Frobnicate with
-    // an empty 'foo'. The Frobnicate service cannot be easily fixed to pass
-    // the 'foo' itself, because it does not currently have access to the
+    // an empty &#39;foo&#39;. The Frobnicate service cannot be easily fixed to pass
+    // the &#39;foo&#39; itself, because it does not currently have access to the
     // backend which can find the right foo for the bar. If the bar has
     // multiple associated foos, this will only return the last written foo.
     // Other clients SHOULD NOT rely on this.
@@ -407,8 +375,8 @@ console.info(lzm.compressToEncodedURIComponent(
 }</code></pre>
 Why? Because that way, people are less likely to build more hacks on top of this hack, because there is a long paragraph full of scary words.</li>
 <li><p>Let’s say that you inherited 1 million LOC from someone in a hurry, and at some point, they made a misguided architectural decision that makes your code clunky and hard to understand. Create a central bug for this in your bug tracking system, and whenever you write new code that would be made better by fixing the bug, add a note like:</p>
-<pre><code>// TODO(agentydragon): Once we resolve b/12345, we'll be able to replace the
-// Frobnicator with a mock for tests, so our tests won't need such
+<pre><code>// TODO(agentydragon): Once we resolve b/12345, we&#39;ll be able to replace the
+// Frobnicator with a mock for tests, so our tests won&#39;t need such
 // complicated fixtures.</code></pre>
 Why? Because that way once you get around to fixing b/12345, you will be able to grep all places where this hurt some code, and fix them one by one. Also, let’s say some kind soul needs to change this code 2 years after you’re done with it, and finds that TODO. (That person might be you.) When they see this TODO, they might go “hmmm, that bug number looks quite low. aha, it’s been filed 2 years back, and it’s fixed now. yay! that means that I can fix this now and the diff for my new feature will be about 20% less horrible!”</li>
 <li><p>Let’s say your code processes two different <em>kinds of things</em>, which both happen to be sort-of-strings (indulge me for a second and assume your code does not use strong types for such things). Think “URLs and street addresses”. For some hacky reason, which you hope to get rid of at some point, you are computing one from the other. What I would do in that case is make that code obviously painful and horrible using devices like variable and function names and type aliases. Not like this:</p>
@@ -433,14 +401,17 @@ Url BuildFallbackUrlFromStreetAddress(const string&amp; address) {
 <p>Same about your colleagues. If you say “I did not verify this”, someone who has nagging doubts might be much more likely to say “hey I’m not sure because I’m a human and I forget but I think I got some cake last month when I tried a different thing”, instead of thinking “huh. so he says Frobnicator service does not give cake in this case. I guess they changed it or I don’t remember it correctly.”.</p></li>
 <li><p>Let’s say that I’m talking with someone and they raise a counterpoint to my preferred opinion that I never considered yet. Instead of immediately rushing to defend myself, I sometimes try to instead take in the new thing, and sit there for a bit with the dissonance (“but but but I want to be right so this thing must be wroooong aaaaaaaah”, or maybe “but but but I don’t want to have to redo this 3k line change that I love aaaaaarrrhh”). And instead of “Hmm, but your proposal would not address the …<em>insert ad-lib</em>…”, say, “Huh. I didn’t think of that yet. I’ll need to think about that.”</p></li>
 </ul>
-<p>“Call out problems” feels sort of close to <a href="https://en.wikipedia.org/wiki/Nonviolent_Communication">non-violent communication</a>. I feel much less like openly communicating problems if it feels like the environment will hurt me if I do that. That happens to me with some strong personalities, or with people who (probably mostly unknowingly) trigger my sense of “argh I’m being bullied I want to curl up in a corner”. On the other hand, I usually try to call out problems more often than people around me, because I want to nudge culture towards cooperation. (Google culture is pretty blameless, so I don’t feel I’m acting against my interests.)</p>
-	</article>
-
-	<article>
-	<h3>2018-09-11 - <a href="./posts/2018-09-11-things-to-learn.html">Trying "Things to learn" and "Documented systems"</a></h3>
-	<p>It’s been a long silence for me on this homepage. Stuff has been happening, but somehow I didn’t find the time to write much.</p>
+<p>“Call out problems” feels sort of close to <a href="https://en.wikipedia.org/wiki/Nonviolent_Communication">non-violent communication</a>. I feel much less like openly communicating problems if it feels like the environment will hurt me if I do that. That happens to me with some strong personalities, or with people who (probably mostly unknowingly) trigger my sense of “argh I’m being bullied I want to curl up in a corner”. On the other hand, I usually try to call out problems more often than people around me, because I want to nudge culture towards cooperation. (Google culture is pretty blameless, so I don’t feel I’m acting against my interests.)</p>]]></description>
+    <pubDate>Wed, 12 Sep 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-09-12-call-out-bad-code.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Trying "Things to learn" and "Documented systems"</title>
+    <link>http://agentydragon.com/posts/2018-09-11-things-to-learn.html</link>
+    <description><![CDATA[<p>It’s been a long silence for me on this homepage. Stuff has been happening, but somehow I didn’t find the time to write much.</p>
 <p>I’m trying out a new thing. I have a lot of stuff I want to learn some day, but I don’t have the time to learn all of it (and often I also don’t have the leftover energy to do personal-development type stuff, but that is another problem). I’ve had a bunch of systems to remember the interesting things I want to learn - a file on my disk, then a more complex file on my disk, then my laptop crashed, then Google Keep.</p>
-<p>So the new thing I’m trying is that I’m adding a new page here called <a href="./wiki/learn.html">Things to learn</a>. When I find a new thing I want to deeply understand some day, I write it into the list. And when I (some day) feel like diving into a thing, I will pick one up from the list, spend a bunch of time learning it, and then I’ll write a thing, put it on my website and link it from there.</p>
+<p>So the new thing I’m trying is that I’m adding a new page here called <a href="/wiki/learn.html">Things to learn</a>. When I find a new thing I want to deeply understand some day, I write it into the list. And when I (some day) feel like diving into a thing, I will pick one up from the list, spend a bunch of time learning it, and then I’ll write a thing, put it on my website and link it from there.</p>
 <p>Why this might be good:</p>
 <ul>
 <li>I won’t hopefully end up forgetting and then relearning the same stuff.</li>
@@ -464,12 +435,15 @@ Url BuildFallbackUrlFromStreetAddress(const string&amp; address) {
 <li>It stores the system out of my mind. For example, I have a system for which things to have in my backpack and where. It tends to deteriorate, and when the chaos threatens to overwhelm my backpack, I can just refer to the explicit description of what goes where, and maybe update it if needed. I don’t have to solve the problem of “figure out the optimal things to put into my backpack and where to put them” every time it gets too messy.</li>
 <li>It enables debugging.</li>
 </ul>
-<p>The way I think of it right now is to have a “source code for my systems”, sort of. Right now I have a like 5-page Google doc with a mix of where things go in my apartment, how to pack for things, and where things go in my backpack, and the motivation and open problems for each.</p>
-	</article>
-
-	<article>
-	<h3>2018-03-24 - <a href="./posts/2018-03-24-fixing-chrome-zoom.html">When I use my touchpad to scroll and then press Ctrl, Chrome starts zooming in/out. How to fix that?</a></h3>
-	<p>This has been plaguing me for a few days (I just got a new Lenovo X1 Yoga laptop), and I think I now figured it out. The Synaptics touchpad driver has a <code>CoastingSpeed</code> option (see <a href="http://manpages.ubuntu.com/manpages/xenial/man4/synaptics.4.html">man 4 synaptics</a>).</p>
+<p>The way I think of it right now is to have a “source code for my systems”, sort of. Right now I have a like 5-page Google doc with a mix of where things go in my apartment, how to pack for things, and where things go in my backpack, and the motivation and open problems for each.</p>]]></description>
+    <pubDate>Tue, 11 Sep 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-09-11-things-to-learn.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>When I use my touchpad to scroll and then press Ctrl, Chrome starts zooming in/out. How to fix that?</title>
+    <link>http://agentydragon.com/posts/2018-03-24-fixing-chrome-zoom.html</link>
+    <description><![CDATA[<p>This has been plaguing me for a few days (I just got a new Lenovo X1 Yoga laptop), and I think I now figured it out. The Synaptics touchpad driver has a <code>CoastingSpeed</code> option (see <a href="http://manpages.ubuntu.com/manpages/xenial/man4/synaptics.4.html">man 4 synaptics</a>).</p>
 <p>The issue is that when I start two-finger scrolling on a webpage, the driver interprets that to mean “oh and when I take my fingers off the touchpad, please continue scrolling for a few more seconds in the same direction, while slowing down until you stop scrolling”.</p>
 <p>Guess what? When you press Ctrl in Chrome and the touchpad driver keeps sending the “ooh we’re scrolling!” message, Chrome starts changing the font size, which is what “Ctrl + scroll” does.</p>
 <p>Quoting from the manual:</p>
@@ -482,12 +456,15 @@ Url BuildFallbackUrlFromStreetAddress(const string&amp; address) {
   MatchDriver &quot;synaptics&quot;
   Option &quot;CoastingSpeed&quot; &quot;0&quot;
 EndSection</code></pre>
-<p>And I’ll report back if that doesn’t work. (So if this text is still here, you can assume it did and I was too lazy to update this post :p)</p>
-	</article>
-
-	<article>
-	<h3>2018-03-21 - <a href="./posts/2018-03-21-triage.html">Triage</a></h3>
-	<p>I am tired and feel like I shouldn’t go to sleep yet. The Soylent thing has been working only very very slowly. I assume the first few days were just losing the contents of my bowels and now I just want to keep it up. Maybe in the hope that it will remove the habit of snacking when I feel stressed/bad.</p>
+<p>And I’ll report back if that doesn’t work. (So if this text is still here, you can assume it did and I was too lazy to update this post :p)</p>]]></description>
+    <pubDate>Sat, 24 Mar 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-03-24-fixing-chrome-zoom.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Triage</title>
+    <link>http://agentydragon.com/posts/2018-03-21-triage.html</link>
+    <description><![CDATA[<p>I am tired and feel like I shouldn’t go to sleep yet. The Soylent thing has been working only very very slowly. I assume the first few days were just losing the contents of my bowels and now I just want to keep it up. Maybe in the hope that it will remove the habit of snacking when I feel stressed/bad.</p>
 <p>The thing about feeling stressed at work has gotten a little bit better. But somehow I don’t feel that much like I’m winning.</p>
 <p>Tomorrow a pretty useful thing would be to wake up reasonably early, then ~8 hours of work. I could really use some emotional support. Something’s wrong, actually a bunch of things feel wrong. I feel lonely. I don’t want to be fat. Work sucks and looks like my attempts to hoist myself into an AI safety, or at least AI-related position might fall flat. I might have reached beyond what I am currently good enough for.</p>
 <p>I guess the last part feels pretty close to it. Work sucks. If I could do anything with my life, I would do X. Solve for X.</p>
@@ -522,12 +499,15 @@ EndSection</code></pre>
 <p><em>Itch</em>. But well, I guess this triage will do. The parts which are most important on it are keeping on track with not overeating or snacking, and making some progress on the thesis.</p>
 <p>Part of me feels like this is just not enough. Just getting that one Kubernetes script done in one day? Hah, don’t make me laugh. At this rate, you’ll be stumbling around at roughly the same spot in the thesis until time runs out.</p>
 <p>Oh, and also, I want to some day go and implement a bunch of ML papers so I can learn TensorFlow and get the confidence to say “I can write AI”. That might actually have higher priority than the master’s thesis, if I were to only care about getting a job in AI.</p>
-<p><em>Sigh.</em> 3, 2, 1, chaaaaaaaarge, and let’s go to sleep. And if we can’t, maybe we can try to probe this “nothing is enough” thing.</p>
-	</article>
-
-	<article>
-	<h3>2018-03-15 - <a href="./posts/2018-03-15-against-goals.html">Against goals</a></h3>
-	<p>First off, it’s morning so I want to plan out today. An unexpected thing that happened yesterday was misstepping on my run down the stairs when I was going to work, and spraining my ankle. My right ankle, in which I had arthroscopic surgery some years ago. So I had to go to see (another) doctor, and probably will be working from home until the swelling stops. Hopefully it’s just a simple sprain and will be alright in a couple of weeks.</p>
+<p><em>Sigh.</em> 3, 2, 1, chaaaaaaaarge, and let’s go to sleep. And if we can’t, maybe we can try to probe this “nothing is enough” thing.</p>]]></description>
+    <pubDate>Wed, 21 Mar 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-03-21-triage.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Against goals</title>
+    <link>http://agentydragon.com/posts/2018-03-15-against-goals.html</link>
+    <description><![CDATA[<p>First off, it’s morning so I want to plan out today. An unexpected thing that happened yesterday was misstepping on my run down the stairs when I was going to work, and spraining my ankle. My right ankle, in which I had arthroscopic surgery some years ago. So I had to go to see (another) doctor, and probably will be working from home until the swelling stops. Hopefully it’s just a simple sprain and will be alright in a couple of weeks.</p>
 <p>Because I had been home and not at work, I didn’t have Joylent available - I just grabbed the ~1/4th a packet I had at home for breakfast, and then when I came back from having myself drilled in the mouth and touched on the legs, I had been hungry. And I ended up just very quickly cooking whatever was in the kitchen, which was a big can of beans from Denner, 5 eggs and a packet of Chinese noodles. (Since I switched to not cooking and going with Joylent instead, my kitchen is mostly free of any ingredients of my own…) I munched all of that down very quickly, and then felt bad, because my stomach was disturbed and I felt that I had slipped into bad eating habits. I think it was the beans - they were not very good, predictably. When I started cooking the stuff, I did not have much agency, and had the opposite of reflection and mindfulness. I had entered some mode like “gaah eat all the food”. It was lucky for me to not have much actual food at hand, otherwise I might have eaten much more. I actually think I still was under the 2000 kcal I’m getting daily from the Joylent.</p>
 <p>I don’t really know what to do next time. I guess something like a TAP like “omg want food → remember to breathe and not eat everything in sight”. Doing mindful eating on the meal would probably also stop it.</p>
 <p>Rationality Zurich went fine yesterday. Just 3 people, but we had a nice conversation about an alternative system of self-development brought up by my roommate. My summarization of it is:</p>
@@ -547,12 +527,15 @@ EndSection</code></pre>
 <p>Google’s research into effective teams identified this attribute called “psychological safety”, which seems to predict lots of good things, and it seems to me like the belief that it’s <em>okay</em> to make mistakes, that you <em>will not be personally-judged for what you do</em>, that <em>you are not on thin ice</em>, that <em>you are free to be yourself here</em>. I’m not sure if it’s supposed to be mostly work-related - i.e., “it’s <em>okay</em> to break the build for a few days and we won’t be mad at you”. What I think would make me feel better at work and more free to be authentic (and also like it more, because I would <em>not feel forced into putting up a performance of a solid worker drone that I actually am not</em>) would be a kind of “psychological safety” less about the content of my work and more about “it’s okay to be fragile, it’s okay to be disturbed by people talking a lot, it’s okay to cry if you’re overwhelmed”.</p>
 <p>Feeling psychologically unsafe is also kind of self-perpetuating. If you don’t feel safe to e.g. express an overwhelming sadness when you feel you’ve done something wrong, and hence you don’t do it, you will use it later as more evidence that you are not psychologically safe here.</p>
 <p>Maybe <em>if</em> my current work environment is actually supportive of everything like that and most of my fears/expectations-of-judgement are from this kind of self-driven feedback loop, some CoZE-type experiments could help. Like, maybe when I tell my boss I’m feeling bad, don’t say it while wearing the mask of “I’m an efficient worker and emotions are my slaves”, and instead let it drop and shed a few tears or let my voice break. Meh. Probably actually something weaker than that. This would already feel unsafe.</p>
-<p>There’s a thought lingering in my head about the “think of it as a process” thesis. Maybe <em>things which you have to force yourself into doing</em> (by way of e.g., Complice or calendar reminders or willpower or what not) <em>are not really worth it</em>. Because being forced into something hurts. And maybe the thing to do instead is to start with where I am, and making progress through a sequence of comfortable expansions at the margins, <em>all of which feel good and not forced</em> and don’t make me feel bad if I don’t end up doing them.</p>
-	</article>
-
-	<article>
-	<h3>2018-03-14 - <a href="./posts/2018-03-14-murphyjitsu-for-today.html">Murphy-jitsu for today</a></h3>
-	<p>An experiment in writing out and publishing my Murphy-jitsu for today. I have put this in as a reminder for the last ~5 days. The implementation so far has been just “grab a tablet and plan out the day, without real Murphy-jitsu”. Let’s see what happens if I give it some more structure.</p>
+<p>There’s a thought lingering in my head about the “think of it as a process” thesis. Maybe <em>things which you have to force yourself into doing</em> (by way of e.g., Complice or calendar reminders or willpower or what not) <em>are not really worth it</em>. Because being forced into something hurts. And maybe the thing to do instead is to start with where I am, and making progress through a sequence of comfortable expansions at the margins, <em>all of which feel good and not forced</em> and don’t make me feel bad if I don’t end up doing them.</p>]]></description>
+    <pubDate>Thu, 15 Mar 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-03-15-against-goals.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
+    <title>Murphy-jitsu for today</title>
+    <link>http://agentydragon.com/posts/2018-03-14-murphyjitsu-for-today.html</link>
+    <description><![CDATA[<p>An experiment in writing out and publishing my Murphy-jitsu for today. I have put this in as a reminder for the last ~5 days. The implementation so far has been just “grab a tablet and plan out the day, without real Murphy-jitsu”. Let’s see what happens if I give it some more structure.</p>
 <p>What am I planning to do today?</p>
 <ul>
 <li>I want to eat just 1 packet of Joylent today.</li>
@@ -584,39 +567,11 @@ EndSection</code></pre>
 <li>At 18:00, I am leaving work to go back home.</li>
 <li>Before the Rationality Zurich meetup, I’ll unwind and think about whether there’s some cool thing we could be doing today.</li>
 </ul>
-<p>Intentions are entered into Complice, and I can look over them in the evening to see how things went.</p>
-	</article>
+<p>Intentions are entered into Complice, and I can look over them in the evening to see how things went.</p>]]></description>
+    <pubDate>Wed, 14 Mar 2018 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2018-03-14-murphyjitsu-for-today.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
 
-
-<hr>
-
-<p>You can find more in the <a href="./archive.html">archive</a>.</p>
-
-			</div>
-			<hr class="clearfix">
-		</div>
-
-		<footer>
-			<p>
-				The <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a>
-				license applies unless otherwise specified.
-			</p>
-
-			<p>
-				Site proudly generated by
-				<a href="http://jaspervdj.be/hakyll">Hakyll</a>.
-			</p>
-		</footer>
-
-		<!-- Google Analytics tracking -->
-		<script>
-			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-			ga('create', 'UA-17386731-5', 'auto');
-			ga('send', 'pageview');
-		</script>
-	</body>
-</html>
+    </channel>
+</rss>

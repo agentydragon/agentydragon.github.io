@@ -48,6 +48,8 @@ Statistics and methodology
 Computer science
 ==
 
+* [Nelder-Mead method](https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method)
+
 Machine learning and AI
 ===
 

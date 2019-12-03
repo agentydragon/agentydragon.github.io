@@ -11,11 +11,10 @@ noticed, and then share patterns I use, mostly to counteract the antipatterns.
 I will then throw in a grab-bag of things I’ve found useful to learn with Anki,
 and some miscellaneous tips.
 
-Alex Vermeer’s free book
-[Anki Essentials](https://alexvermeer.com/anki-essentials/) helped me learn how
-to use Anki effectively, and I can wholeheartedly recommend it. I learned at
-least about the concept of interference from it, but I am likely reinventing
-other wheels from it.
+Alex Vermeer’s book [Anki Essentials](https://alexvermeer.com/anki-essentials/)
+helped me learn how to use Anki effectively, and I can wholeheartedly recommend
+it. I learned at least about the concept of interference from it, but I am
+likely reinventing other wheels from it.
 
 # Antipatterns
 

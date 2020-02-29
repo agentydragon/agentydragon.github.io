@@ -2,19 +2,21 @@
 title: About
 ---
 
-<!-- md5("pok@rny.cz") -->
-<img src="http://www.gravatar.com/avatar/d3ac2004810ac193c989d403a3bbe29c?s=200"
+<!-- md5("agentydragon@gmail.com") -->
+<img src="http://www.gravatar.com/avatar/a389909145981708ab2c9fc8bddbe92c?s=200"
      class="avatar"
      style="float: right;"
      alt="Me">
 
 Hi!
 
-I'm Michal Pokorný, a 25-years-old "software" "engineer" from Czech Republic.
+My chosen name is Rai, and my given name is Michal Pokorný. I'm 26, grew up
+in Czech Republic and I've worked as a software engineer at Google Zurich since
+March 2016.
 
-I work at Google Zurich and might some day get around to finishing
-a master's in AI at the [Faculty of Mathematics and Physics][mff]
-of the Charles University in Prague.
+I have a bachelor's in general CS from the [Faculty of Mathematics and Physics][mff]
+of the Charles University in Prague. I started a master's in AI at the very same,
+and passed all parts but the "you have to write a thesis" one.
 <!-- TODO: stredni skola? -->
 
 You can find me on Telegram as [agentydragon][telegram].
@@ -22,27 +24,22 @@ My personal e-mail is `agentydragon@gmail.com`.
 
 I am on GitHub as [agentydragon][github].
 
-I am an [effective altruist][ea] ([Czech][ea-cz]) and I currently earn to give.
-You can take a look at my donations on [My Giving at Giving What We Can][my-giving].
-(If the link is broken, it means CEA still didn't fix their new shiny site
-after their org ate GWWC. My apologies. I guess they are working on it.)
+I am an [effective altruist][ea] ([Czech][ea-cz]) and I currently aim to give
+~10%.
 
 I also have a [LinkedIn account][linkedin] and a [Facebook account][facebook].
 I only use LinkedIn for people I worked with and I only use Facebook for people
-I consider my friends. If you try to connect with me or add me as a friend
-and I have no idea who you are, I'll probably ignore the request. I do not mean
-this personally and this does not mean that I do not want to be your friend. In
-general, I want people to be my friends. It's just my preference in how I use
-social networks.
+I know in person.
 
-From time to time, I hunt for geocaches.
-
+I hunted a few geocaches:
 <a href="https://www.geocaching.com/profile/?guid=8011109d-8913-415c-9272-3e82426f3835" target="_blank">
 <img src="https://img.geocaching.com/stats/img.aspx?txt=Ooooh,+shiny!&uid=8011109d-8913-415c-9272-3e82426f3835&bg=1" alt="Geocaching badge" />
 </a>
 
 I try to be a generalist. Some stuff I do or did before:
 
+ * Lots of Google stack in C++, Python. Services, gigabyte-terabyte scale
+   pipelines, stuff like that.
  * Web stuff. In the distant past, I used PHP, then Ruby (on Rails and off),
    and I mostly use Python today. Of course, there's JavaScript and its
    offshoots.
@@ -61,5 +58,4 @@ seminar for high school students by Charles University.
 [linkedin]: https://linkedin.com/in/agentydragon
 [facebook]: https://facebook.com/agentydragon
 [ksp]: https://ksp.mff.cuni.cz/
-[my-giving]: https://www.givingwhatwecan.org/igivedisplay?publicid=11360&publicauth=600761404
 [telegram]: https://telegram.me/agentydragon

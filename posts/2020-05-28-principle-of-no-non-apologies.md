@@ -84,3 +84,11 @@ If your behavior is worthy of an apology, don't stop at "I'm sorry". Understand
 why the behavior happened, and work to prevent it from causing more bad
 consequences in the future.
 
+# P.S.: Generalizations
+
+This is just one instance of a more general move of looking at some social
+ritual (like apologizing) and looking at it a little "sideways": getting back
+in touch with the original meanings of the expressions used in it. Rituals and
+words can lose meaning over time, and you can lose concepts when that happens.
+If you want to see what it's like to look at things that way, I've had a pretty
+vivid experience of it after finishing Wittgenstein's Tractatus.

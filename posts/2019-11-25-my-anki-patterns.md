@@ -47,10 +47,10 @@ that don’t track whether you are learning the facts you want to learn.
 If you try to “power through” and learn ambiguous cards, you will be learning
 factoids that are not inherent to the material you are learning, but just
 accidental due to how your notes and cards represent the material. If you learn
-to distinguish two ambiguous cards, it will often be due to some property such
+to disambiguate two ambiguous cards, it will often be due to some property such
 as how the text is laid out. You might end up learning “great (adj.)
 → großartig” and “great, typeset in boldface → gewaltig”, instead of the useful
-lesson of what actually distinguishes the words (“großartig” is “metaphorically
+lesson of what actually disambiguates the words (“großartig” is “metaphorically
 great” as in “what a great sandwich”, whereas “gewaltig” means “physically
 great” as in “the Burj Khalifa is a great structure”).
 
@@ -107,10 +107,13 @@ I use the same system also for tracking what information I’d like to put into
 Anki at some point. (This mirrors the idea from the Getting Things Done theory
 that *your TODO list belong outside your mind*.)
 
-## Distinguishers
+## Disambiguators
 
-Distinguishers are one way I fight interference. They are **cards that teach
-distinguishing interfering facts**.
+*2020-06-01 update: In an earlier version, I used to call those "distinguishers".
+I now call them "disambiguators", because I think it's a more appropriate name.*
+
+Disambiguators are one way I fight interference. They are **cards that teach
+disambiguating interfering facts**.
 
 For example: “erheblich” means “considerable” and “vergeblich” means “in vain”.
 Say I notice that when given the prompt “considerable”, I sometimes recall
@@ -118,7 +121,7 @@ Say I notice that when given the prompt “considerable”, I sometimes recall
 
 When I get the card wrong, I notice the interference, and write down
 “erheblich/vergeblich” into my Keep. Later, when I organize my deck on my
-computer, I add a “distinguisher”, typically using Cloze deletion.
+computer, I add a “disambiguator”, typically using Cloze deletion.
 For example, like this:
 
 {{c1::e}}r{{c1::h}}eblich: {{c2::considerable}}
@@ -133,7 +136,7 @@ blanks.
 This sometimes fixes interference. When I learn the disambiguator note and later
 need to translate the word “considerable” into German, I might still think of
 the wrong word (“vergeblich”) first. But now the word “vergeblich” is also a
-trigger for the distinguisher, so I will likely remember: “Oh, but wait,
+trigger for the disambiguator, so I will likely remember: “Oh, but wait,
 vergeblich can be confused with erheblich, and vergeblich means ‘in vain’, not
 ‘considerably’”. And I will more likely answer the formerly interfering card
 correctly.
@@ -148,8 +151,8 @@ does not contain the letter E”. The **constraint makes the question have only
 one acceptable answer** - artificially.
 
 Because constraints are artificial, I only use them when I can’t make
-a distinguisher. For example, when two German words are true synonyms, they
-cannot be distinguished based on nuances of their meaning.
+a disambiguator. For example, when two German words are true synonyms, they
+cannot be disambiguated based on nuances of their meaning.
 
 In Anki, you can annotate a Cloze with a hint text. I often put the constraint
 into it. I use a hint of “~a~” to mean “word that contains the letter A”, and

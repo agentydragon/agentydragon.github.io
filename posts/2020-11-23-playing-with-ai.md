@@ -23,13 +23,13 @@ I saw very interesting examples of how well modern language model can generate t
 
 But I guess I could then just as well automate this whole website thing. I put too little stuff on it anyway - if I just got myself to do the work and put my ideas into polished-ish writing, I would write so much more.
 
-I guess I'd still write also because there's some pleasure in someone telling me "oh by the way I read your article the other day, thanks for that tip". And I'd not get that from text I had a Transformer write. Even if it did manage to write a thing as good as me or better, so that people would compliment me for "hey nice thing on your website", it would still make me go a bit "nice!", but it would ring a little hollow, I guess. Praise for work that isn't mine. But then, did the Transformer really "work" for it? Also the work coming up with the architecture and implementing it and making https://transformer.huggingface.co/doc/distil-gpt2 belongs to many many other people.
+I guess I'd still write also because there's some pleasure in someone telling me "oh by the way I read your article the other day, thanks for that tip". And I'd not get that from text I had a Transformer write. Even if it did manage to write a thing as good as me or better, so that people would compliment me for "hey nice thing on your website", it would still make me go a bit "nice!", but it would ring a little hollow, I guess. Praise for work that isn't mine. But then, did the Transformer really "work" for it? Also the work coming up with the architecture and implementing it and making [Write With Transformer](https://transformer.huggingface.co/doc/distil-gpt2) belongs to many many other people.
 
 ## Experiment
 
-So I'm going to try it in this article. I will start slowly replacing words by top suggestions (again, from https://transformer.huggingface.co/doc/distil-gpt2). I'll start with maybe 90% me, 10% Transformer, and by the time I finish writing this, it'll be 100% Transformer. And I won't, at least for now, tell you which parts are me and which are the generator. That way I won't have just a test of "I can / cannot be replaced by a Transformer", but by asking people which sentences were from me and which were from the Transformer, I'll get more gradual information about the point at which today's Transformers can replace me. From what I read, models like GPT-3 are able to convincingly copy "surface style", and they are able to make simple inferences, but they might make mistakes.
+So I'm going to try it in this article. I will start slowly replacing words by top suggestions ([Write With Transformer distil-gpt2](https://transformer.huggingface.co/doc/distil-gpt2)). I'll start with maybe 90% me, 10% Transformer, and by the time I finish writing this, it'll be 100% Transformer. And I won't, at least for now, tell you which parts are me and which are the generator. That way I won't have just a test of "I can / cannot be replaced by a Transformer", but by asking people which sentences were from me and which were from the Transformer, I'll get more gradual information about the point at which today's Transformers can replace me. From what I read, models like GPT-3 are able to convincingly copy "surface style", and they are able to make simple inferences, but they might make mistakes.
 
-By the way, the footer of https://transformer.huggingface.co/ says: "It is to writing what calculators are to calculus." And that's a nice sentence in that, on a shallow reading, it sounds like a positive comparison. "It is to writing what [things for doing mathematics] are to [field of mathematics]." But I never had a calculator that was any good for calculus. I never saw a calculator with a "derive by x" or "indefinite integral dx". Though now I also wonder why no calculator has it. It would be so useful, and not that hard to implement. Mathematica can integrate most of what you throw at it! And algorithms for integrating broad classes of functions are also totally a thing in literature!
+By the way, the footer of [Write With Transformer](https://transformer.huggingface.co/) says: "It is to writing what calculators are to calculus." And that's a nice sentence in that, on a shallow reading, it sounds like a positive comparison. "It is to writing what [things for doing mathematics] are to [field of mathematics]." But I never had a calculator that was any good for calculus. I never saw a calculator with a "derive by x" or "indefinite integral dx". Though now I also wonder why no calculator has it. It would be so useful, and not that hard to implement. Mathematica can integrate most of what you throw at it! And algorithms for integrating broad classes of functions are also totally a thing in literature!
 
 "It is to writing what Mathematica is to calculus"? Sure. That sounds useful. A
 tool that can solve 90% of practical problems. Neat. "It is to writing what
@@ -46,7 +46,7 @@ jobs of some people much easier with AI like this. For example, I have a virtual
 
 ## Motivation to do my own thing
 
-By the way, the other day I stumbled on https://betterexplained.com/, and the author has a great article: Surviving (and thriving) on your own: Know Thyself.
+By the way, the other day I stumbled on [Better Explained](https://betterexplained.com/), and the author has a great article: Surviving (and thriving) on your own: Know Thyself.
 
 And this <span class="generated">is the best of</span> sources of motivation to do my own thing that I've
 seen in a while. This article made me realize that yes, there are actually things I want to do. I can just look at my TODO list in my Roam Research database. If I only had the most productive ~8 hours of my time available for all the things I want to learn and make.
@@ -115,9 +115,9 @@ current default setting where "want" tends to fall back. I don't want to get
 bored. It's just a matter of how much I like it.</span> In the moment.
 
 <span class="generated">
- And for those of you out there who are interested in reading, please, like me, subscribe to my Facebook page and share your thoughts about the situation with me . (By email or to your friends , subscribe to my blog here.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.
+ And for those of you out there who are interested in reading, please, like me, subscribe to my Facebook page and share your thoughts about the situation with me . (By email or to your friends , subscribe to my blog <a href="/">here</a>.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.
 
- And for those of you who aren't interested in reading, please , like me, subscribe to my Facebook page and share your thoughts about the situation with me. (By email or to your friends, subscribe to my blog here.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.
+ And for those of you who aren't interested in reading, please , like me, subscribe to my Facebook page and share your thoughts about the situation with me. (By email or to your friends, subscribe to my blog <a href="/">here</a>.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.
 </span>
 
 So  <span class="generated"> I'm going to be publishing the article in the second week and I'll be

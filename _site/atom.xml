@@ -23,7 +23,7 @@
 <p>In the end, I managed to solve it a couple hours back.</p>
 <p>In the implementation, I’ve made a couple mistakes and observations, which I want to note down.</p>
 <h2 id="short-episodic-environments-can-use-high-γ">Short episodic environments can use high γ</h2>
-<p>I initially wrote my code to use a discount rate of 0.9. On one solution that I found on <a href="https://github.com/openai/gym/wiki/Leaderboard">the leaderboard</a> (unfortunately not sure which one it was), the discount rate was actually set to 1.</p>
+<p>I initially wrote my code to use a discount rate of 0.9. On <a href="https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/">n1try’s solution</a> that I found on <a href="https://gym.openai.com/envs/CartPole-v0/">the leaderboard</a> (unfortunately not sure which one it was), the discount rate was actually set to 1.</p>
 <p>I suspect I might have set the discount rate too low. The CartPole environment has episodes which have length of only up to ~500, with 1 unit of reward per step.</p>
 <p>If you have a discount rate γ and an average per-step reward of <span class="math inline"><em>r</em></span>, then in an infinite environment, the value of a state will be something like: <br /><span class="math display">$$ \frac{r}{1-\gamma} = r + r \cdot \gamma + r \cdot \gamma^2 $$</span><br /> Knowing this, I was a worried that if I set <span class="math inline"><em>γ</em></span> too high, the targets for the Q network to learn would have a high variance. But I forgot that the environment had only like ~500 steps, so setting <span class="math inline"><em>γ</em> = 1</span> would be alright in this case.</p>
 <p><em>Lesson learned</em>: I need to keep in mind the environment’s characteristics, in particular how long are the episodes and how high total rewards can I expect.</p>
@@ -53,9 +53,10 @@
 <p>Another potential reason for having a really bad episode might be if the agent happens to pick a random action (with probability <span class="math inline"><em>ε</em></span>) at an early point where the pole is unstable and very easy to mess up. And then it can’t recover from that error. But that explanation isn’t supported by how wide these areas of low episode returns are. It might explain maybe one sporadic bad episode, but not a whole bunch of them after each other.</p>
 <h2 id="next-steps">Next steps</h2>
 <p>Now that I got a CartPole agent running, I’ll come back to the Lunar Lander environment. I’ll first try solving it again with a Q network. I could probably similarly get away with not discounting rewards at all (<span class="math inline"><em>γ</em> = 1</span>).</p>
+<p>Also I’d like to implement experience replay to make this more sample-efficient.</p>
 <p>If that ends up working, I still want to get actor-critic working.</p>
-<p>Obligatory videos:</p>
-<video controls loop>
+<p>Obligatory scoot-scoot:</p>
+<video controls loop autoplay>
 <source src="/static/2020-12-31-cartpole.mp4" type="video/mp4">
 </video>]]></summary>
 </entry>

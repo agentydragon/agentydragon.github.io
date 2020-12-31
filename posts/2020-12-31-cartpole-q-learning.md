@@ -36,8 +36,9 @@ want to note down.
 
 ## Short episodic environments can use high &gamma;
 
-I initially wrote my code to use a discount rate of 0.9. On one solution that
-I found on [the leaderboard](https://github.com/openai/gym/wiki/Leaderboard)
+I initially wrote my code to use a discount rate of 0.9. On
+[n1try's solution](https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/)
+that I found on [the leaderboard](https://gym.openai.com/envs/CartPole-v0/)
 (unfortunately not sure which one it was), the discount rate was actually set
 to 1.
 
@@ -147,6 +148,8 @@ episode, but not a whole bunch of them after each other.
 Now that I got a CartPole agent running, I'll come back to the Lunar Lander
 environment. I'll first try solving it again with a Q network. I could probably
 similarly get away with not discounting rewards at all ($\gamma = 1$).
+
+Also I'd like to implement experience replay to make this more sample-efficient.
 
 If that ends up working, I still want to get actor-critic working.
 

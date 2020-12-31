@@ -150,8 +150,8 @@ similarly get away with not discounting rewards at all ($\gamma = 1$).
 
 If that ends up working, I still want to get actor-critic working.
 
-Obligatory videos:
+Obligatory scoot-scoot:
 
-<video controls loop>
+<video controls loop autoplay>
     <source src="/static/2020-12-31-cartpole.mp4" type="video/mp4">
 </video>

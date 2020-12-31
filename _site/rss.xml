@@ -18,6 +18,9 @@
 <p>I decided to first try a simpler environment, <a href="https://gym.openai.com/envs/CartPole-v0/">CartPole</a>.</p>
 <p>In the end, I managed to solve it a couple hours back.</p>
 <p>In the implementation, I’ve made a couple mistakes and observations, which I want to note down.</p>
+<h2 id="colab-notebook-with-my-cartpole-agent">Colab notebook with my CartPole agent</h2>
+<p>Here’s my notebook if you want to play around:</p>
+<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
 <h2 id="short-episodic-environments-can-use-high-γ">Short episodic environments can use high γ</h2>
 <p>I initially wrote my code to use a discount rate of 0.9. On <a href="https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/">n1try’s solution</a> that I found on <a href="https://gym.openai.com/envs/CartPole-v0/">the leaderboard</a> (unfortunately not sure which one it was), the discount rate was actually set to 1.</p>
 <p>I suspect I might have set the discount rate too low. The CartPole environment has episodes which have length of only up to ~500, with 1 unit of reward per step.</p>

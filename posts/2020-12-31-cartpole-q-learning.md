@@ -34,6 +34,12 @@ In the end, I managed to solve it a couple hours back.
 In the implementation, I've made a couple mistakes and observations, which I
 want to note down.
 
+## Colab notebook with my CartPole agent
+
+Here's my notebook if you want to play around:
+
+<a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+
 ## Short episodic environments can use high &gamma;
 
 I initially wrote my code to use a discount rate of 0.9. On

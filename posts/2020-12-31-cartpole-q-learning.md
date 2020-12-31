@@ -38,7 +38,9 @@ want to note down.
 
 Here's my notebook if you want to play around:
 
-<a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole-q-learning.ipynb" target="_parent">
+  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab">
+</a>
 
 ## Short episodic environments can use high &gamma;
 

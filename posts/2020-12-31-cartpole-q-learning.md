@@ -42,7 +42,7 @@ Here's my notebook if you want to play around:
   <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab">
 </a>
 
-## Short episodic environments can use high &gamma;
+## Rai's ML mistake #1: Short episodic environments can use high &gamma;
 
 I initially wrote my code to use a discount rate of 0.9. On
 [n1try's solution](https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/)
@@ -65,7 +65,7 @@ in this case.
 *Lesson learned*: I need to keep in mind the environment's characteristics, in
 particular how long are the episodes and how high total rewards can I expect.
 
-## Too little exploration
+## Rai's ML mistake #2: Too little exploration
 
 The algorithm that ended up working for me was Q-learning (with function
 approximation by a small neural network). I selected actions
@@ -80,7 +80,7 @@ exploration rate, after all the decay, to *10%* - 5x more than I had.
 I think my code found a policy that "solves" the environment faster when I put
 in 10% exploration.
 
-## Evaluation interfering with training
+## Rai's ML mistake #3: Evaluation interfering with training
 
 I ran my algorithm on 10k episodes, and every 1k episodes, I ran the code in
 "greedy mode" (i.e., no random actions) and recorded average performance on 100
@@ -107,7 +107,6 @@ update per evaluation episode.
 how to learn from this :/
 
 ## *Forgetting when learned too much‽‽*
-
 
 <figure>
 <img src="/static/2020-12-31-total_reward.svg" style="height: 400px;"

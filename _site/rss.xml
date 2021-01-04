@@ -7,8 +7,150 @@
         <description><![CDATA[*agentydragon noises*]]></description>
         <atom:link href="http://agentydragon.com/rss.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Thu, 31 Dec 2020 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Mon, 04 Jan 2021 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Rai's ML mistakes, part 2 of ∞</title>
+    <link>http://agentydragon.com/posts/2021-01-04-rai-ml-mistakes-2.html</link>
+    <description><![CDATA[<p>Continuing my list of ML mistakes from <a href="/posts/2020-12-31-cartpole-q-learning.html">last time</a>, here’s:</p>
+<h1 id="rais-ml-mistake-4-too-much-autograd">Rai’s ML mistake #4: Too much autograd</h1>
+<p>So here I am, writing an agent for <a href="https://gym.openai.com/envs/LunarLander-v2/">LunarLander-v2</a>. I’m using Q-learning. I approximate <span class="math inline"><em>q</em><sub>*</sub>(<em>s</em>, <em>a</em>)</span> as <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>s</em>, <em>a</em>)</span> with a neural network, taking a vector representing the state, and outputting one approximate action value per output. The neural network is trained to minimize squared TD error on the policy the agent’s running, which is <span class="math inline"><em>ε</em></span>-greedy with respect to <span class="math inline"><em>q̂</em></span>: <br /><span class="math display">$$
+\begin{align*}
+\require{extpfeil}
+\ell(w) &amp;= \mathop{\mathbb{E}}\limits_{(S \xrightarrow{A} R,S') \sim \mathrm{greedy}(\mathrm{\hat{q}}_w)}
+\left[ \left(\mathrm{\hat{q}}_w(S, A) - (R + \gamma \max_{A'} \mathrm{\hat{q}}_w(S',A')) \right)^2 \right] \\
+\text{output } &amp;\arg\min_w \ell(w)
+\end{align*}
+$$</span><br /></p>
+<h2 id="not-quite-off-policy">Not quite off-policy</h2>
+<p>One note about the “policity” of this method.</p>
+<p>Tabular Q-learning without function approximation is off-policy - you learn about <span class="math inline"><em>π</em><sub>*</sub></span> from experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)</span> sampled from any (sane™) policy. You just keep updating <span class="math inline"><em>q̂</em>(<em>S</em>, <em>A</em>)</span> towards <span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub><em>q̂</em>(<em>S</em>′, <em>A</em>′)</span>, and to <span class="math inline">max </span> is there because you want to learn about the optimal policy.</p>
+<p>But note that in <span class="math inline">ℓ(<em>w</em>)</span>, the experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)</span> is sampled from the policy <span class="math inline"><em>g</em><em>r</em><em>e</em><em>e</em><em>d</em><em>y</em>(<em>q̂</em><sub><em>w</em></sub>)</span>. We need to expect <em>over a policy</em>, because we’re using function approximation, so presumably we cannot learn a <span class="math inline"><em>w</em></span> which would make <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span> exactly fit <span class="math inline"><em>q</em><sub>*</sub></span>. So we have to pick out battles for how well do we approximate <span class="math inline"><em>q</em><sub>*</sub></span> - we care about approximating it closely for states and actions actually visited by the estimation policy.</p>
+<p>Instead of assuming that we can sample <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)</span> from <span class="math inline"><em>g</em><em>r</em><em>e</em><em>e</em><em>d</em><em>y</em>(<em>q̂</em><sub><em>w</em></sub>)</span> (so that we can approximate the expected squared TD error over it), I guess you could use the general importance sampling recipe to get rid of that: <br /><span class="math display">$$\mathop{\mathbb{E}}_\limits{X\sim \pi}[\mathrm{f}(X)] =
+\mathop{\mathbb{E}}_\limits{X\sim b}\left[\mathrm{f}(X) \cdot \frac{\pi(X)}{b(X)}\right]$$</span><br /></p>
+<h2 id="semi-gradient">Semi-gradient</h2>
+<p>So, we want to minimize <span class="math inline">ℓ</span>.</p>
+<p>Note that <span class="math inline">ℓ</span> depends on <span class="math inline"><em>w</em></span> (via <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>) in 3 places:</p>
+<ol type="1">
+<li>In <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span>, which we are trying to nudge to move to the right place,</li>
+<li>in <span class="math inline"><em>R</em> + <em>γ</em>max<sub><em>A</em>′</sub><em>q̂</em><sub><em>w</em></sub>(<em>S</em>′, <em>A</em>′)</span>, which is a sample from a distribution centered on <span class="math inline"><em>q</em><sub><em>g</em><em>r</em><em>e</em><em>e</em><em>d</em><em>y</em>(<em>q̂</em><sub><em>w</em></sub>)</sub>(<em>S</em>, <em>A</em>)</span>,</li>
+<li>and in the distribution we’re taking the expectation on.</li>
+</ol>
+<p>In practice, we hold (2) and (3) constant, and in one optimization step, we wiggle <span class="math inline"><em>w</em></span> only to move <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span> closer to targets. That means that in our gradient, we are ignoring the dependency of (2) and (3) on the <span class="math inline"><em>w</em></span> that we are optimizing, which makes this not a full gradient method, but instead a <em>semi-gradient</em> method.</p>
+<h2 id="experience-replay">Experience replay</h2>
+<p>My first shot at this agent just learned from 1 step (sampled from <span class="math inline"><em>ε</em></span>-greedy policy for <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>) at a time. It worked in the sense that it ended up learning a policy close enough to “solving the environment”. (The environment says the “solved reward” is 200. I got maybe like 150-180 over 100 episodes, so not quite there, but it’s close enough for me to say “meh, I’ll wiggle a few hyperparameters and get there”.)</p>
+<p>But to learn a fair policy, it took the agent about 10 000 episodes, and the per-episode total reward over time made a spiky ugly graph:</p>
+<figure>
+<img src="/static/2020-12-31-total_reward.svg" style="height: 400px;"
+     title="Total reward per episode graph">
+</figure>
+<p>I don’t like that it takes all of 10 000 episodes, and I don’t like how spiky and ugly the chart is.</p>
+<p>Experience replay means we store a bunch of experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)<sub>1, 2, …</sub></span> in a buffer, and instead of updating <span class="math inline"><em>w</em></span> by some gradient-based optimization method (I used ADAM) to minimize squared TD error one step at a time, we update it to minimize squared TD error over the whole buffer, a bunch of steps at a time.</p>
+<p>Experience replay should make learning more sample-efficient (so it should need less than 10 000 episodes). Also, it should reduce one source of “spikiness and ugliness” in the chart, because the chart will be doing step updates on a larger batch. Making the batch larger should reduce the variance of the updates.</p>
+<h2 id="broken-code">Broken code</h2>
+<p>So, here’s how I initially implemented one step of the update. <code>self.experience_{prestates, actions, rewards, poststates, done}</code> holds the experience buffer (<span class="math inline"><em>S</em>, <em>A</em>, <em>R</em>, <em>S</em>′</span> respectively for observed transition <span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>, plus flag to signal end of episode).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="at">@tf.function</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">def</span> q_update(<span class="va">self</span>):</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">    <span class="co"># \max_{A&#39;} \hat{q}(S&#39;, A&#39;)</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">    best_next_action_value <span class="op">=</span> tf.reduce_max(</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">        <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">    <span class="co"># If episode ends after this step, the environment will only give us</span></a>
+<a class="sourceLine" id="cb1-8" data-line-number="8">    <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">    <span class="co"># state S&#39; is best_next_action_value.</span></a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">    next_state_value <span class="op">=</span> tf.where(</a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">        <span class="va">self</span>.experience_done,</a>
+<a class="sourceLine" id="cb1-12" data-line-number="12">        tf.zeros_like(best_next_action_value),</a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">        best_next_action_value)</a>
+<a class="sourceLine" id="cb1-14" data-line-number="14">    targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"></a>
+<a class="sourceLine" id="cb1-16" data-line-number="16">    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></a>
+<a class="sourceLine" id="cb1-17" data-line-number="17">    <span class="co"># actions.</span></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18">    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></a>
+<a class="sourceLine" id="cb1-20" data-line-number="20">    <span class="co"># S_i --(A_i)--&gt; R_i, S&#39;_i, done_i.</span></a>
+<a class="sourceLine" id="cb1-21" data-line-number="21">    indices <span class="op">=</span> tf.stack(</a>
+<a class="sourceLine" id="cb1-22" data-line-number="22">      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</a>
+<a class="sourceLine" id="cb1-23" data-line-number="23">      axis<span class="op">=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb1-24" data-line-number="24">    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</a>
+<a class="sourceLine" id="cb1-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb1-26" data-line-number="26">    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</a>
+<a class="sourceLine" id="cb1-27" data-line-number="27">        values_of_selected_actions, targets)</a>
+<a class="sourceLine" id="cb1-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb1-29" data-line-number="29">  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</a>
+<a class="sourceLine" id="cb1-30" data-line-number="30">  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</a></code></pre></div>
+<p>What’s wrong here?</p>
+<p>The symptom is that the policy is not improving. The total reward per episode is just oscillating.</p>
+<figure>
+<img src="/static/2020-sticker-hmm.png" title="Hmm">
+</figure>
+<h2 id="the-problem">The problem</h2>
+<p>Remember how I said it’s a <em>semi-gradient</em> method?</p>
+<p>Here’s the fix:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="at">@tf.function</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">def</span> q_update(<span class="va">self</span>):</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">  <span class="co"># \max_{A&#39;} \hat{q}(S&#39;, A&#39;)</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">  best_next_action_value <span class="op">=</span> tf.reduce_max(</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">      <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">  <span class="co"># If episode ends after this step, the environment will only give us</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">  <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">  <span class="co"># state S&#39; is best_next_action_value.</span></a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">  next_state_value <span class="op">=</span> tf.where(</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">      <span class="va">self</span>.experience_done,</a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">      tf.zeros_like(best_next_action_value),</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">      best_next_action_value)</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13">  targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">    <span class="co"># actions.</span></a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</a>
+<a class="sourceLine" id="cb2-19" data-line-number="19">    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20">    <span class="co"># S_i --(A_i)--&gt; R_i, S&#39;_i, done_i.</span></a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">    indices <span class="op">=</span> tf.stack(</a>
+<a class="sourceLine" id="cb2-22" data-line-number="22">      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</a>
+<a class="sourceLine" id="cb2-23" data-line-number="23">      axis<span class="op">=</span><span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-24" data-line-number="24">    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</a>
+<a class="sourceLine" id="cb2-25" data-line-number="25"></a>
+<a class="sourceLine" id="cb2-26" data-line-number="26">    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</a>
+<a class="sourceLine" id="cb2-27" data-line-number="27">        values_of_selected_actions, targets)</a>
+<a class="sourceLine" id="cb2-28" data-line-number="28"></a>
+<a class="sourceLine" id="cb2-29" data-line-number="29">  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</a>
+<a class="sourceLine" id="cb2-30" data-line-number="30">  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</a></code></pre></div>
+<p>So, what was the problem?</p>
+<p>The code calls the Q network twice: once to compute the targets (<span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub><em>q̂</em><sub><em>w</em></sub>(<em>S</em>′, <em>A</em>′)</span>), once to compute <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span>. Then, we will compute a loss, and we will take its partial <em>“semi-derivative”</em> with respect to <span class="math inline"><em>w</em></span>, and apply the gradient to bring <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span> closer to the target.</p>
+<p>The problem was: I also put the target computation into <code>GradientTape</code> scope, so the optimization was given the freedom to change not just <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span>, but <em>also</em> <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>′, <em>A</em>′)</span>. So the fix was just to move computing the targets out of the <code>GradientTape</code> scope.</p>
+<p>I looked at this code basically non-stop for 2 hours, and I realized the error when I took a break and talked with a friend.</p>
+<figure>
+<img src="/static/2020-sticker-ded.png" title="_(x.x)_   <-- ded">
+</figure>
+<h2 id="pet-peeve-47-math-typesetting">Pet peeve #47: math typesetting</h2>
+<p><em>The full list of previous 46 pet peeves will be provided on request, subject to a reasonable processing fee.</em></p>
+<h3 id="mathjax-hat-and-mathrm">MathJax, <code>\hat</code> and <code>\mathrm</code></h3>
+<p><span class="math inline"><em>q̂</em></span> is a function (of <span class="math inline"><em>w</em>, <em>S</em>, <em>A</em></span>), not a variable, so it shouldn’t be typeset in italic. I tried using <code>\hat{\mathrm{q}}_w</code>. I believe that works in LaTeX but turns out that MathJax is not willing to render it (<span class="math inline">$\hat{\mathrm{q}}$</span>). But <code>\mathrm{\hat{q}}</code> is perfectly fine: <span class="math inline"><em>q̂</em></span>. But <code>\mathrm{\hat{q}}_w</code> is perfectly fine: <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>.</p>
+<h3 id="mathjax-and-inline-xrightarrow">MathJax and inline <code>\xrightarrow</code></h3>
+<p>Also, my MathJax doesn’t seem to understand <code>\xrightarrow</code> in inline equations. That’s a shame, because <code>S \xrightarrow{A} R, S'</code> is more readable than <code>S \rightarrow_A R, S'</code> (<span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>), which I used here instead (in inline equations). It looks like this: <br /><span class="math display">$$S \xrightarrow{A} R, S'$$</span><br /> Let me know if you know what’s up with those MathJax things. I wonder if it’s MathJax being wrong, or me sucking at LaTeX.</p>
+<h3 id="why-im-a-math-typesetting-snob">Why I’m a math typesetting snob</h3>
+<p>Typesetting things that aren’t variables as if they were variables really bugs me, because it makes the formulas really ugly. And the font you use to typeset a math thing is a very useful hint for the reader about what sort of object it is. I learned a bit about it when volunteering as a <a href="https://ksp.mff.cuni.cz/">KSP</a> organizer - KSP is full of math snobs. Compare: <br /><span class="math display">$$
+\begin{align*}
+\mathrm{Loss}(w) = \sum_i (\mathrm{f}(x_i) - y_i)^2 \\
+Loss(w) = \sum_i (f(x_i) - y_i)^2
+\end{align*}$$</span><br /> In the second one, it takes a bit of processing to understand that <span class="math inline"><em>L</em><em>o</em><em>s</em><em>s</em></span> is not a multiplication (<span class="math inline"><em>L</em> ⋅ <em>o</em> ⋅ <em>s</em> ⋅ <em>s</em></span>), and that <span class="math inline"><em>f</em>(<em>x</em><sub><em>i</em></sub>)</span> is function application.</p>
+<p>If you want to read more, you can take a look at <a href="https://en.wikipedia.org/wiki/Typographical_conventions_in_mathematical_formulae">Typographical conventions in mathematical formulae on Wikipedia</a>. Or maybe some LaTeX / TeX books or reference material might have a lot of explanations, like “use this in these situations”. And also good math books often have a large table at the front which explains used conventions, like “<span class="math inline"><strong>w</strong></span> is a vector, <span class="math inline"><em>X</em></span> is a matrix, <span class="math inline"><em>f</em></span> is a function, …”</p>
+<figure>
+<img src="https://imgs.xkcd.com/comics/kerning.png" style="height: 400px;"
+     title="XKCD 1015 (Kerning)">
+<div>
+<p><a href="https://xkcd.com/1015/">https://xkcd.com/1015/</a> <br> Now you know about ugly errors in math typesetting, and if you Google it, also about bad kerning. You’re welcome, pass it along.</p>
+</div>
+</figure>
+<figure>
+<img src="/static/2020-sticker-mlem.png" title="Mlem!">
+</figure>]]></description>
+    <pubDate>Mon, 04 Jan 2021 00:00:00 UT</pubDate>
+    <guid>http://agentydragon.com/posts/2021-01-04-rai-ml-mistakes-2.html</guid>
+    <dc:creator>Rai</dc:creator>
+</item>
+<item>
     <title>Cartpole Q-learning</title>
     <link>http://agentydragon.com/posts/2020-12-31-cartpole-q-learning.html</link>
     <description><![CDATA[<p>Recently I’ve been working on skilling up on reinforcement learning, particularly practice. I’m currently on the last course of the <a href="https://www.coursera.org/specializations/reinforcement-learning">Reinforcement Learning specialization</a> from University of Alberta on Coursera. The last piece of the course is about solving the <a href="https://gym.openai.com/envs/LunarLander-v2/">Lunar Lander</a> environment. I’ve been trying to solve it on my own first before going through the labs, so that I can learn things deeper and experiment.</p>
@@ -21,16 +163,16 @@
 <h2 id="colab-notebook-with-my-cartpole-agent">Colab notebook with my CartPole agent</h2>
 <p>Here’s my notebook if you want to play around:</p>
 <p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole-q-learning.ipynb" target="_parent"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
-<h2 id="short-episodic-environments-can-use-high-γ">Short episodic environments can use high γ</h2>
+<h2 id="rais-ml-mistake-1-short-episodic-environments-can-use-high-γ">Rai’s ML mistake #1: Short episodic environments can use high γ</h2>
 <p>I initially wrote my code to use a discount rate of 0.9. On <a href="https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/">n1try’s solution</a> that I found on <a href="https://gym.openai.com/envs/CartPole-v0/">the leaderboard</a> (unfortunately not sure which one it was), the discount rate was actually set to 1.</p>
 <p>I suspect I might have set the discount rate too low. The CartPole environment has episodes which have length of only up to ~500, with 1 unit of reward per step.</p>
 <p>If you have a discount rate γ and an average per-step reward of <span class="math inline"><em>r</em></span>, then in an infinite environment, the value of a state will be something like: <br /><span class="math display">$$ \frac{r}{1-\gamma} = r + r \cdot \gamma + r \cdot \gamma^2 $$</span><br /> Knowing this, I was a worried that if I set <span class="math inline"><em>γ</em></span> too high, the targets for the Q network to learn would have a high variance. But I forgot that the environment had only like ~500 steps, so setting <span class="math inline"><em>γ</em> = 1</span> would be alright in this case.</p>
 <p><em>Lesson learned</em>: I need to keep in mind the environment’s characteristics, in particular how long are the episodes and how high total rewards can I expect.</p>
-<h2 id="too-little-exploration">Too little exploration</h2>
+<h2 id="rais-ml-mistake-2-too-little-exploration">Rai’s ML mistake #2: Too little exploration</h2>
 <p>The algorithm that ended up working for me was Q-learning (with function approximation by a small neural network). I selected actions <span class="math inline"><em>ε</em></span>-greedily, with <span class="math inline"><em>ε</em></span> set to 0.02, so ~2% chance of random moves.</p>
 <p>Looking at some solutions of the environment that I found, they had much higher exploration rates. Some that I saw had 100% random actions initially, and had it then decay. And the particular solution I was looking at set the minimal exploration rate, after all the decay, to <em>10%</em> - 5x more than I had.</p>
 <p>I think my code found a policy that “solves” the environment faster when I put in 10% exploration.</p>
-<h2 id="evaluation-interfering-with-training">Evaluation interfering with training</h2>
+<h2 id="rais-ml-mistake-3-evaluation-interfering-with-training">Rai’s ML mistake #3: Evaluation interfering with training</h2>
 <p>I ran my algorithm on 10k episodes, and every 1k episodes, I ran the code in “greedy mode” (i.e., no random actions) and recorded average performance on 100 episodes. I did that because my Q-learning implementation was executing an <span class="math inline"><em>ε</em></span>-soft policy, which might be worse than the greedy policy that it’s learning. I don’t know how “fragile” the CartPole environment is (i.e., how much worse the total reward per episode gets if I force an agent to take some amount of random actions), but I wanted to rule it out as a source of errors.</p>
 <p>I implemented the evaluation by just adding a flag <code>train: bool = True</code> to the agent’s functions. If <code>train</code> was <code>False</code>, I’d skip all the update steps and select actions greedily.</p>
 <p>Unfortunately, I ended up making a mistake and I forgot to add the condition around one branch of code - updating the Q network after a final step (i.e., when the agent receives a last reward and the episode ends).</p>
@@ -516,74 +658,6 @@ console.info(lzm.compressToEncodedURIComponent(
 <p>But by god, please, if you make a game, either make it obvious it’s unbeatable, or make it beatable with some indicator of progress. And if you do decide to make your game beatable, please make it beatable for humans in their current meat shells.</p>]]></description>
     <pubDate>Sun, 09 Dec 2018 00:00:00 UT</pubDate>
     <guid>http://agentydragon.com/posts/2018-12-09-groundhog-life.html</guid>
-    <dc:creator>Rai</dc:creator>
-</item>
-<item>
-    <title>Review heuristic: Call out bad code</title>
-    <link>http://agentydragon.com/posts/2018-09-12-call-out-bad-code.html</link>
-    <description><![CDATA[<h1 id="code-health-tradeoffs-in-larger-codebases">Code health tradeoffs in larger codebases</h1>
-<p>When people program, they often need to make tradeoffs between what will fix the current problem quickly, and what will make for a healthy codebase. Examples of such a tradeoff is:</p>
-<p>I found a function which does almost what I want, but not quite. Do I wait for its maintainer to let me refactor it so I can reuse it, or do I just copy-paste? Or - if it’s just a 5-line chunk, do I extract it into a function if it will require a bunch of boilerplate (maybe it would necessiate adding a new module)?</p>
-<p>It’s often a question of “do I pay the bigger upfront cost now, or do I make future-me front it”. These days I often work in a really big codebase, where there ends up being a bunch of those.</p>
-<h1 id="my-review-tip-for-copy-pasted-code">My review tip for copy-pasted code</h1>
-<p>When you review someone’s code that adds similar technical debt, you might not want to force the author to go and dig in 4 files just to extract out a function. It might frustrate them. And also, often it’s really not the best thing to do. If you really only duplicate the same 5-line chunk in two places, and it’s not often changed and not tricky, it might really be less costly to copy it than to agressively share such code.</p>
-<p>So the request I often give in code reviews is: “if you duplicate code, add a TODO that the code is duplicated” (preferably to <em>both copies</em>).</p>
-<p>This way, you allow the reviewer to quickly go along their day. But also you leave a “hey, this is a known bit of technical debt” affordance in the code.</p>
-<p>When someone ends up copy-pasting the same code a third time, you will be much more likely to look and say “hey time to extract a function, there is this TODO which says it’s not the first time we’re doing this”.</p>
-<h1 id="general-heuristic-feel-the-pain">General heuristic: “feel the pain”</h1>
-<p>There is a more general heuristic, which I use, that I call “feel the pain”. The heuristic is that bad things should be <em>obviously painfully bad</em>. Other instances of “feel the pain” are:</p>
-<ul>
-<li><p>Let’s say someone breaks the contract of your <code>Frobnicate</code> RPC and sometimes doesn’t pass a required parameter <code>foo</code>, and you need to fix your service to accept that. Fine. But don’t do it like this:</p>
-<pre><code>void HandleFrobnicateRPC(const string&amp; foo, const string&amp; bar) {
-  if (foo.empty()) {
-    foo = ComputeDefaultFoo(bar);
-  }
-  ...
-}</code></pre>
-<p>Do it like this:</p>
-<pre><code>void HandleFrobnicateRPC(const string&amp; foo, const string&amp; bar) {
-  if (foo.empty()) {
-    // NOTE: As of 2018-09-12, the Bazinator service calls Frobnicate with
-    // an empty &#39;foo&#39;. The Frobnicate service cannot be easily fixed to pass
-    // the &#39;foo&#39; itself, because it does not currently have access to the
-    // backend which can find the right foo for the bar. If the bar has
-    // multiple associated foos, this will only return the last written foo.
-    // Other clients SHOULD NOT rely on this.
-    foo = ComputeDefaultFoo(bar);
-  }
-  ...
-}</code></pre>
-Why? Because that way, people are less likely to build more hacks on top of this hack, because there is a long paragraph full of scary words.</li>
-<li><p>Let’s say that you inherited 1 million LOC from someone in a hurry, and at some point, they made a misguided architectural decision that makes your code clunky and hard to understand. Create a central bug for this in your bug tracking system, and whenever you write new code that would be made better by fixing the bug, add a note like:</p>
-<pre><code>// TODO(agentydragon): Once we resolve b/12345, we&#39;ll be able to replace the
-// Frobnicator with a mock for tests, so our tests won&#39;t need such
-// complicated fixtures.</code></pre>
-Why? Because that way once you get around to fixing b/12345, you will be able to grep all places where this hurt some code, and fix them one by one. Also, let’s say some kind soul needs to change this code 2 years after you’re done with it, and finds that TODO. (That person might be you.) When they see this TODO, they might go “hmmm, that bug number looks quite low. aha, it’s been filed 2 years back, and it’s fixed now. yay! that means that I can fix this now and the diff for my new feature will be about 20% less horrible!”</li>
-<li><p>Let’s say your code processes two different <em>kinds of things</em>, which both happen to be sort-of-strings (indulge me for a second and assume your code does not use strong types for such things). Think “URLs and street addresses”. For some hacky reason, which you hope to get rid of at some point, you are computing one from the other. What I would do in that case is make that code obviously painful and horrible using devices like variable and function names and type aliases. Not like this:</p>
-<pre><code>string GetResult(const string&amp; input) {
-  return UrlEncode(input + &quot;-autogenerated&quot;);
-}</code></pre>
-<p>More like this:</p>
-<pre><code>using StreetAddress = string;
-using Url = string;
-
-// Long and verbose comment about why this is necessary and what it should be
-// replaced with and when.
-Url BuildFallbackUrlFromStreetAddress(const string&amp; address) {
-  return UrlEncode(address + &quot;-autogenerated&quot;);
-}</code></pre></li>
-</ul>
-<h1 id="even-generaler-heuristic-call-out-problems">Even generaler heuristic: “Call out problems”</h1>
-<p>There is actually an even more general heuristic than this, which is “call out problems”. I also use it in other contexts.</p>
-<ul>
-<li><p>Let’s say I am writing a design document, and I notice that I did not actually verify some assumption that I’m making, let’s say, “when a customer frobnicates a Foo without also having a Bar, Frobnicator service will not give them cake”.</p>
-<p>When I notice that and don’t have time to immediately verify it, I’ll openly say, “I believe that when …, then … happens, but did not verify that.” This is good for when your future-self might be going over your notes later, and, reading that doc, starts assuming that the doc is an authoritative source on the particularities of customers getting cake from the Frobnicator service.</p>
-<p>Same about your colleagues. If you say “I did not verify this”, someone who has nagging doubts might be much more likely to say “hey I’m not sure because I’m a human and I forget but I think I got some cake last month when I tried a different thing”, instead of thinking “huh. so he says Frobnicator service does not give cake in this case. I guess they changed it or I don’t remember it correctly.”.</p></li>
-<li><p>Let’s say that I’m talking with someone and they raise a counterpoint to my preferred opinion that I never considered yet. Instead of immediately rushing to defend myself, I sometimes try to instead take in the new thing, and sit there for a bit with the dissonance (“but but but I want to be right so this thing must be wroooong aaaaaaaah”, or maybe “but but but I don’t want to have to redo this 3k line change that I love aaaaaarrrhh”). And instead of “Hmm, but your proposal would not address the …<em>insert ad-lib</em>…”, say, “Huh. I didn’t think of that yet. I’ll need to think about that.”</p></li>
-</ul>
-<p>“Call out problems” feels sort of close to <a href="https://en.wikipedia.org/wiki/Nonviolent_Communication">non-violent communication</a>. I feel much less like openly communicating problems if it feels like the environment will hurt me if I do that. That happens to me with some strong personalities, or with people who (probably mostly unknowingly) trigger my sense of “argh I’m being bullied I want to curl up in a corner”. On the other hand, I usually try to call out problems more often than people around me, because I want to nudge culture towards cooperation. (Google culture is pretty blameless, so I don’t feel I’m acting against my interests.)</p>]]></description>
-    <pubDate>Wed, 12 Sep 2018 00:00:00 UT</pubDate>
-    <guid>http://agentydragon.com/posts/2018-09-12-call-out-bad-code.html</guid>
     <dc:creator>Rai</dc:creator>
 </item>
 

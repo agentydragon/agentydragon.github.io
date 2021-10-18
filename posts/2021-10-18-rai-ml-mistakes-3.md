@@ -80,15 +80,11 @@ Run the agent with your current policy in a replay buffer, plus with some
 exploration (like a bit of Gaussian noise added to actions). Draw a batch from
 the replay buffer, and do an optimization step on the critic to minimize its
 Bellman error:
-
 $$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
 \left[\hat{\mathrm{Q}}_\theta(s,a) - (r + \gamma \hat{\mathrm{Q}}_\theta(s', \pi_\varphi(s')))\right]^2 $$
-
 Then update the actor to choose actions that get better Q values on the same
 batch:
-
 $$\arg\max_\varphi \sum_{(s,a) \in \mathrm{batch}} \hat{\mathrm{Q}}_\theta(s,\pi_\varphi(s))$$
-
 The batch has to be drawn randomly. This is important, because if you draw a
 bunch of states that immediately follow each other, their predictions will end
 up pulling each other to explode towards infinity.
@@ -97,23 +93,18 @@ To prevent similar feedback cycles between the actor and critic, you keep 2
 copies of each: the *optimized* one and the *target* one. They start out as
 exact copies. When computing the Bellman targets for the critic, instead of
 using the *optimized* actor and critic, use the *target* ones:
-
 $$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
 \left[\hat{\mathrm{Q}}_{\theta_\text{opt}}(s,a) - (r + \gamma \hat{\mathrm{Q}}_{\theta_\text{targ}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$
-
 And slowly [Polyak-average](https://paperswithcode.com/method/polyak-averaging)
 the target networks towards the optimized one (with \(\varrho \\approx 0.05\)):
-
 $$
 \begin{align*}
 \theta_\text{targ} & \gets \varrho \cdot \theta_\text{opt} + (1-\varrho) \cdot \theta_\text{targ} \\
 \varphi_\text{targ} & \gets \varrho \cdot \varphi_\text{opt} + (1-\varrho) \cdot \varphi_\text{targ}
 \end{align*}
 $$
-
 By the way, I made up this a shorthand notation for this operation "update x towards
 y with update size \(\\alpha\)":
-
 $$\require{extpfeil}
 \theta_\text{targ} \xmapsto{\varrho} \theta_\text{opt}, \varphi_\text{targ}
 \xmapsto{\varrho} \varphi_\text{opt}

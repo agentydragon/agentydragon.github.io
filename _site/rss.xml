@@ -174,7 +174,7 @@ Evaluation over 10 episodes: 963.088
 <p>And probably write unit tests, too. I probably won’t be bothered to do that anyway because writing unit tests for code that has complex optimizers and neural nets is annoying.</p>
 <p>And maybe I should be using operators that don’t auto-broadcast, or something that doesn’t allow me to mistakenly vector-vector-to-matrix multiply when I mean to vector-vector-elementwise multiply.</p>
 <p>I’m not done being annoyed and sour about this but I’m done ranting about it here. Ciao, see you next time I kill a few weeks on another mistake this stupid. This is the point of all those “Rai’s ML mistakes” posts. I write these algorithms so I can grok them, and I headsmash the keyboard this way because I hope now I’ll remember with a bit more clarity and immediacy: “It’s always the goddamn tensor shapes”.</p>
-<p>My fixed code is [on my GitLab], and here’s the obligatory scoot-scoot:</p>
+<p>My fixed code is <a href="https://gitlab.com/agentydragon/rl-experiments/-/merge_requests/8">on my GitLab</a>, and here’s the obligatory scoot-scoot:</p>
 <figure>
 <video controls loop autoplay>
 <source src="/static/2021-10-18-half-cheetah-216.mp4" type="video/mp4">

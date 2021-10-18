@@ -400,7 +400,7 @@ algorithms so I can grok them, and I headsmash the keyboard this way because
 I hope now I'll remember with a bit more clarity and immediacy: "It's always the
 goddamn tensor shapes".
 
-My fixed code is [on my GitLab], and here's the obligatory scoot-scoot:
+My fixed code is [on my GitLab](https://gitlab.com/agentydragon/rl-experiments/-/merge_requests/8), and here's the obligatory scoot-scoot:
 
 <figure>
 <video controls loop autoplay>

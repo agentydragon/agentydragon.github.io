@@ -2,6 +2,7 @@ My homepage. Everything is CC BY-NC-SA 3.0.
 
 To build:
 
+    $ sass css/default.scss > css/default.css
     $ stack build
     $ stack exec site build
 

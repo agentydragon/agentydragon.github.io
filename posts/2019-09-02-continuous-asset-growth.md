@@ -42,7 +42,7 @@ Problems
 Assuming infinite retirement time
 ====
 
-If you pay yourself a monthly salary of $ \$1000 $ and your monthly interest is $ \$1000 $, your money will last forever, beyond your (likely) lifespan. If you are fine with retiring with $ \$0 $, you can pay yourself a bit more than just the $ \$1000$ interest.
+If you pay yourself a monthly salary of $ \\$1000 $ and your monthly interest is $ \\$1000 $, your money will last forever, beyond your (likely) lifespan. If you are fine with retiring with $ \\$0 $, you can pay yourself a bit more than just the $ \\$1000$ interest.
 
 Ignoring growth while saving
 ====
@@ -75,9 +75,10 @@ $$
 
 (Where $i'$ plays *sorta* the same role as $i$ - except it's not equal to $i$. For now let's pretend it's some unknown variable. Its relationship to $i$ will eventually pop out.)
 
-[Wikipedia's Ordinary differential equations article](https://en.wikipedia.org/wiki/Ordinary_differential_equation) says that if $dy/dx = F(y)$, then the solution is  $x=\int ^{y}{\frac {d\lambda }{F(\lambda )}}+C$. In our case, we have $F:x\mapsto ix-c'$, so:
+[Wikipedia's Ordinary differential equations article](https://en.wikipedia.org/wiki/Ordinary_differential_equation) says that if $dy/dx = F(y)$, then the solution is  \\(x=\\int^{y}{\\frac {d\\lambda }{F(\\lambda )}}+C\\).
+In our case, we have $F:x\mapsto ix-c'$, so:
 
-$$x = \int^{f(x)}{\frac{1}{i'\lambda-c'} d\lambda}+C =_\text{Wolfram Alpha} \frac{\log(i'f(x)-c')}{i'} + C$$
+$$x = \int^{f(x)}{\frac{1}{i'\lambda-c'} d\lambda}+C \stackrel{\text{Wolfram Alpha}}{=} \frac{\log(i'f(x)-c')}{i'} + C$$
 
 Solving for $f(x)$:
 
@@ -137,14 +138,11 @@ $$C = f_0 - \frac{c}{i'}$$
 Okay this is a little bit ugly. Let's play.
 
 
-```
+```python
 c = 12000  # yearly costs
 f_0 = 100000  # initial savings
 i = 0.04  # interest
-```
 
-
-```
 from math import log, exp
 i_prime = log(1+i)
 print(f'i_prime={i_prime}')
@@ -158,6 +156,8 @@ def f(x):
 for r in range(11):
   print("after", r, "years, got:", f(r))
 ```
+
+And it gives:
 
     i_prime=0.03922071315328133
     C=-205960.78029234003

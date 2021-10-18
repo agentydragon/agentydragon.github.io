@@ -81,7 +81,7 @@
 </ul>
 <h1 id="problems">Problems</h1>
 <h1 id="assuming-infinite-retirement-time">Assuming infinite retirement time</h1>
-<p>If you pay yourself a monthly salary of $ $1000 $ and your monthly interest is $ $1000 $, your money will last forever, beyond your (likely) lifespan. If you are fine with retiring with $ $0 $, you can pay yourself a bit more than just the $ $1000$ interest.</p>
+<p>If you pay yourself a monthly salary of $ \$1000 $ and your monthly interest is $ \$1000 $, your money will last forever, beyond your (likely) lifespan. If you are fine with retiring with $ \$0 $, you can pay yourself a bit more than just the $ \<span class="math inline">1000</span> interest.</p>
 <h1 id="ignoring-growth-while-saving">Ignoring growth while saving</h1>
 <p>“Take how much money I need - how much I have, divide by monthly savings” ignores that the money I saved up so far also earn interest, before I’m done saving. It’s too pessimistic.</p>
 <h1 id="stand-aside-i-know-differential-equations">Stand aside, I know differential equations!</h1>
@@ -93,8 +93,8 @@
 <p>If we instead pretend that everything is continuous and squint, this looks like a differential equation:</p>
 <p><br /><span class="math display"><em>f</em>′(<em>x</em>) = <em>i</em>′ ⋅ <em>f</em>(<em>x</em>) − <em>c</em>′</span><br /></p>
 <p>(Where <span class="math inline"><em>i</em>′</span> plays <em>sorta</em> the same role as <span class="math inline"><em>i</em></span> - except it’s not equal to <span class="math inline"><em>i</em></span>. For now let’s pretend it’s some unknown variable. Its relationship to <span class="math inline"><em>i</em></span> will eventually pop out.)</p>
-<p><a href="https://en.wikipedia.org/wiki/Ordinary_differential_equation">Wikipedia’s Ordinary differential equations article</a> says that if <span class="math inline"><em>d</em><em>y</em>/<em>d</em><em>x</em> = <em>F</em>(<em>y</em>)</span>, then the solution is <span class="math inline">$x=\int ^{y}{\frac {d\lambda }{F(\lambda )}}+C$</span>. In our case, we have <span class="math inline"><em>F</em> : <em>x</em> ↦ <em>i</em><em>x</em> − <em>c</em>′</span>, so:</p>
-<p><br /><span class="math display">$$x = \int^{f(x)}{\frac{1}{i'\lambda-c'} d\lambda}+C =_\text{Wolfram Alpha} \frac{\log(i'f(x)-c')}{i'} + C$$</span><br /></p>
+<p><a href="https://en.wikipedia.org/wiki/Ordinary_differential_equation">Wikipedia’s Ordinary differential equations article</a> says that if <span class="math inline"><em>d</em><em>y</em>/<em>d</em><em>x</em> = <em>F</em>(<em>y</em>)</span>, then the solution is \(x=\int^{y}{\frac {d\lambda }{F(\lambda )}}+C\). In our case, we have <span class="math inline"><em>F</em> : <em>x</em> ↦ <em>i</em><em>x</em> − <em>c</em>′</span>, so:</p>
+<p><br /><span class="math display">$$x = \int^{f(x)}{\frac{1}{i'\lambda-c'} d\lambda}+C \stackrel{\text{Wolfram Alpha}}{=} \frac{\log(i'f(x)-c')}{i'} + C$$</span><br /></p>
 <p>Solving for <span class="math inline"><em>f</em>(<em>x</em>)</span>:</p>
 <p><br /><span class="math display">$$
 \log(i'f(x)-c') = i'(x-C) \\
@@ -125,21 +125,23 @@ $$</span><br /> The one remaining unknown variable is <span class="math inline">
 <p>So:</p>
 <p><br /><span class="math display">$$C = f_0 - \frac{c}{i'}$$</span><br /></p>
 <p>Okay this is a little bit ugly. Let’s play.</p>
-<pre><code>c = 12000  # yearly costs
-f_0 = 100000  # initial savings
-i = 0.04  # interest</code></pre>
-<pre><code>from math import log, exp
-i_prime = log(1+i)
-print(f'i_prime={i_prime}')
-
-C = f_0 - (c / i_prime)
-print(f'C={C}')
-
-def f(x):
-  return C * (1+i) ** x + (c / i_prime)
-
-for r in range(11):
-  print(&quot;after&quot;, r, &quot;years, got:&quot;, f(r))</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1">c <span class="op">=</span> <span class="dv">12000</span>  <span class="co"># yearly costs</span></a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">f_0 <span class="op">=</span> <span class="dv">100000</span>  <span class="co"># initial savings</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">i <span class="op">=</span> <span class="fl">0.04</span>  <span class="co"># interest</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="im">from</span> math <span class="im">import</span> log, exp</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">i_prime <span class="op">=</span> log(<span class="dv">1</span><span class="op">+</span>i)</a>
+<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="bu">print</span>(<span class="ss">f'i_prime=</span><span class="sc">{</span>i_prime<span class="sc">}</span><span class="ss">'</span>)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9">C <span class="op">=</span> f_0 <span class="op">-</span> (c <span class="op">/</span> i_prime)</a>
+<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="bu">print</span>(<span class="ss">f'C=</span><span class="sc">{C}</span><span class="ss">'</span>)</a>
+<a class="sourceLine" id="cb1-11" data-line-number="11"></a>
+<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="kw">def</span> f(x):</a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">  <span class="cf">return</span> C <span class="op">*</span> (<span class="dv">1</span><span class="op">+</span>i) <span class="op">**</span> x <span class="op">+</span> (c <span class="op">/</span> i_prime)</a>
+<a class="sourceLine" id="cb1-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">11</span>):</a>
+<a class="sourceLine" id="cb1-16" data-line-number="16">  <span class="bu">print</span>(<span class="st">&quot;after&quot;</span>, r, <span class="st">&quot;years, got:&quot;</span>, f(r))</a></code></pre></div>
+<p>And it gives:</p>
 <pre><code>i_prime=0.03922071315328133
 C=-205960.78029234003
 after 0 years, got: 100000.0

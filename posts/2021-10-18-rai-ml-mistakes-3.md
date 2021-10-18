@@ -60,8 +60,8 @@ you use to make \\(\\hat{\\mathrm{Q}}\_\\theta\\) approximate
 \\(\\mathrm{Q}\_\\pi\\) is basically SARSA: you minimize the squared error
 between \\(\\hat{\\mathrm{Q}}\_\\theta(s,a)\\) and an estimator that converges to
 center on the actual \\(\\mathrm{Q}\_\\pi(s,a)\\). In the finite case, that
-Q learning estimator for a transition \\(s \\xrightarrow{a} r, s'\\) is
-\\(r + \\gamma \\max{a'} \\hat{\\mathrm{Q}}\_\\theta(s',a')\\). In vanilla Q
+Q learning estimator for a transition \\(s \\xrightarrow{a} (r, s')\\) is
+\\(r + \\gamma \\max_{a'} \\hat{\\mathrm{Q}}\_\\theta(s',a')\\). In vanilla Q
 learning, the followed policy is \\(\mathrm{greedy}(\\hat{\\mathrm{Q}})\\),
 which is what that maximum does.
 

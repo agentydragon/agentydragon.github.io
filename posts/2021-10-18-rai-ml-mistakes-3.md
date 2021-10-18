@@ -22,7 +22,7 @@ In this environment, you control a simple robot and are trying to teach it to
 run. You control it with continuous signals. I'm not sure what exactly they
 mean, probably something like force applied to joints. Continuous actions mean
 you need to use slightly different algorithms. I went to learn TD3 (twin delayed
-deep deterministic actor-critic), based on [OpenAI's treatment Spinning Up in
+deep deterministic actor-critic), based on [OpenAI's treatment in Spinning Up in
 Deep RL](https://spinningup.openai.com/en/latest/algorithms/td3.html). It was
 published in a 2018 paper called [Addressing Function Approximation Error in
 Actor-Critic Methods][paper].

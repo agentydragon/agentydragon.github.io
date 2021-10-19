@@ -407,4 +407,18 @@ A half-cheetah doing the scoot-scoot after 216 episodes of training.
 </div>
 </figure>
 
+### Update: MuJoCo half-cheetah
+
+So, since MuJoCo is now open-source, I tried it and got the MuJoCo environment
+`HalfCheetah-v2` also working. Nice :)
+
+<figure>
+<video controls loop autoplay>
+    <source src="/static/2021-10-19-half-cheetah-mujoco.mp4" type="video/mp4">
+</video>
+<div>
+Trained MuJoCo half-cheetah. Episode reward is 5330.
+</div>
+</figure>
+
 [paper]: <https://arxiv.org/abs/1802.09477>

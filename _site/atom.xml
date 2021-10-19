@@ -30,6 +30,8 @@
 <p>The vanilla half-cheetah environment is written with MuJoCo. MuJoCo is a <em>commercial</em> physics simulator used for a lot of robotics environments like this. You need a license to run it. As of now (October 18, 2021), there is a free license available for everyone to run MuJoCo until the end of this month. But in general, closed-source dependencies for open research <em>suck</em>.</p>
 <p>There’s this open-source physics engine called <a href="https://pybullet.org/">Bullet</a>. I’ve played with it a bit in middle-high school when I was trying to write some 3D stuff. Turns out they have since made Python bindings, and implemented a bunch of OpenAI Gym environments. So you can now run lots of environments without MuJoCo :)</p>
 <p>To use the PyBullet environments, install the <code>pybullet</code> Python package and <code>import pybullet_envs</code>. The PyBullet repo has <a href="https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/__init__.py">the list of implemented environments</a>.</p>
+<h3 id="sidenote-2-actually-mujoco-is-now-open-source">Sidenote 2: Actually MuJoCo is now open-source</h3>
+<p>So, later on the same day I wrote this post, turns out DeepMind bought MuJoCo and made it open-source and free (at https://mujoco.org/). Good stuff :)</p>
 <h2 id="td3-description">TD3 description</h2>
 <h3 id="q-learning">Q learning</h3>
 <p>To describe TD3 briefly, it’s similar to Q learning.</p>

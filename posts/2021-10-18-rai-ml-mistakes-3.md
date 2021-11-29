@@ -5,7 +5,7 @@ title: Rai's ML mistakes, part 3 of ∞
 Previous parts:
 
 * [Part 1 on Cartpole](/posts/2020-12-31-cartpole-q-learning.html)
-* [Part 2 on Lunar Landing](/posts/2021-01-04-rai-ml-mistakes-3.html)
+* [Part 2 on Lunar Landing](/posts/2021-01-04-rai-ml-mistakes-2.html)
 
 ## Next step: half-cheetah, TD3, continuous actions
 

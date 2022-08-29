@@ -48,7 +48,7 @@ seminar for high school students by Charles University.
 ### Preferred
 
 * Mastodon: [@agentydragon@mastodon.social][mastodon]
-* Matrix: [@agentydragon:matrix.org][matrix]()[][matrix]
+* Matrix: [@agentydragon:matrix.org][matrix]
 * email: `agentydragon@gmail.com`
 * GitLab: [agentydragon][gitlab]
 

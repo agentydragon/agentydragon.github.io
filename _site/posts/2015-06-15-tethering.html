@@ -60,13 +60,26 @@
     Posted on 2015-06-15
 </div>
 
-<p>I have an oldish Android 2.3.6 phone (a Samsung Galaxy Mini). The last few months, I have been tethering it to my laptop via USB. It’s a bit tedious to manually activate tethering every time I connect the phone.</p>
-<p>Luckily, Android contains a utility called <code>service</code> (which lives in <code>/system/bin/service</code>). This utility lets you issue calls to Android services through <code>adb shell</code>. You can list all available services by running <code>service list</code>. Apparently, services provide API endpoints identified by a numerical identifier, and every endpoint accepts some number of arguments. The <code>service</code> utility lets you pass strings or 32-bit integers, like this:</p>
+<p>I have an oldish Android 2.3.6 phone (a Samsung Galaxy Mini). The last few
+months, I have been tethering it to my laptop via USB. It’s a bit tedious to
+manually activate tethering every time I connect the phone.</p>
+<p>Luckily, Android contains a utility called <code>service</code> (which lives in
+<code>/system/bin/service</code>). This utility lets you issue calls to Android services
+through <code>adb shell</code>. You can list all available services by running <code>service list</code>. Apparently, services provide API endpoints identified by a numerical
+identifier, and every endpoint accepts some number of arguments. The <code>service</code>
+utility lets you pass strings or 32-bit integers, like this:</p>
 <pre><code>$ service call [service_name] [endpoint_id] s16 [string_arg] i32 [int_arg] ...</code></pre>
-<p>By Googling around, I found that Android phones have a <code>connectivity</code> service, which is probably implemented as an instance of <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/net/IConnectivityManager.aidl">android.net.IConnectivityManager</a>. Unfortunately, I couldn’t find any API definition that would exactly match what my phone seemed to have. Maybe the API was updated a few times between my Android version and the current one?</p>
-<p>By blindly probing and looking at <code>adb logcat</code>, I found the following interesting call IDs:</p>
+<p>By Googling around, I found that Android phones have a <code>connectivity</code> service,
+which is probably implemented as an instance of
+<a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/net/IConnectivityManager.aidl">android.net.IConnectivityManager</a>.
+Unfortunately, I couldn’t find any API definition that would exactly match
+what my phone seemed to have. Maybe the API was updated a few times
+between my Android version and the current one?</p>
+<p>By blindly probing and looking at <code>adb logcat</code>, I found the following
+interesting call IDs:</p>
 <ul>
-<li>Numbers 4 and 5 seem to describe some aspects of the available mobile networks.
+<li>Numbers 4 and 5 seem to describe some aspects of the available mobile
+networks.
 <pre>
 # service call connectivity 4
 Result: Parcel(
@@ -82,15 +95,28 @@ Result: Parcel(
   0x00000090: 00650074 006e0072 00740065 00000000 't.e.r.n.e.t.....')
 # (similar for 5)
 </pre></li>
-<li>6 is apparently <code>setWifiEnabled</code>. Calling <code>service call connectivity 6 i32 1</code> calls <code>setWifiEnabled(true)</code>. Looks useful.</li>
+<li>6 is apparently <code>setWifiEnabled</code>. Calling <code>service call connectivity 6   i32 1</code> calls <code>setWifiEnabled(true)</code>. Looks useful.</li>
 <li>9 is <code>stopUsingNetworkFeature</code>.</li>
 <li>10 is <code>requestRouteToHost</code>.</li>
 <li>13 is <code>getMobileDataEnabled</code>.</li>
-<li>14 is <code>setMobileDataEnabled</code>. Calling with <code>i32 0</code> turns off mobile data, <code>i32 1</code> turns mobile data on.</li>
-<li>15 starts tethering on a network interface. The name of the interface is passed as the first string argument.</li>
+<li>14 is <code>setMobileDataEnabled</code>. Calling with <code>i32 0</code> turns off mobile data,
+<code>i32 1</code> turns mobile data on.</li>
+<li>15 starts tethering on a network interface. The name of the interface is
+passed as the first string argument.</li>
 </ul>
-<p>I aborted my search here, because I found what I came for: calling <code>service call connectivity 15 s16 usb0</code> starts tethering via USB. So, to get an Android 2.3.6 phone to tether with your PC, you can call: <code>adb shell su -c service call connectivity 15 s16 usb0</code>. I’ll probably turn this snippet into a mini-script. Unfortunately, you need to use a rooted phone and the <code>su</code> part: otherwise, you’ll get back a Parcel with a permission complaint.</p>
-<p>And, just as I finished my search, I found <a href="http://ktnr74.blogspot.com/2014/09/calling-android-services-from-adb-shell.html">this interesting blog post</a>, where the author describes a better way of getting at the service codes than wild probing: apparently if you know your Android version and the service name you want, you can find an AIDL (Android Interface Definition Language) with the service description on <a href="https://android.googlesource.com/" class="uri">https://android.googlesource.com/</a>.</p>
+<p>I aborted my search here, because I found what I came for:
+calling <code>service call connectivity 15 s16 usb0</code> starts tethering via USB.
+So, to get an Android 2.3.6 phone to tether with your PC, you can
+call: <code>adb shell su -c service call connectivity 15 s16 usb0</code>.
+I’ll probably turn this snippet into a mini-script.
+Unfortunately, you need to use a rooted phone and the <code>su</code> part:
+otherwise, you’ll get back a Parcel with a permission complaint.</p>
+<p>And, just as I finished my search, I found
+<a href="http://ktnr74.blogspot.com/2014/09/calling-android-services-from-adb-shell.html">this interesting blog post</a>,
+where the author describes a better way of getting at the service codes
+than wild probing: apparently if you know your Android version and the service
+name you want, you can find an AIDL (Android Interface Definition Language)
+with the service description on <a href="https://android.googlesource.com/">https://android.googlesource.com/</a>.</p>
 <p>YMMV. Cheers.</p>
 
 			</div>

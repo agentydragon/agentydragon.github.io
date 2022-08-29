@@ -34,3 +34,13 @@ stack install --flag skylighting-core:executable skylighting-core
 ```
 skylighting --help
 ```
+
+# Upgrades
+
+Might need:
+
+```bash
+$ stack upgrade
+```
+
+Maybe try to upgrade resolver in `stack.yaml`.

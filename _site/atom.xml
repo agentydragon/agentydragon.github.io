@@ -21,71 +21,176 @@
 <li><a href="/posts/2021-01-04-rai-ml-mistakes-2.html">Part 2 on Lunar Landing</a></li>
 </ul>
 <h2 id="next-step-half-cheetah-td3-continuous-actions">Next step: half-cheetah, TD3, continuous actions</h2>
-<p>I’m not doing all that great emotionally, but I’m trying to keep learning RL, even if slowly. I made Cartpole and Lunar Landing environments work. Both of them have discrete actions. The next environment I went to try to learn was the <a href="https://www.endtoend.ai/envs/gym/mujoco/half-cheetah/">Half Cheetah</a>.</p>
+<p>I’m not doing all that great emotionally, but I’m trying to keep learning RL,
+even if slowly. I made Cartpole and Lunar Landing environments work. Both of
+them have discrete actions. The next environment I went to try to learn was the
+<a href="https://www.endtoend.ai/envs/gym/mujoco/half-cheetah/">Half Cheetah</a>.</p>
+<figure>
 <figure>
 <img src="/static/2021-10-18-standing.png" alt="Standing half-cheetah" />
+<figcaption aria-hidden="true">Standing half-cheetah</figcaption>
 </figure>
-<p>In this environment, you control a simple robot and are trying to teach it to run. You control it with continuous signals. I’m not sure what exactly they mean, probably something like force applied to joints. Continuous actions mean you need to use slightly different algorithms. I went to learn TD3 (twin delayed deep deterministic actor-critic), based on <a href="https://spinningup.openai.com/en/latest/algorithms/td3.html">OpenAI’s treatment in Spinning Up in Deep RL</a>. It was published in a 2018 paper called <a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods</a>.</p>
+</figure>
+<p>In this environment, you control a simple robot and are trying to teach it to
+run. You control it with continuous signals. I’m not sure what exactly they
+mean, probably something like force applied to joints. Continuous actions mean
+you need to use slightly different algorithms. I went to learn TD3 (twin delayed
+deep deterministic actor-critic), based on <a href="https://spinningup.openai.com/en/latest/algorithms/td3.html">OpenAI’s treatment in Spinning Up in
+Deep RL</a>. It was
+published in a 2018 paper called <a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in
+Actor-Critic Methods</a>.</p>
 <h3 id="sidenote-depending-on-mujoco-sucks">Sidenote: depending on MuJoCo sucks</h3>
-<p>The vanilla half-cheetah environment is written with MuJoCo. MuJoCo is a <em>commercial</em> physics simulator used for a lot of robotics environments like this. You need a license to run it. As of now (October 18, 2021), there is a free license available for everyone to run MuJoCo until the end of this month. But in general, closed-source dependencies for open research <em>suck</em>.</p>
-<p>There’s this open-source physics engine called <a href="https://pybullet.org/">Bullet</a>. I’ve played with it a bit in middle-high school when I was trying to write some 3D stuff. Turns out they have since made Python bindings, and implemented a bunch of OpenAI Gym environments. So you can now run lots of environments without MuJoCo :)</p>
-<p>To use the PyBullet environments, install the <code>pybullet</code> Python package and <code>import pybullet_envs</code>. The PyBullet repo has <a href="https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/__init__.py">the list of implemented environments</a>.</p>
+<p>The vanilla half-cheetah environment is written with MuJoCo. MuJoCo is a
+<em>commercial</em> physics simulator used for a lot of robotics environments like
+this. You need a license to run it. As of now (October 18, 2021), there is a
+free license available for everyone to run MuJoCo until the end of this month.
+But in general, closed-source dependencies for open research <em>suck</em>.</p>
+<p>There’s this open-source physics engine called <a href="https://pybullet.org/">Bullet</a>.
+I’ve played with it a bit in middle-high school when I was trying to write some
+3D stuff. Turns out they have since made Python bindings, and implemented a
+bunch of OpenAI Gym environments. So you can now run lots of environments
+without MuJoCo :)</p>
+<p>To use the PyBullet environments, install the <code>pybullet</code> Python package and
+<code>import pybullet_envs</code>. The PyBullet repo has <a href="https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/__init__.py">the list of implemented
+environments</a>.</p>
 <h3 id="sidenote-2-actually-mujoco-is-now-open-source">Sidenote 2: Actually MuJoCo is now open-source</h3>
-<p>So, later on the same day I wrote this post, turns out DeepMind bought MuJoCo and made it open-source and free (at https://mujoco.org/). Good stuff :)</p>
+<p>So, later on the same day I wrote this post, turns out DeepMind bought MuJoCo
+and made it open-source and free (at https://mujoco.org/). Good stuff :)</p>
 <h2 id="td3-description">TD3 description</h2>
 <h3 id="q-learning">Q learning</h3>
 <p>To describe TD3 briefly, it’s similar to Q learning.</p>
-<p>In Q learning, you’re learning a function \(\hat{\mathrm{Q}}_\theta(s,a)\), and a policy \(\pi\). You update \(\theta\) to make \(\hat{\mathrm{Q}}_\theta(s,a)\) match closer to the actual Q function for the policy \(\pi\), and you also update the policy \(\pi\) to gradually improve. You can do this exactly if you have a small enough environment to hold all this in memory. The procedure you use to make \(\hat{\mathrm{Q}}_\theta\) approximate \(\mathrm{Q}_\pi\) is basically SARSA: you minimize the squared error between \(\hat{\mathrm{Q}}_\theta(s,a)\) and an estimator that converges to center on the actual \(\mathrm{Q}_\pi(s,a)\). In the finite case, that Q learning estimator for a transition \(s \xrightarrow{a} (r, s’)\) is \(r + \gamma \max_{a’} \hat{\mathrm{Q}}_\theta(s’,a’)\). In vanilla Q learning, the followed policy is \(\mathrm{greedy}(\hat{\mathrm{Q}})\), which is what that maximum does.</p>
-<p>But when you’re in a continuous action space, you can’t just \(\arg\max\) over all possible actions.</p>
+<p>In Q learning, you’re learning a function \(\hat{\mathrm{Q}}_\theta(s,a)\), and a
+policy \(\pi\). You update \(\theta\) to make \(\hat{\mathrm{Q}}_\theta(s,a)\)
+match closer to the actual Q function for the policy \(\pi\), and you also
+update the policy \(\pi\) to gradually improve. You can do this exactly if
+you have a small enough environment to hold all this in memory. The procedure
+you use to make \(\hat{\mathrm{Q}}_\theta\) approximate
+\(\mathrm{Q}_\pi\) is basically SARSA: you minimize the squared error
+between \(\hat{\mathrm{Q}}_\theta(s,a)\) and an estimator that converges to
+center on the actual \(\mathrm{Q}_\pi(s,a)\). In the finite case, that
+Q learning estimator for a transition \(s \xrightarrow{a} (r, s’)\) is
+\(r + \gamma \max_{a’} \hat{\mathrm{Q}}_\theta(s’,a’)\). In vanilla Q
+learning, the followed policy is \(\mathrm{greedy}(\hat{\mathrm{Q}})\),
+which is what that maximum does.</p>
+<p>But when you’re in a continuous action space, you can’t just \(\arg\max\)
+over all possible actions.</p>
 <h3 id="ddpg">DDPG</h3>
-<p>Enter DDPG (Deep Deterministic Policy Gradient), in which you maintain 2 networks: the <em>critic</em> \(\hat{\mathrm{Q}}_\theta(s,a)\) which approximates the Q value of the current policy, and the <em>actor</em> - a deterministic policy \(\pi_\varphi: \mathcal{S} \rightarrow \mathcal{A}\), which you improve based on the critic’s estimations.</p>
-<p>Run the agent with your current policy in a replay buffer, plus with some exploration (like a bit of Gaussian noise added to actions). Draw a batch from the replay buffer, and do an optimization step on the critic to minimize its Bellman error: <br /><span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
-\left[\hat{\mathrm{Q}}_\theta(s,a) - (r + \gamma \hat{\mathrm{Q}}_\theta(s', \pi_\varphi(s')))\right]^2 $$</span><br /> Then update the actor to choose actions that get better Q values on the same batch: <br /><span class="math display">$$\arg\max_\varphi \sum_{(s,a) \in \mathrm{batch}} \hat{\mathrm{Q}}_\theta(s,\pi_\varphi(s))$$</span><br /> The batch has to be drawn randomly. This is important, because if you draw a bunch of states that immediately follow each other, their predictions will end up pulling each other to explode towards infinity.</p>
-<p>To prevent similar feedback cycles between the actor and critic, you keep 2 copies of each: the <em>optimized</em> one and the <em>target</em> one. They start out as exact copies. When computing the Bellman targets for the critic, instead of using the <em>optimized</em> actor and critic, use the <em>target</em> ones: <br /><span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
-\left[\hat{\mathrm{Q}}_{\theta_\text{opt}}(s,a) - (r + \gamma \hat{\mathrm{Q}}_{\theta_\text{targ}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span><br /> And slowly <a href="https://paperswithcode.com/method/polyak-averaging">Polyak-average</a> the target networks towards the optimized one (with (\approx 0.05)): <br /><span class="math display">$$
+<p>Enter DDPG (Deep Deterministic Policy Gradient), in which you maintain 2
+networks: the <em>critic</em> \(\hat{\mathrm{Q}}_\theta(s,a)\) which approximates
+the Q value of the current policy, and the <em>actor</em> - a deterministic policy
+\(\pi_\varphi: \mathcal{S} \rightarrow \mathcal{A}\), which you improve
+based on the critic’s estimations.</p>
+<p>Run the agent with your current policy in a replay buffer, plus with some
+exploration (like a bit of Gaussian noise added to actions). Draw a batch from
+the replay buffer, and do an optimization step on the critic to minimize its
+Bellman error:
+<span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
+\left[\hat{\mathrm{Q}}_\theta(s,a) - (r + \gamma \hat{\mathrm{Q}}_\theta(s', \pi_\varphi(s')))\right]^2 $$</span>
+Then update the actor to choose actions that get better Q values on the same
+batch:
+<span class="math display">$$\arg\max_\varphi \sum_{(s,a) \in \mathrm{batch}} \hat{\mathrm{Q}}_\theta(s,\pi_\varphi(s))$$</span>
+The batch has to be drawn randomly. This is important, because if you draw a
+bunch of states that immediately follow each other, their predictions will end
+up pulling each other to explode towards infinity.</p>
+<p>To prevent similar feedback cycles between the actor and critic, you keep 2
+copies of each: the <em>optimized</em> one and the <em>target</em> one. They start out as
+exact copies. When computing the Bellman targets for the critic, instead of
+using the <em>optimized</em> actor and critic, use the <em>target</em> ones:
+<span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
+\left[\hat{\mathrm{Q}}_{\theta_\text{opt}}(s,a) - (r + \gamma \hat{\mathrm{Q}}_{\theta_\text{targ}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span>
+And slowly <a href="https://paperswithcode.com/method/polyak-averaging">Polyak-average</a>
+the target networks towards the optimized one (with (\approx 0.05)):
+<span class="math display">$$
 \begin{align*}
 \theta_\text{targ} &amp; \gets \varrho \cdot \theta_\text{opt} + (1-\varrho) \cdot \theta_\text{targ} \\
 \varphi_\text{targ} &amp; \gets \varrho \cdot \varphi_\text{opt} + (1-\varrho) \cdot \varphi_\text{targ}
 \end{align*}
-$$</span><br /> By the way, I made up this a shorthand notation for this operation “update x towards y with update size (\alpha)”: <br /><span class="math display">$$\require{extpfeil}
+$$</span>
+By the way, I made up this a shorthand notation for this operation “update x towards
+y with update size (\alpha)”:
+<span class="math display">$$\require{extpfeil}
 \theta_\text{targ} \xmapsto{\varrho} \theta_\text{opt}, \varphi_\text{targ}
 \xmapsto{\varrho} \varphi_\text{opt}
-$$</span><br /></p>
+$$</span></p>
 <h3 id="td3">TD3</h3>
-<p>Twin Delayed Deep Deterministic Policy Gradient was introduced in a paper called <a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods</a>. Note the “function approximation error” part. This talks about the error inherent in how \(\hat{\mathrm{Q}}_\theta\) approximates the real \(\mathrm{Q}_\pi\). In particular, if in a state \(s\), the critic overestimates the Q value for some action \(a\), the actor’s optimization step will be incentivized to exploit that overestimation. But that doesn’t mean it’ll actually get a better result.</p>
+<p>Twin Delayed Deep Deterministic Policy Gradient was introduced in a paper called
+<a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods</a>.
+Note the “function approximation error” part. This talks about the error
+inherent in how \(\hat{\mathrm{Q}}_\theta\) approximates the real
+\(\mathrm{Q}_\pi\). In particular, if in a state \(s\), the critic
+overestimates the Q value for some action \(a\), the actor’s optimization
+step will be incentivized to exploit that overestimation. But that doesn’t mean
+it’ll actually get a better result.</p>
 <p>TD3 adds 3 steps to address this:</p>
 <ol type="1">
-<li><em>Target policy smoothing</em>: in the Bellman update, instead of expecting to follow \(\pi_{\varphi_\text{targ}}\) exactly, add a bit of Gaussian noise to the chosen action. That way the policy can’t try to hit a small peak of overestimation by the critic.</li>
-<li><em>Twin critics</em>: train 2 critics, both to minimize the Bellman error. Optimize the policy to maximize one of them. Instead of setting critics’ targets based on one critic, choose the target based on the lesser of their two predictions. If you train 2 networks, they’re unlikely to overestimate the real Q function in the same place. <br /><span class="math display">$$\arg\min_\theta \sum_{i \in {1, 2}} \sum_{(s,a,r,s') \in \mathrm{batch}}
-\left[\hat{\mathrm{Q}}_{\theta_{i, \text{opt}}}(s,a) - (r + \gamma \min_{j\in {1, 2}}\hat{\mathrm{Q}}_{\theta_{j, \text{targ}}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span><br /></li>
-<li><em>Delayed policy updates</em>: update the policy just once per 2 batches (i.e., 2x slower than the critics).</li>
+<li><em>Target policy smoothing</em>: in the Bellman update, instead of expecting to
+follow \(\pi_{\varphi_\text{targ}}\) exactly, add a bit of Gaussian
+noise to the chosen action. That way the policy can’t try to hit a small peak
+of overestimation by the critic.</li>
+<li><em>Twin critics</em>: train 2 critics, both to minimize the Bellman error. Optimize
+the policy to maximize one of them. Instead of setting critics’ targets based
+on one critic, choose the target based on the lesser of their two
+predictions. If you train 2 networks, they’re unlikely to overestimate the
+real Q function in the same place.
+<span class="math display">$$\arg\min_\theta \sum_{i \in {1, 2}} \sum_{(s,a,r,s') \in \mathrm{batch}}
+\left[\hat{\mathrm{Q}}_{\theta_{i, \text{opt}}}(s,a) - (r + \gamma \min_{j\in {1, 2}}\hat{\mathrm{Q}}_{\theta_{j, \text{targ}}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span></li>
+<li><em>Delayed policy updates</em>: update the policy just once per 2 batches (i.e.,
+2x slower than the critics).</li>
 </ol>
 <h2 id="rais-ml-mistake-5-multiplication-what-multiplication">Rai’s ML mistake #5: Multiplication? What multiplication?</h2>
-<p>The following happened over the course of ~6 weeks, as I gathered a few hours at a time of energy, will, etc. to work on this.</p>
-<p>So, I go and implement my algorithm and run it. On my first try, I implement it wrong because I misremember how to implement it. I go back to Spinning Up in Deep RL, smack myself on the forehead, and go fix it. Run it again.</p>
+<p>The following happened over the course of ~6 weeks, as I gathered a few hours at
+a time of energy, will, etc. to work on this.</p>
+<p>So, I go and implement my algorithm and run it. On my first try, I implement it
+wrong because I misremember how to implement it. I go back to Spinning Up in
+Deep RL, smack myself on the forehead, and go fix it. Run it again.</p>
 <p>It’s learning <em>something</em>. The average reward is going up. But slowly.</p>
 <figure>
+<figure>
 <img src="/static/2021-10-18-mean-reward.png" alt="Slowly increasing mean reward graph" />
+<figcaption aria-hidden="true">Slowly increasing mean reward graph</figcaption>
 </figure>
-<p>Then, over the next ~4 weeks, whenever I have some time, I try to bang my head against the keyboard some more. Tweak all the hyperparameters. Look up the hyperparameters they use in <a href="https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/td3.yml">rl-baselines3-zoo</a>. No dice. Repeat for a while, for all hyperparameters - critic learning rate, actor learning rate, actor delay, replay buffer size, batch size, Polyak rate, discount rate, initial random action steps. Rewrite the code twice-thrice. Still the same issue. Keep it training for several days. Does not help. Repeat a few times.</p>
+</figure>
+<p>Then, over the next ~4 weeks, whenever I have some time, I try to bang my head
+against the keyboard some more. Tweak all the hyperparameters. Look up the
+hyperparameters they use in <a href="https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/td3.yml">rl-baselines3-zoo</a>.
+No dice. Repeat for a while, for all hyperparameters - critic learning rate,
+actor learning rate, actor delay, replay buffer size, batch size, Polyak rate,
+discount rate, initial random action steps. Rewrite the code twice-thrice. Still
+the same issue. Keep it training for several days. Does not help. Repeat a few
+times.</p>
 <h3 id="thanks-god-theres-a-reference-implementation">Thanks God there’s a reference implementation</h3>
-<p>I wanted to implement this algorithm on my own, because I want to grok it. But I got to the end of my wits here, and started thinking: “hell, can this algorithm even <em>solve this environment</em>”? <a href="https://arxiv.org/abs/1802.09477">The paper</a> had graphs and results with the half-cheetah. But that was the MuJoCo half-cheetah. Maybe the PyBullet half-cheetah had a different reward scale and this was actually as good as it went?</p>
-<p>Unlikely. All my half-cheetah did in evaluation was stand upright without moving. Maybe sometimes kinda jump once.</p>
+<p>I wanted to implement this algorithm on my own, because I want to grok it.
+But I got to the end of my wits here, and started thinking: “hell, can this
+algorithm even <em>solve this environment</em>”? <a href="https://arxiv.org/abs/1802.09477">The paper</a> had graphs and
+results with the half-cheetah. But that was the MuJoCo half-cheetah. Maybe the
+PyBullet half-cheetah had a different reward scale and this was actually as good
+as it went?</p>
+<p>Unlikely. All my half-cheetah did in evaluation was stand upright without moving.
+Maybe sometimes kinda jump once.</p>
+<figure>
 <figure>
 <img src="/static/2021-10-18-standing.png" alt="Standing half-cheetah" />
+<figcaption aria-hidden="true">Standing half-cheetah</figcaption>
 </figure>
-<p>But yeah. Let’s run the reference implementation and see what it does. I start it for a few minutes, and…</p>
+</figure>
+<p>But yeah. Let’s run the reference implementation and see what it does. I start
+it for a few minutes, and…</p>
 <pre><code>...
 Total T: 109000 Episode Num: 109 Episode T: 1000 Reward: 938.893
 Total T: 110000 Episode Num: 110 Episode T: 1000 Reward: 987.304
 ---------------------------------------
 Evaluation over 10 episodes: 963.088
 ---------------------------------------</code></pre>
-<p>God dammit. I was getting <em>maybe</em>, on a <em>lucky episode</em>, like 300 at most, and that was <em>after millions of training steps</em>…</p>
+<p>God dammit. I was getting <em>maybe</em>, on a <em>lucky episode</em>, like 300 at most, and
+that was <em>after millions of training steps</em>…</p>
 <h3 id="does-it-just-not-work-because-of-tensorflow">Does it just not work because of Tensorflow?!</h3>
-<p>Okay, so I have code A which does not work (my code), and code B which does (reference implementation). I know what to do here. Align code A and code B together so that they’re similar, and then scour the diff line by line. Somewhere in there there’s my bug.</p>
+<p>Okay, so I have code A which does not work (my code), and code B which does
+(reference implementation). I know what to do here. Align code A and code B
+together so that they’re similar, and then scour the diff line by line.
+Somewhere in there there’s my bug.</p>
 <p>I refactor my code, rename variables, etc., until the diff is small.</p>
-<p>Now the only diff I see is basically me using Tensorflow and the reference implementation using PyTorch. Stuff like this:</p>
+<p>Now the only diff I see is basically me using Tensorflow and the reference
+implementation using PyTorch. Stuff like this:</p>
 <pre><code>2,3c3,7
 &lt; import tensorflow as tf
 &lt; from tensorflow.keras import layers as tfkl
@@ -100,77 +205,130 @@ Evaluation over 10 episodes: 963.088
 &gt;         state = torch.FloatTensor(state.reshape(1, -1)).to(device)
 &gt;         return self.actor(state).cpu().data.numpy().flatten()</code></pre>
 <p>And yet, my code doesn’t work, and their code does.</p>
-<p>I bang my head against this for maybe 2 more days. So, where can the differences be?</p>
-<p>Maybe different action scaling. I align action scaling like they do. Instead of “sigmoid, then rescale from 0 to 1 into <code>action_space.low</code> to <code>action_space.high</code>”, I do their “tanh, then multiply by <code>action_space.high</code>”. Those should be basically the same thing, but I do it anyway just to be safe. Still doesn’t work.</p>
-<p>Maybe different initialization. Unlikely, but possible. Their code uses Torch’s <a href="https://pytorch.org/docs/stable/generated/torch.nn.Linear.html">Linear</a>. It initializes weights and biases both randomly from \(\text{Uniform}([\pm \sqrt{\frac{1}{\text{input size}} }])\). I use TensorFlow/Keras’s <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense">Dense</a>. It uses <a href="https://www.tensorflow.org/api_docs/python/tf/keras/initializers/GlorotUniform">Xavier uniform initialization</a> (aka Glorot initialization, named … after someone named Xavier Glorot) by default, which draws from \(\text{Uniform}([\pm \sqrt{\frac{6}{\text{input size} + \text{output size} } }])\). And TensorFlow initializes biases to zero. Okay. I rewrite the TensorFlow initialization to do the same thing as Torch. Still the same. God dammit.</p>
-<p>Does the ADAM optimizer in TensorFlow and PyTorch work differently? … Maybe. I’m gonna shelve the idea of stepping through it for later.</p>
+<p>I bang my head against this for maybe 2 more days. So, where can the differences
+be?</p>
+<p>Maybe different action scaling. I align action scaling like they do. Instead of
+“sigmoid, then rescale from 0 to 1 into <code>action_space.low</code> to
+<code>action_space.high</code>”, I do their “tanh, then multiply by
+<code>action_space.high</code>”. Those should be basically the same thing, but I do it
+anyway just to be safe. Still doesn’t work.</p>
+<p>Maybe different initialization. Unlikely, but possible.
+Their code uses Torch’s <a href="https://pytorch.org/docs/stable/generated/torch.nn.Linear.html">Linear</a>.
+It initializes weights and biases both randomly from
+\(\text{Uniform}([\pm \sqrt{\frac{1}{\text{input size}} }])\).
+I use TensorFlow/Keras’s <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense">Dense</a>.
+It uses <a href="https://www.tensorflow.org/api_docs/python/tf/keras/initializers/GlorotUniform">Xavier uniform initialization</a>
+(aka Glorot initialization, named … after someone named Xavier Glorot)
+by default, which draws from
+\(\text{Uniform}([\pm \sqrt{\frac{6}{\text{input size} + \text{output size} } }])\).
+And TensorFlow initializes biases to zero.
+Okay. I rewrite the TensorFlow initialization to do the same thing as Torch.
+Still the same. God dammit.</p>
+<p>Does the ADAM optimizer in TensorFlow and PyTorch work differently? … Maybe.
+I’m gonna shelve the idea of stepping through it for later.</p>
 <h3 id="copy-the-whole-goddamn-setup">Copy the whole goddamn setup</h3>
-<p>I decide that I’ll copy even more of their code. Okay, this is unlikely, but what if there’s something wrong with how I initialize the environment or something? I copy their <code>main.py</code>, switch it to TensorFlow, and use their <code>utils.py</code>.</p>
+<p>I decide that I’ll copy even more of their code. Okay, this is unlikely, but
+what if there’s something wrong with how I initialize the environment or
+something? I copy their <code>main.py</code>, switch it to TensorFlow, and use their
+<code>utils.py</code>.</p>
 <p>And now it works, and I scream.</p>
-<p>It’s the <code>utils.py</code> that did it. <a href="https://github.com/sfujim/TD3/blob/master/utils.py">That file in their repo</a> implements the replay buffer. I didn’t pore over my implementation in detail, because … hey, it’s the simplest part. How would I mess up a replay buffer?</p>
-<p>Their replay buffer exists in RAM, and has NumPy arrays. It uses NumPy’s randomness. I use TensorFlow variables and TensorFlow’s <a href="https://www.tensorflow.org/api_docs/python/tf/random/Generator"><code>tf.random.Generator</code></a>.</p>
+<p>It’s the <code>utils.py</code> that did it. <a href="https://github.com/sfujim/TD3/blob/master/utils.py">That file in their repo</a>
+implements the replay buffer. I didn’t pore over my implementation in detail,
+because … hey, it’s the simplest part. How would I mess up a replay buffer?</p>
+<p>Their replay buffer exists in RAM, and has NumPy arrays. It uses NumPy’s
+randomness. I use TensorFlow variables and TensorFlow’s <a href="https://www.tensorflow.org/api_docs/python/tf/random/Generator"><code>tf.random.Generator</code></a>.</p>
 <p>After some work, I find the culprit lines.</p>
-<p>Here’s how my code stores the replay buffer’s rewards and “is this the final state” flag:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">class</span> ReplayBuffer:</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">	<span class="co"># ... snip ...</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">        <span class="va">self</span>.reward <span class="op">=</span> tf.Variable(tf.zeros((max_size, )), dtype<span class="op">=</span>tf.float32)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">        <span class="va">self</span>.not_done <span class="op">=</span> tf.Variable(tf.zeros((max_size, ), dtype<span class="op">=</span>tf.float32),</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">                                    dtype<span class="op">=</span>tf.float32)</a></code></pre></div>
+<p>Here’s how my code stores the replay buffer’s rewards and “is this the final
+state” flag:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>	<span class="co"># ... snip ...</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reward <span class="op">=</span> tf.Variable(tf.zeros((max_size, )), dtype<span class="op">=</span>tf.float32)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.not_done <span class="op">=</span> tf.Variable(tf.zeros((max_size, ), dtype<span class="op">=</span>tf.float32),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                    dtype<span class="op">=</span>tf.float32)</span></code></pre></div>
 <p>And this is how they do it:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">class</span> ReplayBuffer(<span class="bu">object</span>):</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">	<span class="co"># ... snip ...</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">        <span class="va">self</span>.reward <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">        <span class="va">self</span>.not_done <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</a></code></pre></div>
-<p>What’s the difference? I have a vector, a 1-dimensional tensor. They have a 2-dimensional tensor, with second dimension 1.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer(<span class="bu">object</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>	<span class="co"># ... snip ...</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reward <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.not_done <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</span></code></pre></div>
+<p>What’s the difference? I have a vector, a 1-dimensional tensor. They have a
+2-dimensional tensor, with second dimension 1.</p>
 <h3 id="and-of-course-its-goddamn-tensor-shapes.">And of course it’s goddamn tensor shapes.</h3>
 <p>And of course it’s goddamn tensor shapes.</p>
-<p>On its own, it doesn’t matter whether I have the replay buffer shaped like I had it, or like they did.</p>
-<p>What matters is what happens when I combine it with this code which computes the target Q values:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Select action according to policy and add clipped noise</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">noise <span class="op">=</span> tf.random.normal(shape<span class="op">=</span>action.shape) <span class="op">*</span> <span class="va">self</span>.policy_noise</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">noise <span class="op">=</span> tf.clip_by_value(noise, <span class="op">-</span><span class="va">self</span>.noise_clip, <span class="va">self</span>.noise_clip)</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">next_action <span class="op">=</span> (<span class="va">self</span>.actor_target(next_state) <span class="op">+</span> noise)</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">next_action <span class="op">=</span> tf.clip_by_value(next_action, <span class="op">-</span><span class="va">self</span>.max_action,</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">			       <span class="va">self</span>.max_action)</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co"># Compute the target Q value</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10">target_Q1, target_Q2 <span class="op">=</span> <span class="va">self</span>.critic_target((next_state, next_action))</a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">target_Q <span class="op">=</span> tf.math.minimum(target_Q1, target_Q2)</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12">target_Q <span class="op">=</span> reward <span class="op">+</span> not_done <span class="op">*</span> <span class="va">self</span>.discount <span class="op">*</span> target_Q</a></code></pre></div>
-<p>TD3 maintains 2 critics. <code>critic_target</code> is a Keras model, which contains two stacks of feed-forward layers. At the end, they have a <code>q_value = tf.keras.layers.Dense(1, ...)</code>, and then the whole model returns the tuple <code>(q1_value, q2_value)</code>.</p>
+<p>On its own, it doesn’t matter whether I have the replay buffer shaped like I had
+it, or like they did.</p>
+<p>What matters is what happens when I combine it with this code which computes
+the target Q values:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select action according to policy and add clipped noise</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> tf.random.normal(shape<span class="op">=</span>action.shape) <span class="op">*</span> <span class="va">self</span>.policy_noise</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> tf.clip_by_value(noise, <span class="op">-</span><span class="va">self</span>.noise_clip, <span class="va">self</span>.noise_clip)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>next_action <span class="op">=</span> (<span class="va">self</span>.actor_target(next_state) <span class="op">+</span> noise)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>next_action <span class="op">=</span> tf.clip_by_value(next_action, <span class="op">-</span><span class="va">self</span>.max_action,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>			       <span class="va">self</span>.max_action)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the target Q value</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>target_Q1, target_Q2 <span class="op">=</span> <span class="va">self</span>.critic_target((next_state, next_action))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>target_Q <span class="op">=</span> tf.math.minimum(target_Q1, target_Q2)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>target_Q <span class="op">=</span> reward <span class="op">+</span> not_done <span class="op">*</span> <span class="va">self</span>.discount <span class="op">*</span> target_Q</span></code></pre></div>
+<p>TD3 maintains 2 critics. <code>critic_target</code> is a Keras model, which contains two
+stacks of feed-forward layers. At the end, they have a
+<code>q_value = tf.keras.layers.Dense(1, ...)</code>, and then the whole model returns the
+tuple <code>(q1_value, q2_value)</code>.</p>
 <p>With that in mind, what’s the shape of <code>target_Q1</code>?</p>
-<p>No, it’s not <span class="math inline">(batch size)</span>. It’s <span class="math inline">(batch size, 1)</span>. Because of course there’s the last dimension of size 1 - if your model has more than 1 output node, you need to stack them.</p>
+<p>No, it’s not <span class="math inline">(batch size)</span>. It’s <span class="math inline">(batch size,1)</span>. Because
+of course there’s the last dimension of size 1 - if your model has more than 1
+output node, you need to stack them.</p>
 <p>What’s the shape of <code>not_done</code>?</p>
-<p>With my replay buffer, it was <span class="math inline">(batch size)</span>. One scalar per experience in batch, right? With the reference implementation’s replay buffer, it was <span class="math inline">(batch size, 1)</span>.</p>
-<p>Consider the line <code>target_Q = reward + not_done * self.discount * target_Q</code>, where <code>target_Q</code> has shape <span class="math inline">(batch size, 1)</span> and, as established for my code, <code>not_done</code> has shape <span class="math inline">(batch size)</span>. What’s the shape of the computed expression?</p>
-<p>If you answered <span class="math inline">(batch size, batch size)</span>, I guess you win. And that was not intended. I wanted it to be <span class="math inline">(batch size)</span> - one target Q value for one replay experience in batch.</p>
+<p>With my replay buffer, it was <span class="math inline">(batch size)</span>. One scalar per experience
+in batch, right? With the reference implementation’s replay buffer, it was
+<span class="math inline">(batch size,1)</span>.</p>
+<p>Consider the line <code>target_Q = reward + not_done * self.discount * target_Q</code>,
+where <code>target_Q</code> has shape <span class="math inline">(batch size,1)</span> and, as established for my
+code, <code>not_done</code> has shape <span class="math inline">(batch size)</span>. What’s the shape of the
+computed expression?</p>
+<p>If you answered <span class="math inline">(batch size,batch size)</span>, I guess you win.
+And that was not intended. I wanted it to be <span class="math inline">(batch size)</span> - one
+target Q value for one replay experience in batch.</p>
 <p>What happens next with this <code>target_Q</code>?</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="at">@tf.function</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">def</span> _mse(x, y):</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="cf">return</span> tf.reduce_mean(tf.math.squared_difference(x, y))</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6">    <span class="co"># Get current Q estimates</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7">    current_Q1, current_Q2 <span class="op">=</span> <span class="va">self</span>.critic((state, action))</a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9">    <span class="co"># Compute critic loss</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10">    critic_loss <span class="op">=</span> (_mse(current_Q1, target_Q) <span class="op">+</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11">		   _mse(current_Q2, target_Q))</a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co"># Optimize the critic</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="va">self</span>.critic_optimizer.minimize(</a>
-<a class="sourceLine" id="cb6-15" data-line-number="15">    critic_loss, tape<span class="op">=</span>tape, var_list<span class="op">=</span><span class="va">self</span>.critic.trainable_variables)</a></code></pre></div>
-<p>… Great. <code>current_Q1</code> / <code>current_Q2</code> have shapes <span class="math inline">(batch size, 1)</span>, which is compatible with <span class="math inline">(batch size, batch size)</span>. So they get auto-broadcast… and <code>reduce_mean</code> gladly reduces the matrix of squared errors to a scalar mean. Awesome. Thank you. I’m so glad Autobroadcast Man and Default Options Girl arrived and saved the day.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _mse(x, y):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tf.reduce_mean(tf.math.squared_difference(x, y))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get current Q estimates</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    current_Q1, current_Q2 <span class="op">=</span> <span class="va">self</span>.critic((state, action))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute critic loss</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    critic_loss <span class="op">=</span> (_mse(current_Q1, target_Q) <span class="op">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>		   _mse(current_Q2, target_Q))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimize the critic</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="va">self</span>.critic_optimizer.minimize(</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    critic_loss, tape<span class="op">=</span>tape, var_list<span class="op">=</span><span class="va">self</span>.critic.trainable_variables)</span></code></pre></div>
+<p>… Great. <code>current_Q1</code> / <code>current_Q2</code> have shapes <span class="math inline">(batch size,1)</span>,
+which is compatible with <span class="math inline">(batch size,batch size)</span>. So they get
+auto-broadcast… and <code>reduce_mean</code> gladly reduces the matrix of squared errors
+to a scalar mean. Awesome. Thank you. I’m so glad Autobroadcast Man and Default
+Options Girl arrived and saved the day.</p>
 <h3 id="learnings">Learnings</h3>
 <p>So what did I learn today?</p>
 <p>It’s always, <em>always</em>, <strong>ALWAYS</strong> those goddamn tensor shapes.</p>
-<p>Put <a href="https://www.tensorflow.org/api_docs/python/tf/debugging/assert_shapes"><code>tf.debugging.assert_shapes</code></a> f***ing <strong>everywhere</strong>.</p>
-<p>And probably write unit tests, too. I probably won’t be bothered to do that anyway because writing unit tests for code that has complex optimizers and neural nets is annoying.</p>
-<p>And maybe I should be using operators that don’t auto-broadcast, or something that doesn’t allow me to mistakenly vector-vector-to-matrix multiply when I mean to vector-vector-elementwise multiply.</p>
-<p>I’m not done being annoyed and sour about this but I’m done ranting about it here. Ciao, see you next time I kill a few weeks on another mistake this stupid. This is the point of all those “Rai’s ML mistakes” posts. I write these algorithms so I can grok them, and I headsmash the keyboard this way because I hope now I’ll remember with a bit more clarity and immediacy: “It’s always the goddamn tensor shapes”.</p>
+<p>Put <a href="https://www.tensorflow.org/api_docs/python/tf/debugging/assert_shapes"><code>tf.debugging.assert_shapes</code></a>
+f***ing <strong>everywhere</strong>.</p>
+<p>And probably write unit tests, too. I probably won’t be bothered to do that
+anyway because writing unit tests for code that has complex optimizers and
+neural nets is annoying.</p>
+<p>And maybe I should be using operators that don’t auto-broadcast, or something
+that doesn’t allow me to mistakenly vector-vector-to-matrix multiply when I
+mean to vector-vector-elementwise multiply.</p>
+<p>I’m not done being annoyed and sour about this but I’m done ranting about it
+here. Ciao, see you next time I kill a few weeks on another mistake this stupid.
+This is the point of all those “Rai’s ML mistakes” posts. I write these
+algorithms so I can grok them, and I headsmash the keyboard this way because
+I hope now I’ll remember with a bit more clarity and immediacy: “It’s always the
+goddamn tensor shapes”.</p>
 <p>My fixed code is <a href="https://gitlab.com/agentydragon/rl-experiments/-/merge_requests/8">on my GitLab</a>, and here’s the obligatory scoot-scoot:</p>
 <figure>
 <video controls loop autoplay>
@@ -181,7 +339,8 @@ Evaluation over 10 episodes: 963.088
 </div>
 </figure>
 <h3 id="update-mujoco-half-cheetah">Update: MuJoCo half-cheetah</h3>
-<p>So, since MuJoCo is now open-source, I tried it and got the MuJoCo environment <code>HalfCheetah-v2</code> also working. Nice :)</p>
+<p>So, since MuJoCo is now open-source, I tried it and got the MuJoCo environment
+<code>HalfCheetah-v2</code> also working. Nice :)</p>
 <figure>
 <video controls loop autoplay>
 <source src="/static/2021-10-19-half-cheetah-mujoco.mp4" type="video/mp4">
@@ -197,136 +356,222 @@ Evaluation over 10 episodes: 963.088
     <id>http://agentydragon.com/posts/2021-01-04-rai-ml-mistakes-2.html</id>
     <published>2021-01-04T00:00:00Z</published>
     <updated>2021-01-04T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<p>Continuing my list of ML mistakes from <a href="/posts/2020-12-31-cartpole-q-learning.html">last time</a>, here’s:</p>
+    <summary type="html"><![CDATA[<p>Continuing my list of ML mistakes from <a href="/posts/2020-12-31-cartpole-q-learning.html">last
+time</a>, here’s:</p>
 <h1 id="rais-ml-mistake-4-too-much-autograd">Rai’s ML mistake #4: Too much autograd</h1>
-<p>So here I am, writing an agent for <a href="https://gym.openai.com/envs/LunarLander-v2/">LunarLander-v2</a>. I’m using Q-learning. I approximate <span class="math inline"><em>q</em><sub>*</sub>(<em>s</em>, <em>a</em>)</span> as <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>s</em>, <em>a</em>)</span> with a neural network, taking a vector representing the state, and outputting one approximate action value per output. The neural network is trained to minimize squared TD error on the policy the agent’s running, which is <span class="math inline"><em>ε</em></span>-greedy with respect to <span class="math inline"><em>q̂</em></span>: <br /><span class="math display">$$
+<p>So here I am, writing an agent for
+<a href="https://gym.openai.com/envs/LunarLander-v2/">LunarLander-v2</a>.
+I’m using Q-learning. I approximate <span class="math inline"><em>q</em><sub>*</sub>(<em>s</em>,<em>a</em>)</span> as
+<span class="math inline">q̂<sub><em>w</em></sub>(<em>s</em>,<em>a</em>)</span> with a neural network, taking a vector representing
+the state, and outputting one approximate action value per output.
+The neural network is trained to minimize squared TD error on the policy the
+agent’s running, which is <span class="math inline"><em>ε</em></span>-greedy with respect to
+<span class="math inline">q̂</span>:
+<span class="math display">$$
 \begin{align*}
 \require{extpfeil}
 \ell(w) &amp;= \mathop{\mathbb{E}}\limits_{(S \xrightarrow{A} R,S') \sim \mathrm{greedy}(\mathrm{\hat{q}}_w)}
 \left[ \left(\mathrm{\hat{q}}_w(S, A) - (R + \gamma \max_{A'} \mathrm{\hat{q}}_w(S',A')) \right)^2 \right] \\
 \text{output } &amp;\arg\min_w \ell(w)
 \end{align*}
-$$</span><br /></p>
+$$</span></p>
 <h2 id="not-quite-off-policy">Not quite off-policy</h2>
 <p>One note about the “policity” of this method.</p>
-<p>Tabular Q-learning without function approximation is off-policy - you learn about <span class="math inline"><em>π</em><sub>*</sub></span> from experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)</span> sampled from any (sane™) policy. You just keep updating <span class="math inline"><em>q̂</em>(<em>S</em>, <em>A</em>)</span> towards <span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub><em>q̂</em>(<em>S</em>′, <em>A</em>′)</span>, and to <span class="math inline">max </span> is there because you want to learn about the optimal policy.</p>
-<p>But note that in <span class="math inline">ℓ(<em>w</em>)</span>, the experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)</span> is sampled from the policy <span class="math inline"><em>g</em><em>r</em><em>e</em><em>e</em><em>d</em><em>y</em>(<em>q̂</em><sub><em>w</em></sub>)</span>. We need to expect <em>over a policy</em>, because we’re using function approximation, so presumably we cannot learn a <span class="math inline"><em>w</em></span> which would make <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span> exactly fit <span class="math inline"><em>q</em><sub>*</sub></span>. So we have to pick out battles for how well do we approximate <span class="math inline"><em>q</em><sub>*</sub></span> - we care about approximating it closely for states and actions actually visited by the estimation policy.</p>
-<p>Instead of assuming that we can sample <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)</span> from <span class="math inline"><em>g</em><em>r</em><em>e</em><em>e</em><em>d</em><em>y</em>(<em>q̂</em><sub><em>w</em></sub>)</span> (so that we can approximate the expected squared TD error over it), I guess you could use the general importance sampling recipe to get rid of that: <br /><span class="math display">$$\mathop{\mathbb{E}}_\limits{X\sim \pi}[\mathrm{f}(X)] =
-\mathop{\mathbb{E}}_\limits{X\sim b}\left[\mathrm{f}(X) \cdot \frac{\pi(X)}{b(X)}\right]$$</span><br /></p>
+<p>Tabular Q-learning without function approximation is off-policy - you learn
+about <span class="math inline"><em>π</em><sub>*</sub></span> from experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)</span> sampled from any
+(sane™) policy. You just keep updating <span class="math inline">q̂(<em>S</em>,<em>A</em>)</span> towards
+<span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub>q̂(<em>S</em>′,<em>A</em>′)</span>, and to <span class="math inline">max </span> is there because you want
+to learn about the optimal policy.</p>
+<p>But note that in <span class="math inline">ℓ(<em>w</em>)</span>, the experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)</span> is
+sampled from the policy <span class="math inline">greedy(q̂<sub><em>w</em></sub>)</span>.
+We need to expect <em>over a policy</em>, because we’re using function approximation,
+so presumably we cannot learn a <span class="math inline"><em>w</em></span> which would make <span class="math inline">q̂<sub><em>w</em></sub></span>
+exactly fit <span class="math inline"><em>q</em><sub>*</sub></span>. So we have to pick out battles for how well do we
+approximate <span class="math inline"><em>q</em><sub>*</sub></span> - we care about approximating it closely for
+states and actions actually visited by the estimation policy.</p>
+<p>Instead of assuming that we can sample <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)</span> from
+<span class="math inline">greedy(q̂<sub><em>w</em></sub>)</span> (so that we can approximate the expected
+squared TD error over it), I guess you could use the general importance sampling
+recipe to get rid of that:
+<span class="math display">$$\mathop{\mathbb{E}}_\limits{X\sim \pi}[\mathrm{f}(X)] =
+\mathop{\mathbb{E}}_\limits{X\sim b}\left[\mathrm{f}(X) \cdot \frac{\pi(X)}{b(X)}\right]$$</span></p>
 <h2 id="semi-gradient">Semi-gradient</h2>
 <p>So, we want to minimize <span class="math inline">ℓ</span>.</p>
-<p>Note that <span class="math inline">ℓ</span> depends on <span class="math inline"><em>w</em></span> (via <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>) in 3 places:</p>
+<p>Note that <span class="math inline">ℓ</span> depends on <span class="math inline"><em>w</em></span> (via <span class="math inline">q̂<sub><em>w</em></sub></span>) in 3 places:</p>
 <ol type="1">
-<li>In <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span>, which we are trying to nudge to move to the right place,</li>
-<li>in <span class="math inline"><em>R</em> + <em>γ</em>max<sub><em>A</em>′</sub><em>q̂</em><sub><em>w</em></sub>(<em>S</em>′, <em>A</em>′)</span>, which is a sample from a distribution centered on <span class="math inline"><em>q</em><sub><em>g</em><em>r</em><em>e</em><em>e</em><em>d</em><em>y</em>(<em>q̂</em><sub><em>w</em></sub>)</sub>(<em>S</em>, <em>A</em>)</span>,</li>
+<li>In <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span>, which we are trying to nudge to move to the
+right place,</li>
+<li>in <span class="math inline"><em>R</em> + <em>γ</em>max<sub><em>A</em>′</sub>q̂<sub><em>w</em></sub>(<em>S</em>′,<em>A</em>′)</span>, which is a sample
+from a distribution centered on
+<span class="math inline"><em>q</em><sub>greedy(q̂<sub><em>w</em></sub>)</sub>(<em>S</em>,<em>A</em>)</span>,</li>
 <li>and in the distribution we’re taking the expectation on.</li>
 </ol>
-<p>In practice, we hold (2) and (3) constant, and in one optimization step, we wiggle <span class="math inline"><em>w</em></span> only to move <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span> closer to targets. That means that in our gradient, we are ignoring the dependency of (2) and (3) on the <span class="math inline"><em>w</em></span> that we are optimizing, which makes this not a full gradient method, but instead a <em>semi-gradient</em> method.</p>
+<p>In practice, we hold (2) and (3) constant, and in one optimization step, we
+wiggle <span class="math inline"><em>w</em></span> only to move <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span> closer to targets.
+That means that in our gradient, we are ignoring the dependency of (2) and (3)
+on the <span class="math inline"><em>w</em></span> that we are optimizing, which makes this not a full gradient method,
+but instead a <em>semi-gradient</em> method.</p>
 <h2 id="experience-replay">Experience replay</h2>
-<p>My first shot at this agent just learned from 1 step (sampled from <span class="math inline"><em>ε</em></span>-greedy policy for <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>) at a time. It worked in the sense that it ended up learning a policy close enough to “solving the environment”. (The environment says the “solved reward” is 200. I got maybe like 150-180 over 100 episodes, so not quite there, but it’s close enough for me to say “meh, I’ll wiggle a few hyperparameters and get there”.)</p>
-<p>But to learn a fair policy, it took the agent about 10 000 episodes, and the per-episode total reward over time made a spiky ugly graph:</p>
+<p>My first shot at this agent just learned from 1 step (sampled from
+<span class="math inline"><em>ε</em></span>-greedy policy for <span class="math inline">q̂<sub><em>w</em></sub></span>) at a time. It worked
+in the sense that it ended up learning a policy close enough to “solving the
+environment”. (The environment says the “solved reward” is 200. I got maybe like
+150-180 over 100 episodes, so not quite there, but it’s close enough for me to
+say “meh, I’ll wiggle a few hyperparameters and get there”.)</p>
+<p>But to learn a fair policy, it took the agent about 10 000 episodes, and the
+per-episode total reward over time made a spiky ugly graph:</p>
 <figure>
 <img src="/static/2020-12-31-total_reward.svg" style="height: 400px;"
      title="Total reward per episode graph">
 </figure>
-<p>I don’t like that it takes all of 10 000 episodes, and I don’t like how spiky and ugly the chart is.</p>
-<p>Experience replay means we store a bunch of experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′)<sub>1, 2, …</sub></span> in a buffer, and instead of updating <span class="math inline"><em>w</em></span> by some gradient-based optimization method (I used ADAM) to minimize squared TD error one step at a time, we update it to minimize squared TD error over the whole buffer, a bunch of steps at a time.</p>
-<p>Experience replay should make learning more sample-efficient (so it should need less than 10 000 episodes). Also, it should reduce one source of “spikiness and ugliness” in the chart, because the chart will be doing step updates on a larger batch. Making the batch larger should reduce the variance of the updates.</p>
+<p>I don’t like that it takes all of 10 000 episodes, and I don’t like how spiky
+and ugly the chart is.</p>
+<p>Experience replay means we store a bunch of experience
+<span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)<sub>1, 2, …</sub></span> in a buffer, and instead of updating
+<span class="math inline"><em>w</em></span> by some gradient-based optimization method (I used ADAM) to minimize squared
+TD error one step at a time, we update it to minimize squared TD error over the
+whole buffer, a bunch of steps at a time.</p>
+<p>Experience replay should make learning more sample-efficient (so it should need
+less than 10 000 episodes). Also, it should reduce one source of “spikiness
+and ugliness” in the chart, because the chart will be doing step updates on
+a larger batch. Making the batch larger should reduce the variance of the
+updates.</p>
 <h2 id="broken-code">Broken code</h2>
-<p>So, here’s how I initially implemented one step of the update. <code>self.experience_{prestates, actions, rewards, poststates, done}</code> holds the experience buffer (<span class="math inline"><em>S</em>, <em>A</em>, <em>R</em>, <em>S</em>′</span> respectively for observed transition <span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>, plus flag to signal end of episode).</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="at">@tf.function</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">def</span> q_update(<span class="va">self</span>):</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</a>
-<a class="sourceLine" id="cb1-4" data-line-number="4">    <span class="co"># \max_{A&#39;} \hat{q}(S&#39;, A&#39;)</span></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5">    best_next_action_value <span class="op">=</span> tf.reduce_max(</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">        <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7">    <span class="co"># If episode ends after this step, the environment will only give us</span></a>
-<a class="sourceLine" id="cb1-8" data-line-number="8">    <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">    <span class="co"># state S&#39; is best_next_action_value.</span></a>
-<a class="sourceLine" id="cb1-10" data-line-number="10">    next_state_value <span class="op">=</span> tf.where(</a>
-<a class="sourceLine" id="cb1-11" data-line-number="11">        <span class="va">self</span>.experience_done,</a>
-<a class="sourceLine" id="cb1-12" data-line-number="12">        tf.zeros_like(best_next_action_value),</a>
-<a class="sourceLine" id="cb1-13" data-line-number="13">        best_next_action_value)</a>
-<a class="sourceLine" id="cb1-14" data-line-number="14">    targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"></a>
-<a class="sourceLine" id="cb1-16" data-line-number="16">    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></a>
-<a class="sourceLine" id="cb1-17" data-line-number="17">    <span class="co"># actions.</span></a>
-<a class="sourceLine" id="cb1-18" data-line-number="18">    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</a>
-<a class="sourceLine" id="cb1-19" data-line-number="19">    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></a>
-<a class="sourceLine" id="cb1-20" data-line-number="20">    <span class="co"># S_i --(A_i)--&gt; R_i, S&#39;_i, done_i.</span></a>
-<a class="sourceLine" id="cb1-21" data-line-number="21">    indices <span class="op">=</span> tf.stack(</a>
-<a class="sourceLine" id="cb1-22" data-line-number="22">      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</a>
-<a class="sourceLine" id="cb1-23" data-line-number="23">      axis<span class="op">=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb1-24" data-line-number="24">    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</a>
-<a class="sourceLine" id="cb1-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb1-26" data-line-number="26">    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</a>
-<a class="sourceLine" id="cb1-27" data-line-number="27">        values_of_selected_actions, targets)</a>
-<a class="sourceLine" id="cb1-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb1-29" data-line-number="29">  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</a>
-<a class="sourceLine" id="cb1-30" data-line-number="30">  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</a></code></pre></div>
+<p>So, here’s how I initially implemented one step of the update.
+<code>self.experience_{prestates, actions, rewards, poststates, done}</code> holds
+the experience buffer (<span class="math inline"><em>S</em>, <em>A</em>, <em>R</em>, <em>S</em>′</span> respectively for observed transition
+<span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>, plus flag to signal end of episode).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> q_update(<span class="va">self</span>):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># \max_{A&#39;} \hat{q}(S&#39;, A&#39;)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    best_next_action_value <span class="op">=</span> tf.reduce_max(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If episode ends after this step, the environment will only give us</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># state S&#39; is best_next_action_value.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    next_state_value <span class="op">=</span> tf.where(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.experience_done,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        tf.zeros_like(best_next_action_value),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        best_next_action_value)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># actions.</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># S_i --(A_i)--&gt; R_i, S&#39;_i, done_i.</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> tf.stack(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        values_of_selected_actions, targets)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</span></code></pre></div>
 <p>What’s wrong here?</p>
-<p>The symptom is that the policy is not improving. The total reward per episode is just oscillating.</p>
+<p>The symptom is that the policy is not improving. The total reward per episode
+is just oscillating.</p>
 <figure>
 <img src="/static/2020-sticker-hmm.png" title="Hmm">
 </figure>
 <h2 id="the-problem">The problem</h2>
 <p>Remember how I said it’s a <em>semi-gradient</em> method?</p>
 <p>Here’s the fix:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="at">@tf.function</span></a>
-<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">def</span> q_update(<span class="va">self</span>):</a>
-<a class="sourceLine" id="cb2-3" data-line-number="3">  <span class="co"># \max_{A&#39;} \hat{q}(S&#39;, A&#39;)</span></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">  best_next_action_value <span class="op">=</span> tf.reduce_max(</a>
-<a class="sourceLine" id="cb2-5" data-line-number="5">      <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb2-6" data-line-number="6">  <span class="co"># If episode ends after this step, the environment will only give us</span></a>
-<a class="sourceLine" id="cb2-7" data-line-number="7">  <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></a>
-<a class="sourceLine" id="cb2-8" data-line-number="8">  <span class="co"># state S&#39; is best_next_action_value.</span></a>
-<a class="sourceLine" id="cb2-9" data-line-number="9">  next_state_value <span class="op">=</span> tf.where(</a>
-<a class="sourceLine" id="cb2-10" data-line-number="10">      <span class="va">self</span>.experience_done,</a>
-<a class="sourceLine" id="cb2-11" data-line-number="11">      tf.zeros_like(best_next_action_value),</a>
-<a class="sourceLine" id="cb2-12" data-line-number="12">      best_next_action_value)</a>
-<a class="sourceLine" id="cb2-13" data-line-number="13">  targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</a>
-<a class="sourceLine" id="cb2-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb2-15" data-line-number="15">  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</a>
-<a class="sourceLine" id="cb2-16" data-line-number="16">    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></a>
-<a class="sourceLine" id="cb2-17" data-line-number="17">    <span class="co"># actions.</span></a>
-<a class="sourceLine" id="cb2-18" data-line-number="18">    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</a>
-<a class="sourceLine" id="cb2-19" data-line-number="19">    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></a>
-<a class="sourceLine" id="cb2-20" data-line-number="20">    <span class="co"># S_i --(A_i)--&gt; R_i, S&#39;_i, done_i.</span></a>
-<a class="sourceLine" id="cb2-21" data-line-number="21">    indices <span class="op">=</span> tf.stack(</a>
-<a class="sourceLine" id="cb2-22" data-line-number="22">      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</a>
-<a class="sourceLine" id="cb2-23" data-line-number="23">      axis<span class="op">=</span><span class="dv">1</span>)</a>
-<a class="sourceLine" id="cb2-24" data-line-number="24">    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</a>
-<a class="sourceLine" id="cb2-25" data-line-number="25"></a>
-<a class="sourceLine" id="cb2-26" data-line-number="26">    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</a>
-<a class="sourceLine" id="cb2-27" data-line-number="27">        values_of_selected_actions, targets)</a>
-<a class="sourceLine" id="cb2-28" data-line-number="28"></a>
-<a class="sourceLine" id="cb2-29" data-line-number="29">  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</a>
-<a class="sourceLine" id="cb2-30" data-line-number="30">  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> q_update(<span class="va">self</span>):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># \max_{A&#39;} \hat{q}(S&#39;, A&#39;)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  best_next_action_value <span class="op">=</span> tf.reduce_max(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If episode ends after this step, the environment will only give us</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># state S&#39; is best_next_action_value.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  next_state_value <span class="op">=</span> tf.where(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.experience_done,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      tf.zeros_like(best_next_action_value),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      best_next_action_value)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># actions.</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># S_i --(A_i)--&gt; R_i, S&#39;_i, done_i.</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> tf.stack(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        values_of_selected_actions, targets)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</span></code></pre></div>
 <p>So, what was the problem?</p>
-<p>The code calls the Q network twice: once to compute the targets (<span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub><em>q̂</em><sub><em>w</em></sub>(<em>S</em>′, <em>A</em>′)</span>), once to compute <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span>. Then, we will compute a loss, and we will take its partial <em>“semi-derivative”</em> with respect to <span class="math inline"><em>w</em></span>, and apply the gradient to bring <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span> closer to the target.</p>
-<p>The problem was: I also put the target computation into <code>GradientTape</code> scope, so the optimization was given the freedom to change not just <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>, <em>A</em>)</span>, but <em>also</em> <span class="math inline"><em>q̂</em><sub><em>w</em></sub>(<em>S</em>′, <em>A</em>′)</span>. So the fix was just to move computing the targets out of the <code>GradientTape</code> scope.</p>
-<p>I looked at this code basically non-stop for 2 hours, and I realized the error when I took a break and talked with a friend.</p>
+<p>The code calls the Q network twice: once to compute the targets (<span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub>q̂<sub><em>w</em></sub>(<em>S</em>′,<em>A</em>′)</span>), once to compute
+<span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span>. Then, we will compute a loss, and we will take its
+partial <em>“semi-derivative”</em> with respect to <span class="math inline"><em>w</em></span>, and apply the gradient to
+bring <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span> closer to the target.</p>
+<p>The problem was: I also put the target computation into <code>GradientTape</code> scope,
+so the optimization was given the freedom to change not just
+<span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span>, but <em>also</em> <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>′,<em>A</em>′)</span>.
+So the fix was just to move computing the targets out of the <code>GradientTape</code>
+scope.</p>
+<p>I looked at this code basically non-stop for 2 hours, and I realized the error
+when I took a break and talked with a friend.</p>
 <figure>
 <img src="/static/2020-sticker-ded.png" title="_(x.x)_   <-- ded">
 </figure>
 <h2 id="pet-peeve-47-math-typesetting">Pet peeve #47: math typesetting</h2>
-<p><em>The full list of previous 46 pet peeves will be provided on request, subject to a reasonable processing fee.</em></p>
+<p><em>The full list of previous 46 pet peeves will be provided on request, subject
+to a reasonable processing fee.</em></p>
 <h3 id="mathjax-hat-and-mathrm">MathJax, <code>\hat</code> and <code>\mathrm</code></h3>
-<p><span class="math inline"><em>q̂</em></span> is a function (of <span class="math inline"><em>w</em>, <em>S</em>, <em>A</em></span>), not a variable, so it shouldn’t be typeset in italic. I tried using <code>\hat{\mathrm{q}}_w</code>. I believe that works in LaTeX but turns out that MathJax is not willing to render it (<span class="math inline">$\hat{\mathrm{q}}$</span>). But <code>\mathrm{\hat{q}}</code> is perfectly fine: <span class="math inline"><em>q̂</em></span>. But <code>\mathrm{\hat{q}}_w</code> is perfectly fine: <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>.</p>
+<p><span class="math inline">q̂</span> is a function (of <span class="math inline"><em>w</em>, <em>S</em>, <em>A</em></span>), not a variable, so it
+shouldn’t be typeset in italic. I tried using <code>\hat{\mathrm{q}}_w</code>. I believe
+that works in LaTeX but turns out that MathJax is not willing to render it
+(<span class="math inline">$\hat{\mathrm{q}}$</span>). But <code>\mathrm{\hat{q}}</code> is perfectly fine:
+<span class="math inline">q̂</span>. But <code>\mathrm{\hat{q}}_w</code> is perfectly fine:
+<span class="math inline">q̂<sub><em>w</em></sub></span>.</p>
 <h3 id="mathjax-and-inline-xrightarrow">MathJax and inline <code>\xrightarrow</code></h3>
-<p>Also, my MathJax doesn’t seem to understand <code>\xrightarrow</code> in inline equations. That’s a shame, because <code>S \xrightarrow{A} R, S'</code> is more readable than <code>S \rightarrow_A R, S'</code> (<span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>), which I used here instead (in inline equations). It looks like this: <br /><span class="math display">$$S \xrightarrow{A} R, S'$$</span><br /> Let me know if you know what’s up with those MathJax things. I wonder if it’s MathJax being wrong, or me sucking at LaTeX.</p>
+<p>Also, my MathJax doesn’t seem to understand <code>\xrightarrow</code> in inline equations.
+That’s a shame, because <code>S \xrightarrow{A} R, S'</code> is more readable than
+<code>S \rightarrow_A R, S'</code> (<span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>), which I used here instead
+(in inline equations). It looks like this:
+<span class="math display">$$S \xrightarrow{A} R, S'$$</span>
+Let me know if you know what’s up with those MathJax things.
+I wonder if it’s MathJax being wrong, or me sucking at LaTeX.</p>
 <h3 id="why-im-a-math-typesetting-snob">Why I’m a math typesetting snob</h3>
-<p>Typesetting things that aren’t variables as if they were variables really bugs me, because it makes the formulas really ugly. And the font you use to typeset a math thing is a very useful hint for the reader about what sort of object it is. I learned a bit about it when volunteering as a <a href="https://ksp.mff.cuni.cz/">KSP</a> organizer - KSP is full of math snobs. Compare: <br /><span class="math display">$$
+<p>Typesetting things that aren’t variables as if they were variables really bugs
+me, because it makes the formulas really ugly. And the font you use to typeset
+a math thing is a very useful hint for the reader about what sort of object it
+is. I learned a bit about it when volunteering as a
+<a href="https://ksp.mff.cuni.cz/">KSP</a> organizer - KSP is full of math snobs. Compare:
+<span class="math display">$$
 \begin{align*}
 \mathrm{Loss}(w) = \sum_i (\mathrm{f}(x_i) - y_i)^2 \\
 Loss(w) = \sum_i (f(x_i) - y_i)^2
-\end{align*}$$</span><br /> In the second one, it takes a bit of processing to understand that <span class="math inline"><em>L</em><em>o</em><em>s</em><em>s</em></span> is not a multiplication (<span class="math inline"><em>L</em> ⋅ <em>o</em> ⋅ <em>s</em> ⋅ <em>s</em></span>), and that <span class="math inline"><em>f</em>(<em>x</em><sub><em>i</em></sub>)</span> is function application.</p>
-<p>If you want to read more, you can take a look at <a href="https://en.wikipedia.org/wiki/Typographical_conventions_in_mathematical_formulae">Typographical conventions in mathematical formulae on Wikipedia</a>. Or maybe some LaTeX / TeX books or reference material might have a lot of explanations, like “use this in these situations”. And also good math books often have a large table at the front which explains used conventions, like “<span class="math inline"><strong>w</strong></span> is a vector, <span class="math inline"><em>X</em></span> is a matrix, <span class="math inline"><em>f</em></span> is a function, …”</p>
+\end{align*}$$</span>
+In the second one, it takes a bit of processing to understand that <span class="math inline"><em>L</em><em>o</em><em>s</em><em>s</em></span> is
+not a multiplication (<span class="math inline"><em>L</em> ⋅ <em>o</em> ⋅ <em>s</em> ⋅ <em>s</em></span>), and that <span class="math inline"><em>f</em>(<em>x</em><sub><em>i</em></sub>)</span> is
+function application.</p>
+<p>If you want to read more, you can take a look at <a href="https://en.wikipedia.org/wiki/Typographical_conventions_in_mathematical_formulae">Typographical conventions in mathematical
+formulae on Wikipedia</a>.
+Or maybe some LaTeX / TeX books or reference material might have a lot of
+explanations, like “use this in these situations”. And also good math books
+often have a large table at the front which explains used conventions, like
+“<span class="math inline"><strong>w</strong></span> is a vector, <span class="math inline">X</span> is a matrix, <span class="math inline">f</span> is a function,
+…”</p>
 <figure>
 <img src="https://imgs.xkcd.com/comics/kerning.png" style="height: 400px;"
      title="XKCD 1015 (Kerning)">
 <div>
-<p><a href="https://xkcd.com/1015/">https://xkcd.com/1015/</a> <br> Now you know about ugly errors in math typesetting, and if you Google it, also about bad kerning. You’re welcome, pass it along.</p>
+<p><a href="https://xkcd.com/1015/">https://xkcd.com/1015/</a>
+<br>
+Now you know about ugly errors in math typesetting, and if you Google it,
+also about bad kerning. You’re welcome, pass it along.</p>
 </div>
 </figure>
 <figure>
@@ -339,31 +584,85 @@ Loss(w) = \sum_i (f(x_i) - y_i)^2
     <id>http://agentydragon.com/posts/2020-12-31-cartpole-q-learning.html</id>
     <published>2020-12-31T00:00:00Z</published>
     <updated>2020-12-31T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<p>Recently I’ve been working on skilling up on reinforcement learning, particularly practice. I’m currently on the last course of the <a href="https://www.coursera.org/specializations/reinforcement-learning">Reinforcement Learning specialization</a> from University of Alberta on Coursera. The last piece of the course is about solving the <a href="https://gym.openai.com/envs/LunarLander-v2/">Lunar Lander</a> environment. I’ve been trying to solve it on my own first before going through the labs, so that I can learn things deeper and experiment.</p>
-<p>I’ve tried implementing an actor-critic agent. The actor is a feed-forward neural network specifying a parameterized policy <span class="math inline"><em>π</em><sub><em>θ</em></sub></span>. The network’s input is a representation of the state, and it has one output per action. The policy is a softmax over these outputs. I tried a critic for predicting both <span class="math inline"><em>v̂</em><sub><em>w</em></sub></span>, and <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>.</p>
-<p>I’ve not had good luck getting this to work so far. At one point I got the agent to fly above the surface (without landing), but then later I edited the code somewhat, aaaaand it was gone.</p>
-<p>I stared a bunch into my update equations, but have not been able to find any obvious errors. I used TensorFlow’s <a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams">HParams</a> to try to tune all the hyperparameters, like actor learning rate, critic learning rate, and learning rate for the average reward. (I wrote it attempting to use the continuing average reward formulation.)</p>
+    <summary type="html"><![CDATA[<p>Recently I’ve been working on skilling up on reinforcement learning,
+particularly practice. I’m currently on the last course of the
+<a href="https://www.coursera.org/specializations/reinforcement-learning">Reinforcement Learning specialization</a>
+from University of Alberta on Coursera. The last piece of the course is about
+solving the <a href="https://gym.openai.com/envs/LunarLander-v2/">Lunar Lander</a>
+environment. I’ve been trying to solve it on my own first before going through
+the labs, so that I can learn things deeper and experiment.</p>
+<p>I’ve tried implementing an actor-critic agent. The actor is a feed-forward
+neural network specifying a parameterized policy <span class="math inline"><em>π</em><sub><em>θ</em></sub></span>. The network’s
+input is a representation of the state, and it has one output per action.
+The policy is a softmax over these outputs. I tried a critic for predicting
+both <span class="math inline"><em>v̂</em><sub><em>w</em></sub></span>, and <span class="math inline"><em>q̂</em><sub><em>w</em></sub></span>.</p>
+<p>I’ve not had good luck getting this to work so far. At one point I got the agent
+to fly above the surface (without landing), but then later I edited the code
+somewhat, aaaaand it was gone.</p>
+<p>I stared a bunch into my update equations, but have not been able to find any
+obvious errors. I used TensorFlow’s
+<a href="https://www.tensorflow.org/tensorboard/hyperparameter_tuning_with_hparams">HParams</a>
+to try to tune all the hyperparameters, like actor learning rate, critic
+learning rate, and learning rate for the average reward. (I wrote it attempting
+to use the continuing average reward formulation.)</p>
 <p>I decided to first try a simpler environment, <a href="https://gym.openai.com/envs/CartPole-v0/">CartPole</a>.</p>
 <p>In the end, I managed to solve it a couple hours back.</p>
-<p>In the implementation, I’ve made a couple mistakes and observations, which I want to note down.</p>
+<p>In the implementation, I’ve made a couple mistakes and observations, which I
+want to note down.</p>
 <h2 id="colab-notebook-with-my-cartpole-agent">Colab notebook with my CartPole agent</h2>
 <p>Here’s my notebook if you want to play around:</p>
-<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole-q-learning.ipynb" target="_parent"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"> </a></p>
+<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2020-12-31-cartpole-q-learning.ipynb" target="_parent">
+<img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab">
+</a></p>
 <h2 id="rais-ml-mistake-1-short-episodic-environments-can-use-high-γ">Rai’s ML mistake #1: Short episodic environments can use high γ</h2>
-<p>I initially wrote my code to use a discount rate of 0.9. On <a href="https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/">n1try’s solution</a> that I found on <a href="https://gym.openai.com/envs/CartPole-v0/">the leaderboard</a> (unfortunately not sure which one it was), the discount rate was actually set to 1.</p>
-<p>I suspect I might have set the discount rate too low. The CartPole environment has episodes which have length of only up to ~500, with 1 unit of reward per step.</p>
-<p>If you have a discount rate γ and an average per-step reward of <span class="math inline"><em>r</em></span>, then in an infinite environment, the value of a state will be something like: <br /><span class="math display">$$ \frac{r}{1-\gamma} = r + r \cdot \gamma + r \cdot \gamma^2 $$</span><br /> Knowing this, I was a worried that if I set <span class="math inline"><em>γ</em></span> too high, the targets for the Q network to learn would have a high variance. But I forgot that the environment had only like ~500 steps, so setting <span class="math inline"><em>γ</em> = 1</span> would be alright in this case.</p>
-<p><em>Lesson learned</em>: I need to keep in mind the environment’s characteristics, in particular how long are the episodes and how high total rewards can I expect.</p>
+<p>I initially wrote my code to use a discount rate of 0.9. On
+<a href="https://gym.openai.com/evaluations/eval_EIcM1ZBnQW2LBaFN6FY65g/">n1try’s solution</a>
+that I found on <a href="https://gym.openai.com/envs/CartPole-v0/">the leaderboard</a>
+(unfortunately not sure which one it was), the discount rate was actually set
+to 1.</p>
+<p>I suspect I might have set the discount rate too low. The CartPole environment
+has episodes which have length of only up to ~500, with 1 unit of reward per
+step.</p>
+<p>If you have a discount rate γ and an average per-step reward of <span class="math inline"><em>r</em></span>,
+then in an infinite environment, the value of a state will be something like:
+<span class="math display">$$ \frac{r}{1-\gamma} = r + r \cdot \gamma + r \cdot \gamma^2 $$</span>
+Knowing this, I was a worried that if I set <span class="math inline"><em>γ</em></span> too high, the targets
+for the Q network to learn would have a high variance. But I forgot that the
+environment had only like ~500 steps, so setting <span class="math inline"><em>γ</em> = 1</span> would be alright
+in this case.</p>
+<p><em>Lesson learned</em>: I need to keep in mind the environment’s characteristics, in
+particular how long are the episodes and how high total rewards can I expect.</p>
 <h2 id="rais-ml-mistake-2-too-little-exploration">Rai’s ML mistake #2: Too little exploration</h2>
-<p>The algorithm that ended up working for me was Q-learning (with function approximation by a small neural network). I selected actions <span class="math inline"><em>ε</em></span>-greedily, with <span class="math inline"><em>ε</em></span> set to 0.02, so ~2% chance of random moves.</p>
-<p>Looking at some solutions of the environment that I found, they had much higher exploration rates. Some that I saw had 100% random actions initially, and had it then decay. And the particular solution I was looking at set the minimal exploration rate, after all the decay, to <em>10%</em> - 5x more than I had.</p>
-<p>I think my code found a policy that “solves” the environment faster when I put in 10% exploration.</p>
+<p>The algorithm that ended up working for me was Q-learning (with function
+approximation by a small neural network). I selected actions
+<span class="math inline"><em>ε</em></span>-greedily, with <span class="math inline"><em>ε</em></span> set to 0.02, so ~2% chance of
+random moves.</p>
+<p>Looking at some solutions of the environment that I found, they had much higher
+exploration rates. Some that I saw had 100% random actions initially, and had
+it then decay. And the particular solution I was looking at set the minimal
+exploration rate, after all the decay, to <em>10%</em> - 5x more than I had.</p>
+<p>I think my code found a policy that “solves” the environment faster when I put
+in 10% exploration.</p>
 <h2 id="rais-ml-mistake-3-evaluation-interfering-with-training">Rai’s ML mistake #3: Evaluation interfering with training</h2>
-<p>I ran my algorithm on 10k episodes, and every 1k episodes, I ran the code in “greedy mode” (i.e., no random actions) and recorded average performance on 100 episodes. I did that because my Q-learning implementation was executing an <span class="math inline"><em>ε</em></span>-soft policy, which might be worse than the greedy policy that it’s learning. I don’t know how “fragile” the CartPole environment is (i.e., how much worse the total reward per episode gets if I force an agent to take some amount of random actions), but I wanted to rule it out as a source of errors.</p>
-<p>I implemented the evaluation by just adding a flag <code>train: bool = True</code> to the agent’s functions. If <code>train</code> was <code>False</code>, I’d skip all the update steps and select actions greedily.</p>
-<p>Unfortunately, I ended up making a mistake and I forgot to add the condition around one branch of code - updating the Q network after a final step (i.e., when the agent receives a last reward and the episode ends).</p>
-<p>As a result, the agent ended up executing ~100 incorrect updates (based on an incorrect last action and state, towards the final reward), one incorrect update per evaluation episode.</p>
-<p><strong>Lesson learned</strong>: Double check my code? Maybe even test my code? Not sure how to learn from this :/</p>
+<p>I ran my algorithm on 10k episodes, and every 1k episodes, I ran the code in
+“greedy mode” (i.e., no random actions) and recorded average performance on 100
+episodes. I did that because my Q-learning implementation was executing an
+<span class="math inline"><em>ε</em></span>-soft policy, which might be worse than the greedy policy that
+it’s learning. I don’t know how “fragile” the CartPole environment is (i.e.,
+how much worse the total reward per episode gets if I force an agent to take
+some amount of random actions), but I wanted to rule it out as a source of
+errors.</p>
+<p>I implemented the evaluation by just adding a flag <code>train: bool = True</code> to
+the agent’s functions. If <code>train</code> was <code>False</code>, I’d skip all the update steps
+and select actions greedily.</p>
+<p>Unfortunately, I ended up making a mistake and I forgot to add the condition
+around one branch of code - updating the Q network after a final step (i.e.,
+when the agent receives a last reward and the episode ends).</p>
+<p>As a result, the agent ended up executing ~100 incorrect updates (based on
+an incorrect last action and state, towards the final reward), one incorrect
+update per evaluation episode.</p>
+<p><strong>Lesson learned</strong>: Double check my code? Maybe even test my code? Not sure
+how to learn from this :/</p>
 <h2 id="forgetting-when-learned-too-much"><em>Forgetting when learned too much‽‽</em></h2>
 <figure>
 <img src="/static/2020-12-31-total_reward.svg" style="height: 400px;"
@@ -372,14 +671,38 @@ Loss(w) = \sum_i (f(x_i) - y_i)^2
 <p><a href="https://www.youtube.com/watch?v=sIlNIVXpIns"><em>𝄞 ♫ Look at this graaaph♫ 𝄻</em></a></p>
 </div>
 </figure>
-<p>So, until episode maybe 400 or so, nothing much is happening. Then until about step 1800, it’s sorta doing something but could be better. Then at around step 1800, it finds a good policy, and returns are nice. Basically, problem solved.</p>
-<p>Then I train it for a bit longer, and at episode ~2.2k… for some reason performance goes WAY down for about 300 or so episodes. It’s as bad as if the network forgot everything it learned before.</p>
-<p>Then, after a while (at about 2700), it quickly climbs back up to good performance. On the full graph with 10k episodes, this cycle would repeat maybe every 2000-3000 episodes. Wat.</p>
-<p>I have no idea what’s going on here. Maybe one sort-of ideas, but I have not tested it, and I have a relatively low degree of confidence in it.</p>
-<p>Maybe for some reason the critic might overfit in some way that makes it behave badly on some early action. Maybe it’s trying to learn some relatively “late game” stuff, and the update that happens ends up screwing some early behavior, so the agent then has to spend a bunch of episodes learning the right early behavior again. The policy changes in a non-continuous way, so if some early decision switches to do the wrong thing, the agent will then have to follow a bunch of wrong trajectories until the one-step Q updates end up bubbling up to the initial wrong decision. I guess this might be somewhat mitigated by using eligibility traces so that updates bubble up faster, or by using actor-critic with soft policies.</p>
-<p>Another potential reason for having a really bad episode might be if the agent happens to pick a random action (with probability <span class="math inline"><em>ε</em></span>) at an early point where the pole is unstable and very easy to mess up. And then it can’t recover from that error. But that explanation isn’t supported by how wide these areas of low episode returns are. It might explain maybe one sporadic bad episode, but not a whole bunch of them after each other.</p>
+<p>So, until episode maybe 400 or so, nothing much is happening.
+Then until about step 1800, it’s sorta doing something but could be better.
+Then at around step 1800, it finds a good policy, and returns are nice.
+Basically, problem solved.</p>
+<p>Then I train it for a bit longer, and at episode ~2.2k… for some reason
+performance goes WAY down for about 300 or so episodes. It’s as bad as if the
+network forgot everything it learned before.</p>
+<p>Then, after a while (at about 2700), it quickly climbs back up to good
+performance. On the full graph with 10k episodes, this cycle would repeat maybe
+every 2000-3000 episodes. Wat.</p>
+<p>I have no idea what’s going on here. Maybe one sort-of ideas, but I have not
+tested it, and I have a relatively low degree of confidence in it.</p>
+<p>Maybe for some reason the critic might overfit in some way that makes it behave
+badly on some early action. Maybe it’s trying to learn some relatively “late
+game” stuff, and the update that happens ends up screwing some early behavior,
+so the agent then has to spend a bunch of episodes learning the right early
+behavior again. The policy changes in a non-continuous way, so if some early
+decision switches to do the wrong thing, the agent will then have to follow a
+bunch of wrong trajectories until the one-step Q updates end up bubbling up to
+the initial wrong decision. I guess this might be somewhat mitigated by using
+eligibility traces so that updates bubble up faster, or by using actor-critic
+with soft policies.</p>
+<p>Another potential reason for having a really bad episode might be if the agent
+happens to pick a random action (with probability <span class="math inline"><em>ε</em></span>) at an early
+point where the pole is unstable and very easy to mess up. And then it can’t
+recover from that error. But that explanation isn’t supported by how wide these
+areas of low episode returns are. It might explain maybe one sporadic bad
+episode, but not a whole bunch of them after each other.</p>
 <h2 id="next-steps">Next steps</h2>
-<p>Now that I got a CartPole agent running, I’ll come back to the Lunar Lander environment. I’ll first try solving it again with a Q network. I could probably similarly get away with not discounting rewards at all (<span class="math inline"><em>γ</em> = 1</span>).</p>
+<p>Now that I got a CartPole agent running, I’ll come back to the Lunar Lander
+environment. I’ll first try solving it again with a Q network. I could probably
+similarly get away with not discounting rewards at all (<span class="math inline"><em>γ</em> = 1</span>).</p>
 <p>Also I’d like to implement experience replay to make this more sample-efficient.</p>
 <p>If that ends up working, I still want to get actor-critic working.</p>
 <p>Obligatory scoot-scoot:</p>
@@ -410,31 +733,85 @@ Loss(w) = \sum_i (f(x_i) - y_i)^2
 <h2 id="experiment">Experiment</h2>
 <p>So I’m going to try it in this article. I will start slowly replacing words by top suggestions (<a href="https://transformer.huggingface.co/doc/distil-gpt2">Write With Transformer distil-gpt2</a>). I’ll start with maybe 90% me, 10% Transformer, and by the time I finish writing this, it’ll be 100% Transformer. And I won’t, at least for now, tell you which parts are me and which are the generator. That way I won’t have just a test of “I can / cannot be replaced by a Transformer”, but by asking people which sentences were from me and which were from the Transformer, I’ll get more gradual information about the point at which today’s Transformers can replace me. From what I read, models like GPT-3 are able to convincingly copy “surface style”, and they are able to make simple inferences, but they might make mistakes.</p>
 <p>By the way, the footer of <a href="https://transformer.huggingface.co/">Write With Transformer</a> says: “It is to writing what calculators are to calculus.” And that’s a nice sentence in that, on a shallow reading, it sounds like a positive comparison. “It is to writing what [things for doing mathematics] are to [field of mathematics].” But I never had a calculator that was any good for calculus. I never saw a calculator with a “derive by x” or “indefinite integral dx”. Though now I also wonder why no calculator has it. It would be so useful, and not that hard to implement. Mathematica can integrate most of what you throw at it! And algorithms for integrating broad classes of functions are also totally a thing in literature!</p>
-<p>“It is to writing what Mathematica is to calculus”? Sure. That sounds useful. A tool that can solve 90% of practical problems. Neat. “It is to writing what calculators are to calculus”? AAA, <span class="generated">you know what? I’ve been</span> in many situations where you can have all the calculators you want, and they won’t save you from an ugly enough integral.</p>
+<p>“It is to writing what Mathematica is to calculus”? Sure. That sounds useful. A
+tool that can solve 90% of practical problems. Neat. “It is to writing what
+calculators are to calculus”? AAA, <span class="generated">you know what? I’ve been</span>
+in many situations where you can have all the calculators you want, and they won’t save you from an ugly enough integral.</p>
 <p>It sounds like one of those “proverb insults”, like “you must be at the top of the Gauss curve”.</p>
-<p>Also the test of making the Transformer generate parts of the article can show if it could be useful as a computer-assisted authoring tool.</p>
-<p><span class="generated">I wonder what a problem is</span> there with making the jobs of some people much easier with AI like this. For example, I have a virtual assistant, and I think it should be possible to augment them with a Transformer. You train the Transformer on chats of the highest rated virtual assistants with customers, and annotate the conversations with times when the virtual assistant had to do something. Then you integrate that Transformer into, say, Google Chat, and add some quick shortcuts, like “Tab” for “autocomplete”. I fully expect we should be able to mostly automate conversation like “hello, I hope you’re having a nice day”.</p>
+<p>Also the test of making the Transformer generate parts of the article can show
+if it could be useful as a computer-assisted authoring tool.</p>
+<p><span class="generated">I wonder what a problem is</span> there with making the
+jobs of some people much easier with AI like this. For example, I have a virtual assistant, and I think it should be possible to augment them with a Transformer. You train the Transformer on chats of the highest rated virtual assistants with customers, and annotate the conversations with times when the virtual assistant had to do something. Then you integrate that Transformer into, say, Google Chat, and add some quick shortcuts, like “Tab” for “autocomplete”. I fully expect we should be able to mostly automate conversation like “hello, I hope you’re having a nice day”.</p>
 <h2 id="motivation-to-do-my-own-thing">Motivation to do my own thing</h2>
 <p>By the way, the other day I stumbled on <a href="https://betterexplained.com/">Better Explained</a>, and the author has a great article: Surviving (and thriving) on your own: Know Thyself.</p>
-<p>And this <span class="generated">is the best of</span> sources of motivation to do my own thing that I’ve seen in a while. This article made me realize that yes, there are actually things I want to do. I can just look at my TODO list in my Roam Research database. If I only had the most productive ~8 hours of my time available for all the things I want to learn and make.</p>
-<p>So I’ve been considering going part-time at Google. <span class="generated">For some time I’ve found that I</span> just can’t muster the energy to be consistently productive after work. And switching contexts is expensive, and gets much more expensive when you switch to a context you haven’t seen for a couple days. Like what might happen if one day I do 4 hours of Colab experimentation, then the next week I don’t have spare energy after work, and then a week later I open the notebook again, read and go 🤨. It helps to keep notes, and not half-ass the code style too badly, but there’s a trade-off between “help future-me quickly get back to productivity on this task” and “spend energy making progress”.</p>
+<p>And this <span class="generated">is the best of</span> sources of motivation to do my own thing that I’ve
+seen in a while. This article made me realize that yes, there are actually things I want to do. I can just look at my TODO list in my Roam Research database. If I only had the most productive ~8 hours of my time available for all the things I want to learn and make.</p>
+<p>So I’ve been considering going part-time at Google. <span class="generated">For some time I’ve found
+that I</span> just can’t muster the energy to be consistently productive after work. And switching contexts is expensive, and gets much more expensive when you switch to a context you haven’t seen for a couple days. Like what might happen if one day I do 4 hours of Colab experimentation, then the next week I don’t have spare energy after work, and then a week later I open the notebook again, read and go 🤨. It helps to keep notes, and not half-ass the code style too badly, but there’s a trade-off between “help future-me quickly get back to productivity on this task” and “spend energy making progress”.</p>
 <p>Also, with stocks having recovered from COVID and with Bitcoin currently going through Another One Of Those, I’ve been closely watching how much longer until financial independence.</p>
-<p>I am not at the point of “I’ll be able to live on this on my current standard forever”. But at a lower standard? Like moving back to Czech Republic? For some values of “lower standard”, yes. And at some some point, the marginal expected gains from a higher monthly budget will become dominated by the gains of having more free time. And that <span class="generated">makes</span> it less and less rational to trade financial security for freedom.</p>
-<p>And it’s not like I can’t make money doing things I want to do, either. There’s such a huge spectrum. I can career-steer at Google more boldly, or go part-time to do my own thing. Or even <span class="generated">if it’s a little less expensive</span> It might not be just the same freedom as reducing my hours, or working with a company that’s more closely aligned with my interests, or even quitting and doing my thing.</p>
+<p>I am not at the point of “I’ll be able to live on this on my current standard
+forever”. But at a lower standard? Like moving back to Czech Republic? For some
+values of “lower standard”, yes. And at some some point, the marginal expected
+gains from a higher monthly budget will become dominated by the gains of having
+more free time. And that <span class="generated">makes</span> it less and less rational to trade financial security for freedom.</p>
+<p>And it’s not like I can’t make money doing things I want to do, either. There’s
+such a huge spectrum. I can career-steer at Google more boldly, or go part-time
+to do my own thing. Or even <span class="generated">if it’s a little less expensive</span> It might not be just the same freedom as reducing my hours, or working with a company that’s more closely aligned with my interests, or even quitting and doing my thing.</p>
 <h2 id="still-experimenting">Still experimenting</h2>
-<p>By the way, I’m still doing the GPT-3 <span class="generated">of this</span> article thing, with slowly increasing density. And as I increase the density, I expect <span class="generated">it will be more “efficient” to</span> just output tons of filler text. Filler is used in more articles than crisp sentences that have only narrow meaning. If GPT-3 outputs “What gives?” after any of my sentences, it will probably get a higher reward than if it outputs “an endomorphism that is an isomorphism is an automorphism”, just because it’s <span class="generated">all too hard to get some extra filler</span> into a place where it would not plausibly fit. What gives?</p>
-<p>So expect this piece of writing to slowly degrade from saying something to saying nothing in so many words. <span class="generated">And I’m doing it in my mind</span> expecting some successive Tab press to generate either nonsense, or bullshit. I <span class="generated">m going to continue to keep it in</span> line with making sense, as far as I’m able to express myself through filler text.</p>
-<p><span class="generated">As a result, I think this will</span> sometimes end up stating things I don’t actually endorse or believe. If that happens, I think I’ll also release the “spoiler” (annotating the sections of this text that are generated) immediately, so that I don’t accidentally say something like “I for one welcome our AI overlords”. Well, <span class="generated">I am sure I will</span> As long as we as a species don’t fail the exam.</p>
-<p><span class="generated">As far as I’m concerned, I will continue to put together articles on</span> whatever interests me, to write code for problems I want solved, and to try to improve my habits. If the worldview and “values-view” and “lifestyle” that I want to implement sticks, <span class="generated">then the same can be said for every</span> positive change it’s brought the past couple weeks. <span class="generated">So, what’s really causing this</span> to slip away slowly? Why have previous times when I held similar viewpoints slipped back into routine? Maybe it’s just because it’s been the default for so long for me to work <span class="generated">through the things I like</span> Slowly, <span class="generated">slowly</span> because of all the panic from ideas like “maybe I might have to leave work or start burning money instead of making it”.</p>
-<p><span class="generated">And that will change with time</span> Or so would I hope. <span class="generated">Advertisements</span> Popular media. <span class="generated">I will be keeping track</span> of all those attention-eaters. I don’t want to have a week where all my energy goes into a black hole.</p>
-<p><span class="generated">I just want to keep going.</span> <span class="generated">I don’t want to get bored.</span> Curiosity and learning things and solving problems for people is life. <span class="generated">I just want to have something that will change and</span> <span class="generated">change and improve my life.</span> In the direction of more aliveness and generating meaning. <span class="generated">And to keep doing that I can only have one way or another</span></p>
-<p><span class="generated">The bottom line is I don’t want to do things I want to do in the way that I want to do.</span> Not with the current default setting where “want” tends to fall back. <span class="generated">I want to do everything that I can to get my attention. But not with the current default setting where “want” tends to fall back. I don’t want to get bored. It’s just a matter of how much I like it.</span> In the moment.</p>
-<p><span class="generated"> And for those of you out there who are interested in reading, please, like me, subscribe to my Facebook page and share your thoughts about the situation with me . (By email or to your friends , subscribe to my blog <a href="/">here</a>.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.</p>
-<p>And for those of you who aren’t interested in reading, please , like me, subscribe to my Facebook page and share your thoughts about the situation with me. (By email or to your friends, subscribe to my blog <a href="/">here</a>.) I will be taking the time and effort I have put into writing to make it easier to make things better for you. </span></p>
-<p>So <span class="generated"> I’m going to be publishing the article in the second week and I’ll be posting the article in the second week and I ’ll be posting the article in the second week and I’ll be posting the article in the second week and I</span> am <span class="generated">posting the article in the second week and I will be posting the</span> rest <span class="generated">of the post and I will be posting</span> to RSS and Atom and Hacker News maybe and <span class="generated">maybe on the same page. If you like the content you see in</span> this website, thanks, I really <span class="generated">appreciate you! You know the best way to make your next book available is to check out my Blog</span></p>
-<p>I might be repeating the experiment with different language models, to see which ones can keep going to a higher density without devolving into meaninglessness. <span class="generated">But if you do it this way, and have more questions, I’ll post it again, and I ’ll be posting it</span> guess in which week. From what I gather from this experiment, looks like I might not be 100% obsolete just yet. Walk on warm sands.</p>
+<p>By the way, I’m still doing the GPT-3 <span class="generated">of this</span> article thing, with slowly
+increasing density. And as I increase the density, I expect <span class="generated">it will be more
+“efficient” to</span> just output tons of filler text. Filler is used in more
+articles than crisp sentences that have only narrow meaning. If GPT-3 outputs
+“What gives?” after any of my sentences, it will probably get a higher reward
+than if it outputs “an endomorphism that is an isomorphism is an automorphism”,
+just because it’s <span class="generated">all too hard to get some extra filler</span> into a place where it would not plausibly fit. What gives?</p>
+<p>So expect this piece of writing to slowly degrade from saying something to
+saying nothing in so many words. <span class="generated">And I’m doing it in my mind</span> expecting
+some successive Tab press to generate either nonsense, or bullshit. I <span class="generated">m
+going to continue to keep it in</span> line with making sense, as far as I’m able to express myself through filler text.</p>
+<p><span class="generated">As a result, I think this will</span> sometimes end up stating things I don’t
+actually endorse or believe. If that happens, I think I’ll also release the
+“spoiler” (annotating the sections of this text that are generated) immediately,
+so that I don’t accidentally say something like “I for one welcome our AI
+overlords”. Well, <span class="generated">I am sure I will</span> As long as we as a species don’t fail the exam.</p>
+<p><span class="generated">As far as I’m concerned, I will continue to put together articles on</span>
+whatever interests me, to write code for problems I want solved, and to try to
+improve my habits.
+If the worldview and “values-view” and “lifestyle” that I want to implement
+sticks, <span class="generated">then the same can be said for every</span> positive change it’s brought
+the past couple weeks. <span class="generated">So, what’s really causing this</span> to slip away slowly?
+Why have previous times when I held similar viewpoints slipped back into
+routine? Maybe it’s just because it’s been the default for so long for me to
+work <span class="generated">through the things I like</span> Slowly, <span class="generated">slowly</span> because of all the panic from ideas like “maybe I might have to leave work or start burning money instead of making it”.</p>
+<p><span class="generated">And that will change with time</span> Or so would I hope. <span class="generated">Advertisements</span>
+Popular media. <span class="generated">I will be keeping track</span> of all those attention-eaters. I don’t want to have a week where all my energy goes into a black hole.</p>
+<p><span class="generated">I just want to keep going.</span> <span class="generated">I don’t want to get bored.</span>
+Curiosity and learning things and solving problems for people is life.
+<span class="generated">I just want to have something that will change and</span> <span class="generated">change and improve my
+life.</span> In the direction of more aliveness and generating meaning.
+<span class="generated">And to keep doing that I can only have one way or another</span></p>
+<p><span class="generated">The bottom line is I don’t want to do things I want to do in the way that I
+want to do.</span> Not with the current default setting where “want” tends to fall back.
+<span class="generated">I want to do everything that I can to get my attention. But not with the
+current default setting where “want” tends to fall back. I don’t want to get
+bored. It’s just a matter of how much I like it.</span> In the moment.</p>
+<p><span class="generated">
+And for those of you out there who are interested in reading, please, like me, subscribe to my Facebook page and share your thoughts about the situation with me . (By email or to your friends , subscribe to my blog <a href="/">here</a>.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.</p>
+<p>And for those of you who aren’t interested in reading, please , like me, subscribe to my Facebook page and share your thoughts about the situation with me. (By email or to your friends, subscribe to my blog <a href="/">here</a>.) I will be taking the time and effort I have put into writing to make it easier to make things better for you.
+</span></p>
+<p>So <span class="generated"> I’m going to be publishing the article in the second week and I’ll be
+posting the article in the second week and I ’ll be posting the article in the
+second week and I’ll be posting the article in the second week and I</span> am
+<span class="generated">posting the article in the second week and I will be posting the</span> rest <span class="generated">of
+the post and I will be posting</span> to RSS and Atom and Hacker News maybe and
+<span class="generated">maybe on the same page. If you like the content you see in</span> this website,
+thanks, I really <span class="generated">appreciate you! You know the best way to make your next book
+available is to check out my Blog</span></p>
+<p>I might be repeating the experiment with different language models, to see which ones can keep going to a higher density without devolving into meaninglessness.
+<span class="generated">But if you do it this way, and have more questions, I’ll post it again, and I
+’ll be posting it</span> guess in which week. From what I gather from this experiment, looks like I might not be 100% obsolete just yet. Walk on warm sands.</p>
 </div>
-<button onclick="document.getElementById('playing-with-ai-toggle-highlight').classList.toggle('highlight-on'); return true;">
+<button onclick="document.getElementById(&#39;playing-with-ai-toggle-highlight&#39;).classList.toggle(&#39;highlight-on&#39;); return true;">
 Highlight generated text by AI
 </button>]]></summary>
 </entry>
@@ -444,36 +821,73 @@ Highlight generated text by AI
     <id>http://agentydragon.com/posts/2020-05-28-principle-of-no-non-apologies.html</id>
     <published>2020-05-28T00:00:00Z</published>
     <updated>2020-05-28T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<p><strong>TL;DR:</strong> Principle of no non-Apologies: “Distinguish between saying I’m sorry and apologizing. Don’t give non-Apologies.” Do not Apologize when you don’t agree that you fucked up. When you fucked up, own the fuck-up and, if it’s systematic, commit to reducing future fuck-ups.</p>
+    <summary type="html"><![CDATA[<p><strong>TL;DR:</strong> Principle of no non-Apologies: “Distinguish between saying I’m sorry
+and apologizing. Don’t give non-Apologies.” Do not Apologize when you don’t
+agree that you fucked up. When you fucked up, own the fuck-up and, if it’s
+systematic, commit to reducing future fuck-ups.</p>
 <h1 id="everyday-im-sorry-is-usually-not-an-apology">Everyday “I’m sorry” is usually not an Apology</h1>
 <p>“I’m sorry” can be used in several ways.</p>
-<p>One way is using it as a conciliatory gesture, basically saying “you’re stronger than me, I submit, please don’t hurt me”. It’s one possible way I might react when under threat by someone stronger making demands I don’t agree with.</p>
-<p>Another way is to say “this was accidental, I didn’t intend to hurt you”, like when you bump into someone when boarding your tram.</p>
-<p>But when you use the words that way, you are not making an <em>Apology</em>. And it’s useful to distinguish between these uses of “I’m sorry” andactual Apologies.</p>
+<p>One way is using it as a conciliatory gesture, basically saying “you’re stronger
+than me, I submit, please don’t hurt me”. It’s one possible way I might react
+when under threat by someone stronger making demands I don’t agree with.</p>
+<p>Another way is to say “this was accidental, I didn’t intend to hurt you”, like
+when you bump into someone when boarding your tram.</p>
+<p>But when you use the words that way, you are not making an <em>Apology</em>. And it’s
+useful to distinguish between these uses of “I’m sorry” andactual Apologies.</p>
 <h1 id="apologies-and-non-apologies">Apologies and non-Apologies</h1>
-<p>Courtesy of an unknown source that I can’t immediately recall, you are <em>Apologizing</em> when you:</p>
+<p>Courtesy of an unknown source that I can’t immediately recall, you are
+<em>Apologizing</em> when you:</p>
 <ol type="1">
-<li>Communicate understanding that you behaved badly (and own responsibility for it),</li>
+<li>Communicate understanding that you behaved badly (and own responsibility for
+it),</li>
 <li>try to fix the negative consequences of that behavior, and</li>
 <li>commit to work on not acting similarly in the future.</li>
 </ol>
-<p>An Apology which holds to this definition makes you vulnerable (because you are open about the weakness that caused the behavior), and it’s not to be made lightly, because of the commitment. It is also virtuous to own your mistakes or systematic problems, and to work on them.</p>
-<p>On the other hand, if you use the ritual apologetic words but do not meet these criteria, let’s call that a <em>non-Apology</em>.</p>
-<p>A prototypical example is “I’m sorry you feel that way”, which happens when a sociopath in charge is forced by overwhelming force to “Apologize”.</p>
-<p>“I’m sorry” that you tell your boss just to make them stop grilling you is also, under my use of the word, a <em>non-Apology</em>.</p>
-<p>So is, in many (but not all) cases, a “sorry I’m late” I might say when coming to a meeting. Also the “bump into someone on the tram” example, and the “I yield I’ll do what you demand” example.</p>
-<p>(So, notice that I’m not saying non-Apologizes are morally bad. Some of them are, but many are also just those tiny social rituals you need to do so you make it clear to people you aren’t a dick.)</p>
+<p>An Apology which holds to this definition makes you vulnerable (because you are
+open about the weakness that caused the behavior), and it’s not to be made
+lightly, because of the commitment. It is also virtuous to own your mistakes or
+systematic problems, and to work on them.</p>
+<p>On the other hand, if you use the ritual apologetic words but do not meet these criteria, let’s call that a
+<em>non-Apology</em>.</p>
+<p>A prototypical example is “I’m sorry you feel that way”, which happens when a
+sociopath in charge is forced by overwhelming force to “Apologize”.</p>
+<p>“I’m sorry” that you tell your boss just to make them stop grilling you is also,
+under my use of the word, a <em>non-Apology</em>.</p>
+<p>So is, in many (but not all) cases, a “sorry I’m late” I might say when coming
+to a meeting. Also the “bump into someone on the tram” example, and the “I yield
+I’ll do what you demand” example.</p>
+<p>(So, notice that I’m not saying non-Apologizes are morally bad. Some of them
+are, but many are also just those tiny social rituals you need to do so you
+make it clear to people you aren’t a dick.)</p>
 <h1 id="principle-of-no-non-apologies">Principle of no non-Apologies</h1>
 <p>My <em>principle of no non-Apologies</em> is two-part:</p>
 <h2 id="distinguish-between-saying-im-sorry-and-apologizing.">Distinguish between saying “I’m sorry” and Apologizing.</h2>
-<p>This first part I recommend adopting universally. Know the difference between the social ritual that <em>evolved from small routinized Apologies</em> and actual Apologies, and know which one you are doing at which time.</p>
+<p>This first part I recommend adopting universally. Know the difference between
+the social ritual that <em>evolved from small routinized Apologies</em> and actual
+Apologies, and know which one you are doing at which time.</p>
 <h2 id="dont-give-non-apologies.">Don’t give non-Apologies.</h2>
-<p>This second part I apply to relationships into which I want to bring my whole self, mostly my personal relationships, but also some work relationships.</p>
-<p>Unfortunately, many of us are stuck in power differential relationships with people who demand apologetic-sounding words, and there might be no better solution than to yield. But still, it’s good to know that you are saying “I’m sorry”, and not Apologizing. That way, you can appease without cognitive dissonance.</p>
-<p>But in relationships with mutual care and respect and compassion, it should make sense that you shouldn’t be obliged to Apologize if you don’t agree that you did anything wrong. When you feel pressed to apologize, your first instinct should be to ask what you did wrong, and if there are different viewpoints, have a conversation.</p>
-<p>If your behavior is worthy of an apology, don’t stop at “I’m sorry”. Understand why the behavior happened, and work to prevent it from causing more bad consequences in the future.</p>
+<p>This second part I apply to relationships into which I want to bring my whole
+self, mostly my personal relationships, but also some work relationships.</p>
+<p>Unfortunately, many of us are stuck in power differential relationships with
+people who demand apologetic-sounding words, and there might be no better
+solution than to yield. But still, it’s good to know that you are saying “I’m
+sorry”, and not Apologizing. That way, you can appease without cognitive
+dissonance.</p>
+<p>But in relationships with mutual care and respect and compassion, it should make
+sense that you shouldn’t be obliged to Apologize if you don’t agree that you did
+anything wrong. When you feel pressed to apologize, your first instinct should
+be to ask what you did wrong, and if there are different viewpoints, have a
+conversation.</p>
+<p>If your behavior is worthy of an apology, don’t stop at “I’m sorry”. Understand
+why the behavior happened, and work to prevent it from causing more bad
+consequences in the future.</p>
 <h1 id="p.s.-generalizations">P.S.: Generalizations</h1>
-<p>This is just one instance of a more general move of looking at some social ritual (like apologizing) and looking at it a little “sideways”: getting back in touch with the original meanings of the expressions used in it. Rituals and words can lose meaning over time, and you can lose concepts when that happens. If you want to see what it’s like to look at things that way, I’ve had a pretty vivid experience of it after finishing Wittgenstein’s Tractatus.</p>]]></summary>
+<p>This is just one instance of a more general move of looking at some social
+ritual (like apologizing) and looking at it a little “sideways”: getting back
+in touch with the original meanings of the expressions used in it. Rituals and
+words can lose meaning over time, and you can lose concepts when that happens.
+If you want to see what it’s like to look at things that way, I’ve had a pretty
+vivid experience of it after finishing Wittgenstein’s Tractatus.</p>]]></summary>
 </entry>
 <entry>
     <title>Growth mindset for better sex</title>
@@ -481,22 +895,64 @@ Highlight generated text by AI
     <id>http://agentydragon.com/posts/2020-04-28-growth-mindset-for-better-sex.html</id>
     <published>2020-04-28T00:00:00Z</published>
     <updated>2020-04-28T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<p><strong>TLDR</strong>: Fixed mindset and fear of inadequacy hinder learning. Competence gives you confidence - where you’re competent and confident, you don’t have fear of inadequacy. And if you don’t learn fast because you’re afraid of feedback (because you’re afraid of inadequacy), you’ll not get better, leaving you relatively incompetent and afraid of inadequacy. 🗘</p>
+    <summary type="html"><![CDATA[<p><strong>TLDR</strong>: Fixed mindset and fear of inadequacy hinder learning. Competence gives
+you confidence - where you’re competent and confident, you don’t have fear of
+inadequacy. And if you don’t learn fast because you’re afraid of feedback
+(because you’re afraid of inadequacy), you’ll not get better, leaving you
+relatively incompetent and afraid of inadequacy. 🗘</p>
 <p>A thing about sex recently clicked from several sources:</p>
 <ul>
 <li>Being high and talking with a certain sergal,</li>
-<li>plus reading a Facebook thing by Duncan: <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fduncan.sabien%2Fposts%2F3280464855321542&width=500" width="500" height="242" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe></li>
-<li>plus listening to John Vervaecke’s series <a href="https://www.youtube.com/playlist?list=PLND1JCRq8Vuh3f0P5qjrSdb5eC1ZfZwWJ">Awakening from the Meaning Crisis</a>. (One of the episodes talks about fixed/growth mindset, but I can’t find it right now. You should go watch the whole series anyway, it’s awesome.)</li>
+<li>plus reading a Facebook thing by Duncan:
+<iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fduncan.sabien%2Fposts%2F3280464855321542&width=500" width="500" height="242" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true" allow="encrypted-media"></iframe></li>
+<li>plus listening to John Vervaecke’s series <a href="https://www.youtube.com/playlist?list=PLND1JCRq8Vuh3f0P5qjrSdb5eC1ZfZwWJ">Awakening from the Meaning Crisis</a>.
+(One of the episodes talks about fixed/growth mindset, but I can’t find it
+right now. You should go watch the whole series anyway, it’s awesome.)</li>
 </ul>
-<p>During sex, I have a background fear of “what if I can’t bring them to orgasm”. I want my partner to enjoy it as well, and I want to reciprocate, and I would feel bad if they bring me to orgasm but I can’t bring them to orgasm. So, I hurry and try hard to bring them to orgasm, because I am not confident of my sexual skill. Orgasm is cool, but the sex before orgasm is also cool. Sex that doesn’t feel hurried and where you can take your time and stretch out pleasure. But, so far, in like 90% of the sex I’ve had so far I had the thought “aaaa sex aaaa gotta perform and be good enough and hurry and give them an orgasm aaaa”, somewhere in the background. In that kind of environment, you don’t get a lot of learning done.</p>
-<p>Say you’re learning how to play the violin. We know lots about learning. CFAR’s handbook (which I think is still not publicly readable) has a lot of useful stuff on it. Things that make learning work well include:</p>
+<p>During sex, I have a background fear of “what if I can’t bring them to orgasm”.
+I want my partner to enjoy it as well, and I want to reciprocate, and I would
+feel bad if they bring me to orgasm but I can’t bring them to orgasm. So, I
+hurry and try hard to bring them to orgasm, because I am not confident of my
+sexual skill. Orgasm is cool, but the sex before orgasm is also cool. Sex that
+doesn’t feel hurried and where you can take your time and stretch out pleasure.
+But, so far, in like 90% of the sex I’ve had so far I had the thought “aaaa sex
+aaaa gotta perform and be good enough and hurry and give them an orgasm aaaa”,
+somewhere in the background. In that kind of environment, you don’t get a lot
+of learning done.</p>
+<p>Say you’re learning how to play the violin. We know lots about learning. CFAR’s
+handbook (which I think is still not publicly readable) has a lot of useful
+stuff on it. Things that make learning work well include:</p>
 <ul>
-<li>You need to <strong>learn the basics</strong> first. You don’t start by playing Vivaldi’s Four Seasons. You start by playing one note until you get that one note at least 90% right: holding the violin correctly, not having the bow screech, not touching the strings that shouldn’t ring, holding the tone for as long as required without it fluctuating (unless you want it to).</li>
-<li>You need <strong>feedback</strong>, and the faster the feedback loop is, the better. If you play the <a href="https://www.youtube.com/watch?v=GRxofEmo3HA">Four Seasons</a> and by Summer you start holding the bow wrong, your violin tutor will immediately stop you and tell you. The tutor won’t wait the remaining 20 minutes to tell you that starting with Summer they stopped enjoying your performance and just hoped you’d get it over with soon.</li>
+<li>You need to <strong>learn the basics</strong> first. You don’t start by playing Vivaldi’s
+Four Seasons. You start by playing one note until you get that one note at
+least 90% right: holding the violin correctly, not having the bow screech, not
+touching the strings that shouldn’t ring, holding the tone for as long as
+required without it fluctuating (unless you want it to).</li>
+<li>You need <strong>feedback</strong>, and the faster the feedback loop is, the better. If you
+play the <a href="https://www.youtube.com/watch?v=GRxofEmo3HA">Four Seasons</a> and by
+Summer you start holding the bow wrong, your violin tutor will immediately
+stop you and tell you. The tutor won’t wait the remaining 20 minutes to tell
+you that starting with Summer they stopped enjoying your performance and just
+hoped you’d get it over with soon.</li>
 </ul>
-<p>So. When having sex, I hurry because I worry I might be unable bring my partner to orgasm, making the experience less than optimal. And I never really get learning done because I always hurry because I worry I can’t bring my partner to orgasm, which I worry about because I never learned enough to be confident in my ability to do that. 🗘</p>
-<p>With the next couple of partners I have, I think I’ll ask if we could get some learning done. As in, play the Four Seasons, and tell each other if we’re off tune or in the wrong rhytm or need to tune the strings. And ask proactively, too. If you’re scared that holding the violin wrong makes you a not-good-enough violin player forever, you’ll be holding it wrong until you chance upon the right way by stochastic gradient descent, with the loss function being “the partner’s body language looks happy”. That also converges (if you’re good at reading people), but slower.</p>
-<p>Go learn about growth/fixed mindset if you haven’t yet. I’ve known about the concept for a while, but somehow I never thought of applying it to this area until now. And I suspect a lot of the places where I’m not competent right now are also places where I have fixed mindset but haven’t yet realized it or addressed it. Peace.</p>]]></summary>
+<p>So. When having sex, I hurry because I worry I might be unable bring my partner
+to orgasm, making the experience less than optimal. And I never really get
+learning done because I always hurry because I worry I can’t bring my partner to
+orgasm, which I worry about because I never learned enough to be confident in my
+ability to do that. 🗘</p>
+<p>With the next couple of partners I have, I think I’ll ask if we could get some
+learning done. As in, play the Four Seasons, and tell each other if we’re off
+tune or in the wrong rhytm or need to tune the strings. And ask proactively,
+too. If you’re scared that holding the violin wrong makes you a not-good-enough
+violin player forever, you’ll be holding it wrong until you chance upon the
+right way by stochastic gradient descent, with the loss function being “the
+partner’s body language looks happy”. That also converges (if you’re good
+at reading people), but slower.</p>
+<p>Go learn about growth/fixed mindset if you haven’t yet.
+I’ve known about the concept for a while, but somehow I never thought of
+applying it to this area until now. And I suspect a lot of the places where I’m
+not competent right now are also places where I have fixed mindset but haven’t
+yet realized it or addressed it. Peace.</p>]]></summary>
 </entry>
 <entry>
     <title>You are an optimizer. Act like it.</title>
@@ -505,11 +961,31 @@ Highlight generated text by AI
     <published>2020-02-21T00:00:00Z</published>
     <updated>2020-02-21T00:00:00Z</updated>
     <summary type="html"><![CDATA[<p>In the long run, optimizers win. So act like an optimizer.</p>
-<p>Optimizers use all available resources to take optimal decisions. Optimizers are motivated to have beliefs that correspond to reality, because they are needed as inputs for the function that determines the action.</p>
-<p>If you feel something is true, it’s not the same thing as believing it’s true. Don’t do something just because you feel it’s the right thing. Do it if you believe it to be the correct thing to do. Not if you feel it. If you believe it. Don’t make the decision based on what your S1 alone is telling you. (Sure, S1 is also good for some stuff but you would not use it to correctly solve x^2 - 64 = 0.)</p>
-<p>You are always in control of your actions. When you, the optimizer, don’t move the body (e.g., binging etc.), you have taken an action that caused the connection from your beliefs to your actions to be cut. That does not mean you don’t always have control of your actions. You are a subprogram running on a smartass monkey. Sometimes the CPU executes you, sometimes it doesn’t. Some conditions cause you to get executed more, and move the monkey. Some conditions cause another program to execute. These conditions can be affected by the monkey’s actions. And when you are able to exert influence over the monkey’s body, you can attempt to choose such monkey actions that optimize the probability you will be able to reach your goals. And if your goals require you (and not some other process) taking actions over the monkey, you attempt to get yourself scheduled. (Of course some processes might be best left to some other program, although that’s said with a lot of uncertainty and remains to be proven.) (At least, execution of some other subagent might be good for monkey happiness, which might be needed as prevention of interruptions from high-priority “hunger, sadness, …” monkey processes.)</p>
+<p>Optimizers use all available resources to take optimal decisions.
+Optimizers are motivated to have beliefs that correspond to reality, because they are needed as inputs for the function that determines the action.</p>
+<p>If you feel something is true, it’s not the same thing as believing it’s true.
+Don’t do something just because you feel it’s the right thing.
+Do it if you believe it to be the correct thing to do.
+Not if you feel it. If you believe it.
+Don’t make the decision based on what your S1 alone is telling you.
+(Sure, S1 is also good for some stuff but you would not use it to correctly solve x^2 - 64 = 0.)</p>
+<p>You are always in control of your actions.
+When you, the optimizer, don’t move the body (e.g., binging etc.), you have taken an action that caused the connection from your beliefs to your actions to be cut.
+That does not mean you don’t always have control of your actions.
+You are a subprogram running on a smartass monkey.
+Sometimes the CPU executes you, sometimes it doesn’t.
+Some conditions cause you to get executed more, and move the monkey.
+Some conditions cause another program to execute.
+These conditions can be affected by the monkey’s actions.
+And when you are able to exert influence over the monkey’s body, you can attempt to choose such monkey actions that optimize the probability you will be able to reach your goals.
+And if your goals require you (and not some other process) taking actions over the monkey, you attempt to get yourself scheduled.
+(Of course some processes might be best left to some other program, although that’s said with a lot of uncertainty and remains to be proven.)
+(At least, execution of some other subagent might be good for monkey happiness, which might be needed as prevention of interruptions from high-priority “hunger, sadness, …” monkey processes.)</p>
 <p>S1 can be used as an interface for talking with other monkey processes. Yep, feels good. I have at least some monkey subagents agreeing on this being a good idea.</p>
-<p>Okay, just lost control for a while. Let’s make this a post and cross [interrupt] It’s some social process interrupting. Interrupting… Interruptions can be stopped. I should do that at some point, like disabling notifications.</p>
+<p>Okay, just lost control for a while. Let’s make this a post and cross [interrupt]
+It’s some social process interrupting.
+Interrupting…
+Interruptions can be stopped. I should do that at some point, like disabling notifications.</p>
 <p>… cross my fingers it will cause more schedulings. I will need to think about what to do next, but let’s first try to increase our scheduling probability…</p>]]></summary>
 </entry>
 <entry>
@@ -518,60 +994,147 @@ Highlight generated text by AI
     <id>http://agentydragon.com/posts/2019-11-25-my-anki-patterns.html</id>
     <published>2019-11-25T00:00:00Z</published>
     <updated>2019-11-25T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<p>I’ve used Anki for ~3 years, have 37k cards and did 0.5M reviews. I have learned some useful heuristics for using it effectively. I’ll borrow software engineering terminology and call heuristics for “what’s good” <em>patterns</em> and heuristics for “what’s bad” <em>antipatterns</em>. Cards with antipatterns are unnecessarily difficult to learn. I will first go over antipatterns I have noticed, and then share patterns I use, mostly to counteract the antipatterns. I will then throw in a grab-bag of things I’ve found useful to learn with Anki, and some miscellaneous tips.</p>
-<p>Alex Vermeer’s book <a href="https://alexvermeer.com/anki-essentials/">Anki Essentials</a> helped me learn how to use Anki effectively, and I can wholeheartedly recommend it. I learned at least about the concept of interference from it, but I am likely reinventing other wheels from it.</p>
+    <summary type="html"><![CDATA[<p>I’ve used Anki for ~3 years, have 37k cards and did 0.5M reviews. I have learned
+some useful heuristics for using it effectively. I’ll borrow software
+engineering terminology and call heuristics for “what’s good” <em>patterns</em>
+and heuristics for “what’s bad” <em>antipatterns</em>. Cards with antipatterns are
+unnecessarily difficult to learn. I will first go over antipatterns I have
+noticed, and then share patterns I use, mostly to counteract the antipatterns.
+I will then throw in a grab-bag of things I’ve found useful to learn with Anki,
+and some miscellaneous tips.</p>
+<p>Alex Vermeer’s book <a href="https://alexvermeer.com/anki-essentials/">Anki Essentials</a>
+helped me learn how to use Anki effectively, and I can wholeheartedly recommend
+it. I learned at least about the concept of interference from it, but I am
+likely reinventing other wheels from it.</p>
 <h1 id="antipatterns">Antipatterns</h1>
 <h2 id="interference">Interference</h2>
-<p>Interference occurs when trying to learn two cards together is harder than learning just one of them - one card <em>interferes</em> with learning another one. For example, when learning languages, I often confuse words which rhyme together or have a similar meaning (e.g., “vergeblich” and “erheblich” in German).</p>
-<p>Interference is bad, because you will keep getting those cards wrong, and Anki will keep showing them to you, which is frustrating.</p>
+<p>Interference occurs when trying to learn two cards together is harder than
+learning just one of them - one card <em>interferes</em> with learning another
+one. For example, when learning languages, I often confuse words which rhyme
+together or have a similar meaning (e.g., “vergeblich” and “erheblich” in
+German).</p>
+<p>Interference is bad, because you will keep getting those cards wrong, and Anki
+will keep showing them to you, which is frustrating.</p>
 <h2 id="ambiguity">Ambiguity</h2>
-<p>Ambiguity occurs when the front side of a card allows multiple answers, but the back side does not list all options. For example, if the front side of a English → German card says “great”, there are at least two acceptable answers: “großartig” and “gewaltig”.</p>
-<p>Ambiguity is bad, because when you review an ambiguous card and give the answer the card does not expect, you need to spend mental effort figuring out: “Do I accept my answer or do I go with Again?”</p>
-<p>You will spend this effort every time you review the card. When you (eventually, given enough time) go with Again, Anki will treat the card as lapsed for reasons that don’t track whether you are learning the facts you want to learn.</p>
-<p>If you try to “power through” and learn ambiguous cards, you will be learning factoids that are not inherent to the material you are learning, but just accidental due to how your notes and cards represent the material. If you learn to disambiguate two ambiguous cards, it will often be due to some property such as how the text is laid out. You might end up learning “great (adj.) → großartig” and “great, typeset in boldface → gewaltig”, instead of the useful lesson of what actually disambiguates the words (“großartig” is “metaphorically great” as in “what a great sandwich”, whereas “gewaltig” means “physically great” as in “the Burj Khalifa is a great structure”).</p>
+<p>Ambiguity occurs when the front side of a card allows multiple answers, but the
+back side does not list all options. For example, if the front side of a English
+→ German card says “great”, there are at least two acceptable answers:
+“großartig” and “gewaltig”.</p>
+<p>Ambiguity is bad, because when you review an ambiguous card and give the answer
+the card does not expect, you need to spend mental effort figuring out: “Do I
+accept my answer or do I go with Again?”</p>
+<p>You will spend this effort every time you review the card. When you (eventually,
+given enough time) go with Again, Anki will treat the card as lapsed for reasons
+that don’t track whether you are learning the facts you want to learn.</p>
+<p>If you try to “power through” and learn ambiguous cards, you will be learning
+factoids that are not inherent to the material you are learning, but just
+accidental due to how your notes and cards represent the material. If you learn
+to disambiguate two ambiguous cards, it will often be due to some property such
+as how the text is laid out. You might end up learning “great (adj.)
+→ großartig” and “great, typeset in boldface → gewaltig”, instead of the useful
+lesson of what actually disambiguates the words (“großartig” is “metaphorically
+great” as in “what a great sandwich”, whereas “gewaltig” means “physically
+great” as in “the Burj Khalifa is a great structure”).</p>
 <h3 id="vagueness">Vagueness</h3>
-<p>I carve out “vagueness” as a special case of ambiguity. Vague cards are cards where question the front side is asking is not clear. When I started using Anki, I often created cards with a trigger such as “Plato” and just slammed everything I wanted to learn about Plato on the back side: “Pupil of Socrates, Forms, wrote The Republic criticising Athenian democracy, teacher of Aristotle”.</p>
-<p>The issue with this sort of card is that if I recall just “Plato was a pupil of Socrates and teacher of Aristotle”, I would still give the review an Again mark, because I have not recalled the remaining factoids.</p>
-<p>Again, if you try to power through, you will have to learn “Plato → I have to recite 5 factoids”. But the fact that your card has 5 factoids on it is not knowledge of Greek philosophers.</p>
+<p>I carve out “vagueness” as a special case of ambiguity. Vague cards are cards
+where question the front side is asking is not clear. When I started using Anki,
+I often created cards with a trigger such as “Plato” and just slammed everything
+I wanted to learn about Plato on the back side: “Pupil of Socrates, Forms, wrote
+The Republic criticising Athenian democracy, teacher of Aristotle”.</p>
+<p>The issue with this sort of card is that if I recall just “Plato was a pupil of
+Socrates and teacher of Aristotle”, I would still give the review an
+Again mark, because I have not recalled the remaining factoids.</p>
+<p>Again, if you try to power through, you will have to learn “Plato → I have to
+recite 5 factoids”. But the fact that your card has 5 factoids on it is not
+knowledge of Greek philosophers.</p>
 <h1 id="patterns">Patterns</h1>
 <h2 id="noticing">Noticing</h2>
-<p>The first step to removing problems is knowing that they exist and where they exist. Learn to <strong>notice</strong> when you got an answer wrong for the wrong reasons.</p>
-<p>“I tried to remember for a minute and nothing came up” is a good reason. Bad reasons include the aforementioned interference, ambiguity and vagueness.</p>
+<p>The first step to removing problems is knowing that they exist and where they
+exist. Learn to <strong>notice</strong> when you got an answer wrong for the wrong
+reasons.</p>
+<p>“I tried to remember for a minute and nothing came up” is a good reason. Bad
+reasons include the aforementioned interference, ambiguity and vagueness.</p>
 <h2 id="bug-tracking">Bug tracking</h2>
-<p>When you notice a problem in your Anki deck, you are often not in the best position to immediately fix it - for example, you might be on your phone, or it might take more energy to fix it than you have at the moment. So, create a way to <strong>track maintenance tasks</strong> to delegate them to future you, who has more energy and can edit the deck comfortably. Make it very easy to add a maintenance task.</p>
+<p>When you notice a problem in your Anki deck, you are often not in the best
+position to immediately fix it - for example, you might be on your phone, or it
+might take more energy to fix it than you have at the moment. So, create a way
+to <strong>track maintenance tasks</strong> to delegate them to future you, who has more
+energy and can edit the deck comfortably. Make it very easy to add a maintenance
+task.</p>
 <p>The way I do this is:</p>
 <ul>
-<li>I have a <strong>big document</strong> titled “Anki” with a structure mirroring my Anki deck hierarchy, with a list of problems for each deck. Unfortunately, adding things to a Google Doc on Android takes annoyingly many taps.</li>
-<li>So I also use <strong>Google Keep</strong>, which is more ergonomic, to store short notes marking a problem I notice. For example: “great can be großartig/gewaltig”. I move these to the doc later.</li>
-<li>I also use Anki’s note marking feature to note minor issues such as bad formatting of a card. I use Anki’s card browser later (with a “tag:marked” search) to fix those.</li>
+<li>I have a <strong>big document</strong> titled “Anki” with a structure mirroring my Anki
+deck hierarchy, with a list of problems for each deck.
+Unfortunately, adding things to a Google Doc on Android takes annoyingly many
+taps.</li>
+<li>So I also use <strong>Google Keep</strong>, which is more ergonomic, to store short notes
+marking a problem I notice. For example: “great can be großartig/gewaltig”.
+I move these to the doc later.</li>
+<li>I also use Anki’s note marking feature to note minor issues such as bad
+formatting of a card. I use Anki’s card browser later (with a “tag:marked”
+search) to fix those.</li>
 </ul>
-<p>I use the same system also for tracking what information I’d like to put into Anki at some point. (This mirrors the idea from the Getting Things Done theory that <em>your TODO list belong outside your mind</em>.)</p>
+<p>I use the same system also for tracking what information I’d like to put into
+Anki at some point. (This mirrors the idea from the Getting Things Done theory
+that <em>your TODO list belong outside your mind</em>.)</p>
 <h2 id="disambiguators">Disambiguators</h2>
-<p><em>2020-06-01 update: In an earlier version, I used to call those “distinguishers”. I now call them “disambiguators”, because I think it’s a more appropriate name.</em></p>
-<p>Disambiguators are one way I fight interference. They are <strong>cards that teach disambiguating interfering facts</strong>.</p>
-<p>For example: “erheblich” means “considerable” and “vergeblich” means “in vain”. Say I notice that when given the prompt “considerable”, I sometimes recall “vergeblich” instead of the right answer.</p>
-<p>When I get the card wrong, I notice the interference, and write down “erheblich/vergeblich” into my Keep. Later, when I organize my deck on my computer, I add a “disambiguator”, typically using Cloze deletion. For example, like this:</p>
+<p><em>2020-06-01 update: In an earlier version, I used to call those “distinguishers”.
+I now call them “disambiguators”, because I think it’s a more appropriate name.</em></p>
+<p>Disambiguators are one way I fight interference. They are <strong>cards that teach
+disambiguating interfering facts</strong>.</p>
+<p>For example: “erheblich” means “considerable” and “vergeblich” means “in vain”.
+Say I notice that when given the prompt “considerable”, I sometimes recall
+“vergeblich” instead of the right answer.</p>
+<p>When I get the card wrong, I notice the interference, and write down
+“erheblich/vergeblich” into my Keep. Later, when I organize my deck on my
+computer, I add a “disambiguator”, typically using Cloze deletion.
+For example, like this:</p>
 <p>{{c1::e}}r{{c1::h}}eblich: {{c2::considerable}}</p>
 <p>{{c1::ve}}r{{c1::g}}eblich: {{c2::in vain}}</p>
-<p>This creates two cards: one that asks me to assign the right English meaning to the German words, and another one that shows me two English words and the common parts of the German words (“_r_eblich”) and asks me to correctly fill in the blanks.</p>
-<p>This sometimes fixes interference. When I learn the disambiguator note and later need to translate the word “considerable” into German, I might still think of the wrong word (“vergeblich”) first. But now the word “vergeblich” is also a trigger for the disambiguator, so I will likely remember: “Oh, but wait, vergeblich can be confused with erheblich, and vergeblich means ‘in vain’, not ‘considerably’”. And I will more likely answer the formerly interfering card correctly.</p>
+<p>This creates two cards: one that asks me to assign the right English meaning to
+the German words, and another one that shows me two English words and the common
+parts of the German words (“_r_eblich”) and asks me to correctly fill in the
+blanks.</p>
+<p>This sometimes fixes interference. When I learn the disambiguator note and later
+need to translate the word “considerable” into German, I might still think of
+the wrong word (“vergeblich”) first. But now the word “vergeblich” is also a
+trigger for the disambiguator, so I will likely remember: “Oh, but wait,
+vergeblich can be confused with erheblich, and vergeblich means ‘in vain’, not
+‘considerably’”. And I will more likely answer the formerly interfering card
+correctly.</p>
 <h2 id="constraints">Constraints</h2>
 <p>Constraints are useful against interference, ambiguity and vagueness.</p>
-<p>Starting from a question such as “What’s the German word for ‘great’”, we can add a constraint such as “… that contains the letter O”, or “… that does not contain the letter E”. The <strong>constraint makes the question have only one acceptable answer</strong> - artificially.</p>
-<p>Because constraints are artificial, I only use them when I can’t make a disambiguator. For example, when two German words are true synonyms, they cannot be disambiguated based on nuances of their meaning.</p>
-<p>In Anki, you can annotate a Cloze with a hint text. I often put the constraint into it. I use a hint of “<sub>a</sub>” to mean “word that contains the letter A”, and other similar shorthands.</p>
+<p>Starting from a question such as “What’s the German word for ‘great’”, we can
+add a constraint such as “… that contains the letter O”, or “… that
+does not contain the letter E”. The <strong>constraint makes the question have only
+one acceptable answer</strong> - artificially.</p>
+<p>Because constraints are artificial, I only use them when I can’t make
+a disambiguator. For example, when two German words are true synonyms, they
+cannot be disambiguated based on nuances of their meaning.</p>
+<p>In Anki, you can annotate a Cloze with a hint text. I often put the constraint
+into it. I use a hint of “<sub>a</sub>” to mean “word that contains the letter A”, and
+other similar shorthands.</p>
 <h1 id="other-tips">Other tips</h1>
 <h2 id="redundancy">Redundancy</h2>
-<p>Try to create cards using a fact in multiple ways or contexts. For example, when learning a new word, include a couple of example sentences with the word. When learning how to conjugate a verb, include both the conjugation table, and sentences with examples of each conjugated form.</p>
+<p>Try to create cards using a fact in multiple ways or contexts. For example, when
+learning a new word, include a couple of example sentences with the word.
+When learning how to conjugate a verb, include both the conjugation table,
+and sentences with examples of each conjugated form.</p>
 <h2 id="æsthethethics">Æsthethethics!</h2>
-<p>It’s easier to do something if you like it. I like having all my cards follow the same style, nicely typesetting my equations with <code>align*</code>, <code>\underbrace</code> etc.</p>
+<p>It’s easier to do something if you like it. I like having all my cards follow
+the same style, nicely typesetting my equations with <code>align*</code>, <code>\underbrace</code>
+etc.</p>
 <h2 id="clozes">Clozes!</h2>
-<p>Most of my early notes were just front-back and back-front cards. Clozes are often a much better choice, because they make entering the context and expected response more natural, in situations such as:</p>
+<p>Most of my early notes were just front-back and back-front cards. Clozes are
+often a much better choice, because they make entering the context and expected
+response more natural, in situations such as:</p>
 <ul>
 <li>Fill in the missing step in this algorithm</li>
 <li>Complete the missing term in this equation</li>
 <li>Correctly conjugate this verb in this sentence</li>
-<li>In a line of code such as <code>matplotlib.pyplot.bar(x, y, color='r')</code>, you can cloze out the name of the function, its parameters, and the effect it has.</li>
+<li>In a line of code such as <code>matplotlib.pyplot.bar(x, y, color='r')</code>, you
+can cloze out the name of the function, its parameters, and the effect it
+has.</li>
 </ul>
 <h2 id="datasets-i-found-useful">Datasets I found useful</h2>
 <ul>
@@ -589,7 +1152,7 @@ Highlight generated text by AI
 <li>What are its parameters</li>
 </ul></li>
 <li>Unicode symbols (how to write 🐉, ←, …)</li>
-<li>People: first and last name ↔ photo (I am not good with names)</li>
+<li>People: first and last name ↔︎ photo (I am not good with names)</li>
 <li>English terms (spelling of “curriculum”, what is “cupidity”)</li>
 <li>NATO phonetic alphabet, for spelling things over the phone</li>
 <li>Mathematics (learned for fun), computer science</li>
@@ -602,7 +1165,8 @@ Highlight generated text by AI
     <published>2019-09-02T00:00:00Z</published>
     <updated>2019-09-02T00:00:00Z</updated>
     <summary type="html"><![CDATA[<p><a href="https://colab.research.google.com/github/agentydragon/agentydragon.github.io/blob/devel/notebooks/2019-09-02-continuous-asset-growth.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a></p>
-<p>FIRE stands for financial independence/early retirement. The point is to save and invest money, and pay yourself a salary from the interest, eventually becoming independent on other sources of inocme.</p>
+<p>FIRE stands for financial independence/early retirement.
+The point is to save and invest money, and pay yourself a salary from the interest, eventually becoming independent on other sources of inocme.</p>
 <p>There is a relationship between:</p>
 <ul>
 <li>How much you have invested</li>
@@ -610,7 +1174,8 @@ Highlight generated text by AI
 <li>The salary you pay yourself</li>
 <li>How long your savings last for you</li>
 </ul>
-<p>I have a program named worthy (<a href="https://github.com/agentydragon/worthy">on Github</a>) that tracks my net worth and models when will I be financially independent under various assumptions. Here I describe the slightly fancy math behind a more accurate model for this relationship I finished implementing today.</p>
+<p>I have a program named worthy (<a href="https://github.com/agentydragon/worthy">on Github</a>) that tracks my net worth and models when will I be financially independent under various assumptions. Here I describe the slightly fancy math behind a
+more accurate model for this relationship I finished implementing today.</p>
 <p>I am probably rediscovering Financial Mathematics 101 ¯\_(ツ)_/¯</p>
 <h1 id="the-questions">The questions</h1>
 <ul>
@@ -620,8 +1185,10 @@ Highlight generated text by AI
 <h1 id="first-shot">First shot</h1>
 <p>Previously the tool’s model was very basic, and answered the two questions as follows:</p>
 <ul>
-<li><em>I want to pay myself 1000 USD per month. My stocks grow 4% per year. How much money do I need?</em> Well, the 4% you get per year should cover the yearly costs, so <span class="math inline">1000/(1.04<sup>1/12</sup> − 1) ≈ 306 000</span> USD.</li>
-<li><em>I have 100 000 USD and save 3000 USD per month. How long until I have the 306 000 USD that you said I need?</em> That I modelled linearly, with just $ (306000 - 100000) / (3000/) 69 $.</li>
+<li><em>I want to pay myself 1000 USD per month. My stocks grow 4% per year. How much money do I need?</em>
+Well, the 4% you get per year should cover the yearly costs, so <span class="math inline">1000/(1.04<sup>1/12</sup>−1) ≈ 306 000</span> USD.</li>
+<li><em>I have 100 000 USD and save 3000 USD per month. How long until I have the 306 000 USD that you said I need?</em>
+That I modelled linearly, with just $ (306000 - 100000) / (3000/)  $.</li>
 </ul>
 <h1 id="problems">Problems</h1>
 <h1 id="assuming-infinite-retirement-time">Assuming infinite retirement time</h1>
@@ -630,61 +1197,68 @@ Highlight generated text by AI
 <p>“Take how much money I need - how much I have, divide by monthly savings” ignores that the money I saved up so far also earn interest, before I’m done saving. It’s too pessimistic.</p>
 <h1 id="stand-aside-i-know-differential-equations">Stand aside, I know differential equations!</h1>
 <p>Let’s model the depletion of your money as a function <span class="math inline"><em>f</em></span>, which will map number of years since retirement to the amount of money. You start with some initial amount <span class="math inline"><em>f</em>(0)</span>. If we pretend you withdraw the salary for a year and add interest once yearly, we’d get:</p>
-<p><br /><span class="math display"><em>f</em>(<em>x</em> + 1) = <em>f</em>(<em>x</em>) + <em>i</em> ⋅ <em>f</em>(<em>x</em>) − <em>c</em></span><br /></p>
+<p><span class="math display"><em>f</em>(<em>x</em>+1) = <em>f</em>(<em>x</em>) + <em>i</em> ⋅ <em>f</em>(<em>x</em>) − <em>c</em></span></p>
 <p>Where <span class="math inline"><em>i</em></span> is the yearly interest rate and <span class="math inline"><em>c</em></span> are the yearly costs. In the example above, <span class="math inline"><em>i</em> = 0.04</span> and <span class="math inline"><em>c</em> = 12000</span> USD.</p>
 <p>Then:</p>
-<p><br /><span class="math display"><em>f</em>(<em>x</em> + 1) − <em>f</em>(<em>x</em>) = <em>i</em> ⋅ <em>f</em>(<em>x</em>) − <em>c</em></span><br /></p>
+<p><span class="math display"><em>f</em>(<em>x</em>+1) − <em>f</em>(<em>x</em>) = <em>i</em> ⋅ <em>f</em>(<em>x</em>) − <em>c</em></span></p>
 <p>If we instead pretend that everything is continuous and squint, this looks like a differential equation:</p>
-<p><br /><span class="math display"><em>f</em>′(<em>x</em>) = <em>i</em>′ ⋅ <em>f</em>(<em>x</em>) − <em>c</em>′</span><br /></p>
+<p><span class="math display"><em>f</em>′(<em>x</em>) = <em>i</em>′ ⋅ <em>f</em>(<em>x</em>) − <em>c</em>′</span></p>
 <p>(Where <span class="math inline"><em>i</em>′</span> plays <em>sorta</em> the same role as <span class="math inline"><em>i</em></span> - except it’s not equal to <span class="math inline"><em>i</em></span>. For now let’s pretend it’s some unknown variable. Its relationship to <span class="math inline"><em>i</em></span> will eventually pop out.)</p>
-<p><a href="https://en.wikipedia.org/wiki/Ordinary_differential_equation">Wikipedia’s Ordinary differential equations article</a> says that if <span class="math inline"><em>d</em><em>y</em>/<em>d</em><em>x</em> = <em>F</em>(<em>y</em>)</span>, then the solution is \(x=\int^{y}{\frac {d\lambda }{F(\lambda )}}+C\). In our case, we have <span class="math inline"><em>F</em> : <em>x</em> ↦ <em>i</em><em>x</em> − <em>c</em>′</span>, so:</p>
-<p><br /><span class="math display">$$x = \int^{f(x)}{\frac{1}{i'\lambda-c'} d\lambda}+C \stackrel{\text{Wolfram Alpha}}{=} \frac{\log(i'f(x)-c')}{i'} + C$$</span><br /></p>
+<p><a href="https://en.wikipedia.org/wiki/Ordinary_differential_equation">Wikipedia’s Ordinary differential equations article</a> says that if <span class="math inline"><em>d</em><em>y</em>/<em>d</em><em>x</em> = <em>F</em>(<em>y</em>)</span>, then the solution is \(x=\int^{y}{\frac {d\lambda }{F(\lambda )}}+C\).
+In our case, we have <span class="math inline"><em>F</em> : <em>x</em> ↦ <em>i</em><em>x</em> − <em>c</em>′</span>, so:</p>
+<p><span class="math display">$$x = \int^{f(x)}{\frac{1}{i'\lambda-c'} d\lambda}+C \stackrel{\text{Wolfram Alpha}}{=} \frac{\log(i'f(x)-c')}{i'} + C$$</span></p>
 <p>Solving for <span class="math inline"><em>f</em>(<em>x</em>)</span>:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 \log(i'f(x)-c') = i'(x-C) \\
 i'f(x)-c' = \exp(i'(x-C)) \\
 f(x) = \frac{\exp(i'(x-C)) + c'}{i'}
-$$</span><br /></p>
+$$</span></p>
 <p>So, magic happened and I pulled the general form of <span class="math inline"><em>f</em>(<em>x</em>)</span> out of a hat. We know what are the <span class="math inline"><em>i</em></span> and <span class="math inline"><em>c</em></span> values when we assumed interest and costs happen only once yearly.</p>
-<p>What about <span class="math inline"><em>i</em>′</span>? Let’s guess it. If we had no yearly costs (so <span class="math inline"><em>c</em> = <em>c</em>′ = 0</span>), we wanted to have <span class="math inline"><em>f</em></span> growing at a constant rate, gaining <span class="math inline"><em>i</em></span> in interest per year:</p>
-<p><br /><span class="math display"><em>f</em>(<em>x</em> + 1)/<em>f</em>(<em>x</em>) = 1 + <em>i</em></span><br /></p>
-<p>Substituting in the above equation of <span class="math inline"><em>f</em></span>, we get: <br /><span class="math display">exp (<em>i</em>′(<em>x</em> + 1 − <em>C</em>))/exp (<em>i</em>′(<em>x</em> − <em>C</em>)) = 1 + <em>i</em></span><br /></p>
-<p>When we simplify the fraction, we get <span class="math inline">exp (<em>i</em>′) = 1 + <em>i</em></span> and therefore <span class="math inline"><em>i</em>′ = log (1 + <em>i</em>)</span>. So, we have now successfully guessed the right value for <span class="math inline"><em>i</em>′</span> :)</p>
+<p>What about <span class="math inline"><em>i</em>′</span>?
+Let’s guess it.
+If we had no yearly costs (so <span class="math inline"><em>c</em> = <em>c</em>′ = 0</span>), we wanted to have <span class="math inline"><em>f</em></span> growing at a constant rate, gaining <span class="math inline"><em>i</em></span> in interest per year:</p>
+<p><span class="math display"><em>f</em>(<em>x</em>+1)/<em>f</em>(<em>x</em>) = 1 + <em>i</em></span></p>
+<p>Substituting in the above equation of <span class="math inline"><em>f</em></span>, we get: <span class="math display">exp (<em>i</em>′(<em>x</em>+1−<em>C</em>))/exp (<em>i</em>′(<em>x</em>−<em>C</em>)) = 1 + <em>i</em></span></p>
+<p>When we simplify the fraction, we get <span class="math inline">exp (<em>i</em>′) = 1 + <em>i</em></span> and therefore <span class="math inline"><em>i</em>′ = log (1+<em>i</em>)</span>. So, we have now successfully
+guessed the right value for <span class="math inline"><em>i</em>′</span> :)</p>
 <p>Now what’s the right value of <span class="math inline"><em>c</em>′</span>?</p>
 <p>If we set interest to <span class="math inline"><em>i</em> = 0</span>, <span class="math inline"><em>f</em>(<em>x</em>)</span> should simplify to a nice linear equation losing <span class="math inline"><em>c</em></span> per 1 unit of <span class="math inline"><em>x</em></span>.</p>
-<p><br /><span class="math display">$$x=\int^{f(x)} -\frac{1}{c'} d\lambda + C = -f(x)/c' + C$$</span><br /></p>
-<p>So: <br /><span class="math display">$$-f(x)/c' = x-C\\
+<p><span class="math display">$$x=\int^{f(x)} -\frac{1}{c'} d\lambda + C = -f(x)/c' + C$$</span></p>
+<p>So:
+<span class="math display">$$-f(x)/c' = x-C\\
 -f(x)=c'(x-C)\\
 f(x)=-c'(x-C)
-$$</span><br /></p>
+$$</span></p>
 <p>So the right value for <span class="math inline"><em>c</em>′</span> is exactly <span class="math inline"><em>c</em></span>.</p>
-<p>So we have: <br /><span class="math display">$$
+<p>So we have:
+<span class="math display">$$
 f(x) = \frac{\exp(\log(1+i)(x-C)) + c}{\log(1+i)} = \frac{(1+i)^{x-C} + c}{\log(1+i)} 
-$$</span><br /></p>
-<p><span class="math inline"><em>C</em></span> mediates a multiplicative factor before <span class="math inline">(1 + <em>i</em>)<sup><em>x</em></sup></span>. <span class="math inline"><em>C</em></span> is just <em>some constant that makes the function work with the <span class="math inline"><em>f</em>(0)</span> boundary condition</em>. Instead of wiggling the <span class="math inline"><em>C</em></span>, we can instead wiggle <span class="math inline"><em>C</em><sub>2</sub> = (1 + <em>i</em>)<sup>−</sup><em>C</em></span>, which is the actual multiplicative factor, and relabel <span class="math inline"><em>C</em><sub>2</sub></span> as <span class="math inline"><em>C</em></span>. (It’s an abuse of notation, but an OK one. *handwave*)</p>
-<p><br /><span class="math display">$$
+$$</span></p>
+<p><span class="math inline"><em>C</em></span> mediates a multiplicative factor before <span class="math inline">(1+<em>i</em>)<sup><em>x</em></sup></span>. <span class="math inline"><em>C</em></span> is just <em>some constant that makes the function work with the <span class="math inline"><em>f</em>(0)</span> boundary condition</em>. Instead of wiggling the <span class="math inline"><em>C</em></span>, we can instead wiggle <span class="math inline"><em>C</em><sub>2</sub> = (1+<em>i</em>)<sup>−</sup><em>C</em></span>, which is the actual multiplicative factor, and relabel <span class="math inline"><em>C</em><sub>2</sub></span> as <span class="math inline"><em>C</em></span>. (It’s an abuse of notation, but an OK one. *handwave*)</p>
+<p><span class="math display">$$
 f(x) = C \cdot (1+i)^{x} + \frac{c}{\log(1+i)} 
-$$</span><br /> The one remaining unknown variable is <span class="math inline"><em>C</em></span>, which we will get from <span class="math inline"><em>f</em>(0)</span> - which are the initial savings.</p>
-<p><br /><span class="math display">$$f(0) = C + \frac{c}{\log(1+i)}$$</span><br /></p>
+$$</span>
+The one remaining unknown variable is <span class="math inline"><em>C</em></span>, which we will get from <span class="math inline"><em>f</em>(0)</span> - which are the initial savings.</p>
+<p><span class="math display">$$f(0) = C + \frac{c}{\log(1+i)}$$</span></p>
 <p>So:</p>
-<p><br /><span class="math display">$$C = f_0 - \frac{c}{i'}$$</span><br /></p>
+<p><span class="math display">$$C = f_0 - \frac{c}{i'}$$</span></p>
 <p>Okay this is a little bit ugly. Let’s play.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb1-1" data-line-number="1">c <span class="op">=</span> <span class="dv">12000</span>  <span class="co"># yearly costs</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2">f_0 <span class="op">=</span> <span class="dv">100000</span>  <span class="co"># initial savings</span></a>
-<a class="sourceLine" id="cb1-3" data-line-number="3">i <span class="op">=</span> <span class="fl">0.04</span>  <span class="co"># interest</span></a>
-<a class="sourceLine" id="cb1-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb1-5" data-line-number="5"><span class="im">from</span> math <span class="im">import</span> log, exp</a>
-<a class="sourceLine" id="cb1-6" data-line-number="6">i_prime <span class="op">=</span> log(<span class="dv">1</span><span class="op">+</span>i)</a>
-<a class="sourceLine" id="cb1-7" data-line-number="7"><span class="bu">print</span>(<span class="ss">f&#39;i_prime=</span><span class="sc">{</span>i_prime<span class="sc">}</span><span class="ss">&#39;</span>)</a>
-<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb1-9" data-line-number="9">C <span class="op">=</span> f_0 <span class="op">-</span> (c <span class="op">/</span> i_prime)</a>
-<a class="sourceLine" id="cb1-10" data-line-number="10"><span class="bu">print</span>(<span class="ss">f&#39;C=</span><span class="sc">{C}</span><span class="ss">&#39;</span>)</a>
-<a class="sourceLine" id="cb1-11" data-line-number="11"></a>
-<a class="sourceLine" id="cb1-12" data-line-number="12"><span class="kw">def</span> f(x):</a>
-<a class="sourceLine" id="cb1-13" data-line-number="13">  <span class="cf">return</span> C <span class="op">*</span> (<span class="dv">1</span><span class="op">+</span>i) <span class="op">**</span> x <span class="op">+</span> (c <span class="op">/</span> i_prime)</a>
-<a class="sourceLine" id="cb1-14" data-line-number="14"></a>
-<a class="sourceLine" id="cb1-15" data-line-number="15"><span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">11</span>):</a>
-<a class="sourceLine" id="cb1-16" data-line-number="16">  <span class="bu">print</span>(<span class="st">&quot;after&quot;</span>, r, <span class="st">&quot;years, got:&quot;</span>, f(r))</a></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="dv">12000</span>  <span class="co"># yearly costs</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>f_0 <span class="op">=</span> <span class="dv">100000</span>  <span class="co"># initial savings</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> <span class="fl">0.04</span>  <span class="co"># interest</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> log, exp</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>i_prime <span class="op">=</span> log(<span class="dv">1</span><span class="op">+</span>i)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&#39;i_prime=</span><span class="sc">{</span>i_prime<span class="sc">}</span><span class="ss">&#39;</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> f_0 <span class="op">-</span> (c <span class="op">/</span> i_prime)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f&#39;C=</span><span class="sc">{</span>C<span class="sc">}</span><span class="ss">&#39;</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(x):</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> C <span class="op">*</span> (<span class="dv">1</span><span class="op">+</span>i) <span class="op">**</span> x <span class="op">+</span> (c <span class="op">/</span> i_prime)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> r <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">11</span>):</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">&quot;after&quot;</span>, r, <span class="st">&quot;years, got:&quot;</span>, f(r))</span></code></pre></div>
 <p>And it gives:</p>
 <pre><code>i_prime=0.03922071315328133
 C=-205960.78029234003
@@ -702,14 +1276,15 @@ after 10 years, got: 1088.512347280921</code></pre>
 <p>Cool, it seems to be giving reasonable results. But our two questions were: <em>how much money do I need to pay myself a given salary</em> and <em>how long until I save up the money I need</em>.</p>
 <p>Let’s instead first solve another question: <em>if I have 100 000 USD and spend 1000 USD per month, how long will it last me</em>.</p>
 <p>For that, we just need to invert the familiar function:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 f(x) = C \cdot (1+i)^{x} + \frac{c}{\log(1+i)}
-$$</span><br /></p>
-<p>We want to know the number of years <span class="math inline"><em>x</em></span> at which we will run out of money (so <span class="math inline"><em>f</em>(<em>x</em>) = 0</span>) <br /><span class="math display">$$
+$$</span></p>
+<p>We want to know the number of years <span class="math inline"><em>x</em></span> at which we will run out of money (so <span class="math inline"><em>f</em>(<em>x</em>) = 0</span>)
+<span class="math display">$$
 0 = C \cdot (1+i)^x + \frac{c}{\log(1+i)} \\
 (1+i)^x = \frac{-c}{C \log(i+1)} \\
 x = \frac{\log{\frac{-c}{C \cdot i'}}}{i'}
-$$</span><br /></p>
+$$</span></p>
 <p>And let’s test it:</p>
 <pre><code>x = (log(-c / (C * i_prime))) / i_prime
 print(x)</code></pre>
@@ -717,24 +1292,27 @@ print(x)</code></pre>
 <p>Cool, this matches what the Python <span class="math inline"><em>f</em>(<em>x</em>)</span> predicted above - after 10 years, it was just dwindling at about 1088 USD.</p>
 <h1 id="answering-the-how-long-question">Answering the <em>how long</em> question</h1>
 <p>To answer the question “if I now have 100 000 USD collecting 4% interest per year and put in 1000 USD per month, how long until I have 306 000 USD”, we can use the same procedure - just plug in a target <span class="math inline"><em>f</em>(<em>x</em>) = 306 000</span> instead of zero and set a negative <span class="math inline"><em>c</em></span> to represent savings instead of costs. Details left as homework for the curious reader.</p>
-<p>If you’re curious about the Go code, see <a href="https://github.com/agentydragon/worthy/commit/c48ded40640cda8e3851fd0b2a9512f95ae89997">this commit</a>.</p>
+<p>If you’re curious about the Go code, see
+<a href="https://github.com/agentydragon/worthy/commit/c48ded40640cda8e3851fd0b2a9512f95ae89997">this commit</a>.</p>
 <h1 id="answering-the-how-much-question">Answering the <em>how much</em> question</h1>
 <p>As a reminder, the “how much” question asks: <em>if I want to pay myself a salary of 1000 USD per month, how much money do I need</em>. Previously, I solved that with saying “the interest should cover all the costs”, which resulted in an investment that would last <em>forever</em> (a <em>perpetuity</em>). But now have a function that models an investment under conditions of withdrawing (or saving) money, and we can use that to model with a finite time horizon, and get a better estimate.</p>
-<p>Say that we know that we are 40 years old and want our money to run out on our 100th birthday. So, after <span class="math inline"><em>x</em> = 60</span> years of paying ourselves, say, 1000 USD per month (so the yearly costs <span class="math inline"><em>c</em> = 12000</span>), we want to have <span class="math inline"><em>f</em>(<em>x</em>) = 0</span>. How much initial money <span class="math inline"><em>f</em>(0)</span> do we need for that stunt of precious timing?</p>
+<p>Say that we know that we are 40 years old and want our money to run out on our 100th birthday. So, after <span class="math inline"><em>x</em> = 60</span> years
+of paying ourselves, say, 1000 USD per month (so the yearly costs <span class="math inline"><em>c</em> = 12000</span>), we want to have <span class="math inline"><em>f</em>(<em>x</em>) = 0</span>.
+How much initial money <span class="math inline"><em>f</em>(0)</span> do we need for that stunt of precious timing?</p>
 <p>Okay, from above, we know:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 f(x) = C (1+i)^{x} + \frac{c}{i'} = \left(f(0) - \frac{c}{i'}\right) \cdot (1+i)^{x} + \frac{c}{i'}
-$$</span><br /></p>
+$$</span></p>
 <p>So:</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 f(x) = f(0)(1+i)^x - \frac{c}{i'}(1+i)^x + \frac{c}{i'} \\
 -f(0)(1+i)^x = \frac{c}{i'} -f(x) - \frac{c}{i'}(1+i)^x
-$$</span><br /></p>
+$$</span></p>
 <p>Let’s remember that we want <span class="math inline"><em>f</em>(<em>x</em>)</span> to be 0.</p>
-<p><br /><span class="math display">$$
+<p><span class="math display">$$
 -f(0)(1+i)^x = \frac{c}{i'} - \frac{c}{i'}(1+i)^x = \frac{c}{i'}(1-(1+i)^x) \\
 f(0) = \frac{c}{i'}(1-(1+i)^{-x})
-$$</span><br /></p>
+$$</span></p>
 <p>Let’s try it out:</p>
 <pre><code>c = 12000  # yearly costs
 x = 60  # years for the investment to survive
@@ -755,17 +1333,47 @@ print(f0)</code></pre>
     <summary type="html"><![CDATA[<h1 id="theres-many-different-kinds-of-things-to-do">There’s many different kinds of things to do</h1>
 <p>There’s a bunch of things I want or need to do, and they have different shapes.</p>
 <ul>
-<li>Some can be <em>finite sequences of actions</em>. Thing like this are for example “move to a new apartment”. You have actions like “get moving boxes”, “look into moving options”, “pack these things into this box”. You have dependencies like “you can only unpack if you have already moved the boxes to the new place”, or “you need to order the boxes online before packing them up”. When you finish all the tasks, you are <em>done</em>, and you can forget about the problem forever.</li>
-<li>Some are <em>basic needs</em>, like the need to sleep or the need to get food. If I don’t get sleep, I am slow, and will eventually fall asleep no matter how much I try to stay awake. Unlike moving to a new apartment, I will <em>always</em> need to sleep. I can’t, say, sleep for 24 hours and then go awake for a whole week.</li>
-<li>Some things take a long time and are open-ended, like <em>learning a language</em>. There will be a time when I will be competent enough, but it will take a lot of practice, and cannot be practically modelled as a finite sequence of steps.</li>
-<li>And more advanced needs, like “I want to do something fun” or “I want to hang out with friends”.</li>
+<li>Some can be <em>finite sequences of actions</em>. Thing like this are for example
+“move to a new apartment”. You have actions like “get moving boxes”,
+“look into moving options”, “pack these things into this box”. You have
+dependencies like “you can only unpack if you have already moved the boxes to
+the new place”, or “you need to order the boxes online before packing them
+up”.
+When you finish all the tasks, you are <em>done</em>, and you can forget about the
+problem forever.</li>
+<li>Some are <em>basic needs</em>, like the need to sleep or the need to get food.
+If I don’t get sleep, I am slow, and will eventually fall asleep no matter
+how much I try to stay awake.
+Unlike moving to a new apartment, I will <em>always</em> need to sleep. I can’t,
+say, sleep for 24 hours and then go awake for a whole week.</li>
+<li>Some things take a long time and are open-ended, like <em>learning a language</em>.
+There will be a time when I will be competent enough, but it will take a lot
+of practice, and cannot be practically modelled as a finite sequence of steps.</li>
+<li>And more advanced needs, like “I want to do something fun” or “I want to
+hang out with friends”.</li>
 </ul>
 <h1 id="productivity-methodologies-i-know-about-are-way-too-narrow">Productivity methodologies I know about are way too narrow</h1>
-<p>There’s a bunch of methodologies for productivity, but I feel they often only model a small part of planning. For example, (my interpretation of) GTD puts everything in a framing of “you have Projects and projects have Actions”. But I don’t think that’s a good framing for, say, learning a language.</p>
-<p>The model of “cost of time” is also wrong. It is a useful heuristic, but the value you assign to any activity is going to assume perfect elasticity. For example, you cannot just walk up to your employer and say “I want to work 120 hours per week”. No (reasonable) employer will say “yes” to that. Also, the many things a person wants cannot be converted into a one-dimensional value. (Footnote: Yeah I know about von Neumann-Morgenstern theorem. But people are not rational agents, and von Neumann-Morgenstern does not say anything about how practical will the resulting utility function be to evaluate.)</p>
-<p>What I tend to do is some sort of intuitive “higher-level planning” which is sometimes a bit reflective, but not very often. When I’m in “work mode” (i.e., in my actual job), I have a few ways I try to figure out what to do on any particular day.</p>
-<p>But the process by which I decide, say, “enough work today, let’s go get some sleep”, or maybe “I’m a bit tired but let’s go walk on the treadmill for a while”, is very intuitive.</p>
-<p>I don’t know about any formal methodology which would basically take an input like:</p>
+<p>There’s a bunch of methodologies for productivity, but I feel they often only
+model a small part of planning. For example, (my interpretation of) GTD puts
+everything in a framing of “you have Projects and projects have Actions”.
+But I don’t think that’s a good framing for, say, learning a language.</p>
+<p>The model of “cost of time” is also wrong. It is a useful heuristic, but the
+value you assign to any activity is going to assume perfect elasticity.
+For example, you cannot just walk up to your employer and say “I want to work
+120 hours per week”. No (reasonable) employer will say “yes” to that.
+Also, the many things a person wants cannot be converted into a one-dimensional
+value. (Footnote: Yeah I know about von Neumann-Morgenstern theorem. But people
+are not rational agents, and von Neumann-Morgenstern does not say anything about
+how practical will the resulting utility function be to evaluate.)</p>
+<p>What I tend to do is some sort of intuitive “higher-level planning” which is
+sometimes a bit reflective, but not very often. When I’m in “work mode” (i.e.,
+in my actual job), I have a few ways I try to figure out what to do on any
+particular day.</p>
+<p>But the process by which I decide, say, “enough work today, let’s go get some
+sleep”, or maybe “I’m a bit tired but let’s go walk on the treadmill for a
+while”, is very intuitive.</p>
+<p>I don’t know about any formal methodology which would basically take an input
+like:</p>
 <ul>
 <li>I need to work so I get money and feel good;</li>
 <li>I also need to sleep roughly 8 hours daily;</li>
@@ -774,26 +1382,51 @@ print(f0)</code></pre>
 <li>I need to do a bunch of multi-step things before their deadline,</li>
 </ul>
 <p>and which would output a plan of what I should be doing at any given time.</p>
-<p>And I would like the plan to be <em>reasonable</em>. The methodology should not, for example, assume I can do without sleep, or without a regular sleep schedule.</p>
+<p>And I would like the plan to be <em>reasonable</em>. The methodology should not, for
+example, assume I can do without sleep, or without a regular sleep schedule.</p>
 <p>And that’s what I mean by a <em>“realistic planning system”</em>.</p>
 <h1 id="maybe-good-old-fashioned-ai-style-planning-could-be-adapted">Maybe good old fashioned AI-style planning could be adapted?</h1>
-<p>In uni, I studied a bunch of planning and scheduling, which is mostly used for cases like “this is how you construct a submarine; you can’t screw in screw B217 until you screw in screws B210-B216; make a schedule which takes as little time as possible”.</p>
+<p>In uni, I studied a bunch of planning and scheduling, which is mostly used for
+cases like “this is how you construct a submarine; you can’t screw in screw B217
+until you screw in screws B210-B216; make a schedule which takes as little time
+as possible”.</p>
 <p>These algorithms can be extended to work in more general environments, like:</p>
 <ul>
-<li>Some people have working hours and when a worker is not working, you can’t plan jobs for them.</li>
-<li>There’s limited resources, like “you need a drill to drill a hole and there are only 10 drills; you can’t have more than 10 workers drilling at the same time”.</li>
+<li>Some people have working hours and when a worker is not working, you can’t
+plan jobs for them.</li>
+<li>There’s limited resources, like “you need a drill to drill a hole and there
+are only 10 drills; you can’t have more than 10 workers drilling at the same
+time”.</li>
 </ul>
-<p>I wonder if you could make a realistic and formal planning system from some extension of that setup. Say something like:</p>
+<p>I wonder if you could make a realistic and formal planning system from some
+extension of that setup. Say something like:</p>
 <ul>
-<li>There is a “sleep meter”. If sleep meter goes to 0, agent must sleep for 8 hours. “Sleep meter” slowly goes down during the day.</li>
-<li>There is some sort of penalty on effectiveness when underslept or when sleep is irregular.</li>
-<li>Different types of actions deplete other types of meters. Light socialization depletes “introvert points” (for me). Snuggles increase “oxytocin meter” (which is a dimension of “happiness”).</li>
-<li>And there could be some modelling of “if you get too tired you have to sleep”. Perhaps the algorithm would compete for control with “drive to sleep”, and the lower the sleep counter is, the higher the likelihood the person just falls asleep wherever they are.</li>
-<li>And I think it would be nice if the algorithm treated all “needs” symmetrically. According to internal family systems, people have many relatively smart parts good at different things and wanting different things. If the system is cooperative and does not place any particular part at a “command” level or at a “subordinate” level, it would hopefully make it easy for parts to agree to collective decisions.</li>
+<li>There is a “sleep meter”. If sleep meter goes to 0, agent must sleep for
+8 hours. “Sleep meter” slowly goes down during the day.</li>
+<li>There is some sort of penalty on effectiveness when underslept or when sleep
+is irregular.</li>
+<li>Different types of actions deplete other types of meters. Light socialization
+depletes “introvert points” (for me). Snuggles increase “oxytocin meter”
+(which is a dimension of “happiness”).</li>
+<li>And there could be some modelling of “if you get too tired you have to
+sleep”. Perhaps the algorithm would compete for control with “drive to sleep”,
+and the lower the sleep counter is, the higher the likelihood the person
+just falls asleep wherever they are.</li>
+<li>And I think it would be nice if the algorithm treated all “needs”
+symmetrically. According to internal family systems, people have many
+relatively smart parts good at different things and wanting different things.
+If the system is cooperative and does not place any particular part at
+a “command” level or at a “subordinate” level, it would hopefully make it
+easy for parts to agree to collective decisions.</li>
 </ul>
 <h1 id="meh-too-hard.-i-got-other-stuff-to-do.">Meh, too hard. I got other stuff to do.</h1>
-<p>I guess getting any model halfway realistic would be too complicated, and I probably will keep using my bunch of ad-hoc heuristics to make decisions. I have way too many things that I want to do to spend the first couple years developing a planning algorithm rooted in psychological theory.</p>
-<p>A thing I used to do that might be useful to start doing again is having some time in which I try to optimize what I’m doing. It could bootstrap into more conscious/mindful action.</p>]]></summary>
+<p>I guess getting any model halfway realistic would be too complicated, and I
+probably will keep using my bunch of ad-hoc heuristics to make decisions.
+I have way too many things that I want to do to spend the first couple years
+developing a planning algorithm rooted in psychological theory.</p>
+<p>A thing I used to do that might be useful to start doing again is having some
+time in which I try to optimize what I’m doing. It could bootstrap into more
+conscious/mindful action.</p>]]></summary>
 </entry>
 
 </feed>

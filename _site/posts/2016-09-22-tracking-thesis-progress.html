@@ -60,9 +60,19 @@
     Posted on 2016-09-22
 </div>
 
-<p>I’m currently writing my master’s thesis. I’d like to have some idea of how to answer questions like: How well am I doing this week? Have I been stalled for some time? How fast can I write when I’m in the zone? How long until I’m finished?</p>
-<p>To help me answer those, I’m gathering data about it using a cron script that logs the number of pages of my the PDF of my thesis and the number of lines of code I’ve written every hour.</p>
-<p>This is a technique I copied from a video from the excellent screencast series <a href="https://www.destroyallsoftware.com/screencasts">Destroy All Software</a>. The author uses it in several videos. One variant of this data collection idea he uses is going over the Git history of a project and collecting data ex post by checking out every historic revision and running a data collection script over it.</p>
+<p>I’m currently writing my master’s thesis. I’d like to have some idea of how to
+answer questions like: How well am I doing this week? Have I been stalled for
+some time? How fast can I write when I’m in the zone? How long until I’m
+finished?</p>
+<p>To help me answer those, I’m gathering data about it using a cron script that
+logs the number of pages of my the PDF of my thesis and the number of lines of
+code I’ve written every hour.</p>
+<p>This is a technique I copied from a video from the excellent screencast series
+<a href="https://www.destroyallsoftware.com/screencasts">Destroy All Software</a>.
+The author uses it in several videos. One variant of this data collection idea
+he uses is going over the Git history of a project and collecting data
+ex post by checking out every historic revision and running a data collection
+script over it.</p>
 My use of this technique lets me produce a pretty graph that looks like this:
 <figure>
 <img src="../static/2016-09-22-thesis-tracking-graph.png">
@@ -71,7 +81,8 @@ My use of this technique lets me produce a pretty graph that looks like this:
 <ul>
 <li>How many tests were failing in each revision?</li>
 <li>Which authors commited how many lines of code, over time?</li>
-<li>How has the speed of a POST request to <code>/clients/create</code> evolved over time? Which changes affected it positively and negatively?</li>
+<li>How has the speed of a POST request to <code>/clients/create</code> evolved over time?
+Which changes affected it positively and negatively?</li>
 <li>How has the speed of my website’s rendering evolved over time?</li>
 </ul>
 <p>My crontab line looks like this:</p>
@@ -90,8 +101,12 @@ SLOC_LOGFILE=/home/prvak/misc/master-sloc-log.log
 echo &quot;---- CUT ----&quot; &gt;&gt; $SLOC_LOGFILE
 echo $DATE &gt;&gt; $SLOC_LOGFILE
 cloc /home/prvak/master/code &gt;&gt; $SLOC_LOGFILE</code></pre>
-<p>The lines-of-code counting is done by the <a href="https://github.com/AlDanial/cloc">cloc</a> tool (<a href="https://github.com/AlDanial/cloc">AlDanial/cloc</a> on GitHub). In Arch Linux, you can install it by running <code>pacman -S cloc</code>.</p>
-<p>Then, in <code>~/misc/sloc-count-to-log.py</code>, I have a simple script that changes the format of the lines-of-count logfile:</p>
+<p>The lines-of-code counting is done by the
+<a href="https://github.com/AlDanial/cloc">cloc</a> tool
+(<a href="https://github.com/AlDanial/cloc">AlDanial/cloc</a> on GitHub). In Arch Linux,
+you can install it by running <code>pacman -S cloc</code>.</p>
+<p>Then, in <code>~/misc/sloc-count-to-log.py</code>, I have a simple script that changes the
+format of the lines-of-count logfile:</p>
 <pre><code>#!/usr/bin/python
 with open('master-sloc.tsv', 'w') as f:
     for line in open('master-sloc-log.log'):
@@ -114,7 +129,8 @@ plot \
 ~/misc $ gnuplot
 (...)
 gnuplot&gt; load 'plot-thesis-stats.gnuplot'</code></pre>
-<p>I have enjoyed procrastinating by writing this post more than looking at my script munching away training samples for my classifiers.</p>
+<p>I have enjoyed procrastinating by writing this post more than looking at
+my script munching away training samples for my classifiers.</p>
 <p>Enjoy!</p>
 
 			</div>

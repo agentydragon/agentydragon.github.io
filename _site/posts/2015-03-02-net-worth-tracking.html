@@ -60,60 +60,113 @@
     Posted on 2015-03-02
 </div>
 
-<p>I like to keep a close track on my spending and income and to optimize both using historical data. I used to have a large spreadsheet for this purpose, but I was lucky to find the excellent <a href="http://homebank.free.fr/">HomeBank</a> instead of keeping it. Unfortunately, HomeBank alone eventually wasn’t enough to track all my assets.</p>
-<p>I have a custom setup which collects the values of my assets. Most of the code is at <a href="https://github.com/MichalPokorny/scripts">github.com/MichalPokorny/scripts</a> (with horrible undocumented dependencies on <a href="https://github.com/MichalPokorny/btckit">btckit</a>, <a href="https://github.com/MichalPokorny/worthy">worthy</a> and maybe a few others). In this post, I give a high-level overview of how it works at the moment.</p>
+<p>I like to keep a close track on my spending and income
+and to optimize both using historical data.
+I used to have a large spreadsheet for this purpose, but I was lucky
+to find the excellent <a href="http://homebank.free.fr/">HomeBank</a> instead of keeping it.
+Unfortunately, HomeBank alone eventually wasn’t enough to track all my assets.</p>
+<p>I have a custom setup which collects the values of my assets. Most of the code
+is at <a href="https://github.com/MichalPokorny/scripts">github.com/MichalPokorny/scripts</a>
+(with horrible undocumented dependencies on <a href="https://github.com/MichalPokorny/btckit">btckit</a>,
+<a href="https://github.com/MichalPokorny/worthy">worthy</a> and maybe a few others).
+In this post, I give a high-level overview of how it works at the moment.</p>
 <h2>
 The problem
 </h2>
-<p>The system needs to keep track of various assets which aren’t straightforward to appraise:</p>
+<p>The system needs to keep track of various assets which aren’t straightforward
+to appraise:</p>
 <ul>
-<li>I own a few Bitcoins (which were a large portion of my wealth back in the last bubble at the end of 2014).</li>
+<li>I own a few Bitcoins (which were a large portion of my wealth back
+in the last bubble at the end of 2014).</li>
 </ul>
 <figure>
+<figure>
 <img src="../images/bitcoin-06-2013-06-2014.png" alt="Bitcoin price 06/2014-06/2015 - the largest Bitcoin bubble yet" />
+<figcaption aria-hidden="true">Bitcoin price 06/2014-06/2015 - the largest Bitcoin bubble yet</figcaption>
+</figure>
 <div>
-<p>Bitcoin price 06/2014-06/2015 - the largest Bitcoin bubble yet. The price since dropped down to today’s ~$250. Image from <a href="http://bitcoincharts.com/charts/bitstampUSD#rg1460zczsg2013-06-01zeg2014-06-01ztgSzm1g10zm2g25">bitcoincharts.com</a>.</p>
+<p>Bitcoin price 06/2014-06/2015 - the largest Bitcoin bubble yet.
+The price since dropped down to today’s ~$250.
+Image from <a href="http://bitcoincharts.com/charts/bitstampUSD#rg1460zczsg2013-06-01zeg2014-06-01ztgSzm1g10zm2g25">bitcoincharts.com</a>.</p>
 </div>
 </figure>
 <ul>
-<li><p>I have some money in conservative investment funds backed mostly by government bonds.</p></li>
-<li><p>As I am writing this, I have a separate French bank account in euros. At the time when I needed to track it, HomeBank did have a limited form of multicurrency support, but if I remember correctly, I had a good reason for not using that (the feature may not have been usable in my particular case).</p></li>
-<li>In 2014, I started dabbling in stocks.</li>
+<li><p>I have some money in conservative investment funds backed mostly
+by government bonds.</p></li>
+<li><p>As I am writing this, I have a separate French bank account in euros.
+At the time when I needed to track it, HomeBank did have a limited form of
+multicurrency support, but if I remember correctly, I had a good reason
+for not using that (the feature may not have been usable in my particular
+case).</p></li>
+<li><p>In 2014, I started dabbling in stocks.</p></li>
 <li><p>And I also have some cash.</p></li>
 </ul>
-<p>The original problem was keeping track of my fiat money and of my Bitcoins. I wanted to have something stupidly hacky and working. Net worth tracking may have better solutions today (even for the weird structure of my assets), but I guess I’m going to keep using this solution until I’m bored enough to find a replacement :)</p>
+<p>The original problem was keeping track of my fiat money and of my Bitcoins.
+I wanted to have something stupidly hacky and working.
+Net worth tracking may have better solutions today (even for the weird structure
+of my assets), but I guess I’m going to keep using this solution until I’m
+bored enough to find a replacement :)</p>
 <h2>
 Collecting and storing the data
 </h2>
-<p>I have a Ruby script that figures the value of my assets using various sources and then saves the data. The script is in <code>~prvak/bin/net-worth-keeper</code> and it’s run as a cronjob every hour or so:</p>
+<p>I have a Ruby script that figures the value of my assets using various sources
+and then saves the data. The script is in <code>~prvak/bin/net-worth-keeper</code>
+and it’s run as a cronjob every hour or so:</p>
 <pre><code># crontab
 SHELL=/bin/bash
 PATH=/bin:/usr/bin:/usr/local/bin:/home/prvak/bin:/home/prvak/.gem/ruby/2.0.0/bin:/home/prvak/bin/gobin
 HOME=/home/prvak
 0 */1 * * * net-worth-keeper --log --quiet</code></pre>
 <p>Cron has the added benefit of sending me a mail when the script fails.</p>
-<p>I keep all the data in a simple CSV file at <code>~prvak/misc/net-worth.csv</code>. CSVs are simple and readable by everything (think OpenOffice Calc, Gnuplot, Ruby, Octave, etc.). They are also human-readable and writeable.</p>
+<p>I keep all the data in a simple CSV file at <code>~prvak/misc/net-worth.csv</code>.
+CSVs are simple and readable by everything (think OpenOffice Calc, Gnuplot, Ruby, Octave, etc.).
+They are also human-readable and writeable.</p>
 <p>The beginning of the CSV file looks like this (data obviously scrambled):</p>
 <pre><code>2013-09-28 21:00:05,1380394805,11013579.15,123456.7,890123.45,9999999,0.0,0.0
 2013-09-28 21:16:15,1380395775,11015200.366,125000.7,890200.666,9999999,0.0,0.0
 ...</code></pre>
 <ul>
-<li>The first column (<code>2013-09-28 21:00:05</code>) is the date and time the data was collected, in a human-readable format.</li>
-<li>The second column (<code>1380394805</code>) is also the date and time, but in machine-readable format (Unix time = number of seconds since the Epoch).</li>
+<li>The first column (<code>2013-09-28 21:00:05</code>) is the date and time the data was
+collected, in a human-readable format.</li>
+<li>The second column (<code>1380394805</code>) is also the date and time, but in machine-readable
+format (Unix time = number of seconds since the Epoch).</li>
 <li>Every remaining field contains the value of an asset in CZK (Czech koruna).</li>
 </ul>
-<p>Note the zeroes at the end - for example, I didn’t have any stocks at first. When I needed to start tracking them, I just wrote the tracking code and ran a complicated NoSQL CSV migration (i.e. I added “,0.0” at the end of each line).</p>
+<p>Note the zeroes at the end - for example, I didn’t have any stocks at first.
+When I needed to start tracking them, I just wrote the tracking code
+and ran a complicated NoSQL CSV migration (i.e. I added “,0.0” at the end of
+each line).</p>
 <p>New entries are always appended at the end of the file.</p>
 <h2>
 The sources of asset values
 </h2>
-<p>The original <code>net-worth-keeper</code> just fired a bunch of other programs using the <code>parallel</code> gem. Every program’s responsibility was to get the price of one asset (e.g. my Bitcoins) and output it in CZK. <code>net-worth-keeper</code> waited until those programs crashed or gave a valid output, parsed the output and appended it to the CSV file.</p>
-<p>Those binaries shared a lot of common code or common libraries (like currency conversion) and they fired a lot of expensive Ruby interpreters. I eventually moved shared code into one directory. Now <code>net-worth-keeper</code> calls a library function (<code>Prvak::Finance::NetWorth.load_assets</code>), which returns a breakdown of asset values as a Ruby <code>Hash</code> (like <code>{'Money' =&gt; 12345, ...}</code>).</p>
-<p>The breakdown is still done in parallel, but now most of the “workers” are actually just Ruby functions (like <code>Prvak::Finance::IKSPortfolio.load.value</code> or <code>Prvak::Finance::Homebank::Accounting.load.total_value</code>). I can still use separate executables where needed. Every data source just returns a single number (of CZK) or crashes and burns.</p>
+<p>The original <code>net-worth-keeper</code> just fired a bunch of other programs using
+the <code>parallel</code> gem. Every program’s responsibility was to get the price of
+one asset (e.g. my Bitcoins) and output it in CZK. <code>net-worth-keeper</code> waited
+until those programs crashed or gave a valid output, parsed the output and
+appended it to the CSV file.</p>
+<p>Those binaries shared a lot of common code or common libraries (like currency
+conversion) and they fired a lot of expensive Ruby interpreters.
+I eventually moved shared code into one directory.
+Now <code>net-worth-keeper</code> calls a library function
+(<code>Prvak::Finance::NetWorth.load_assets</code>), which returns a breakdown of asset
+values as a Ruby <code>Hash</code> (like <code>{'Money' =&gt; 12345, ...}</code>).</p>
+<p>The breakdown is still done in parallel, but now most of the “workers” are actually
+just Ruby functions (like <code>Prvak::Finance::IKSPortfolio.load.value</code> or
+<code>Prvak::Finance::Homebank::Accounting.load.total_value</code>). I can still use
+separate executables where needed. Every data source just returns a single
+number (of CZK) or crashes and burns.</p>
 <p>I have the following data sources:</p>
 <ul>
-<li><p><code>Prvak::Finance::Homebank::Accounting</code> loads a static HomeBank .xhb file, which has a simple XML format. It uses the wonderful <code>nokogiri</code> gem to parse it and crudely adds up all transactions. There are a few small gotchas regarding “hidden accounts”, internal transfers, and so on.</p></li>
-<li><p><code>Prvak::Finance::IKSPortfolio</code> understands investment funds provided by the company I invest through (<a href="http://www.iks-kb.cz/web/index.html">IKS</a>). Basically, you buy a number of “investment certificates” for price X and hope price eventually befomes &gt;X. I have “investment certificates” for several funds (they differ in their asset allocation).</p>
+<li><p><code>Prvak::Finance::Homebank::Accounting</code> loads a static HomeBank .xhb file,
+which has a simple XML format. It uses the wonderful <code>nokogiri</code> gem to parse
+it and crudely adds up all transactions. There are a few small gotchas
+regarding “hidden accounts”, internal transfers, and so on.</p></li>
+<li><p><code>Prvak::Finance::IKSPortfolio</code> understands investment funds provided
+by the company I invest through (<a href="http://www.iks-kb.cz/web/index.html">IKS</a>).
+Basically, you buy a number of “investment certificates” for price X and hope
+price eventually befomes &gt;X. I have “investment certificates” for several
+funds (they differ in their asset allocation).</p>
 <p>I store the relevant data in <code>~prvak/.iks-portfolio.yml</code>:</p>
 <pre><code>---
 invested: 9900000
@@ -121,21 +174,53 @@ assets:
     KB Konzervativní profil: 500317
     Amundi Funds Equity Global Resources (CZK): 23144
     ...</code></pre>
-<p><code>invested</code> stores the amount of CZK invested into investment funds. The <code>assets</code> hash is keyed by the name of a fund and values are numbers of investment certificates you hold. I then use a small gem of mine (<a href="https://github.com/MichalPokorny/iks_scrape">iks-scrape</a>) to get the value of those.</p>
-<p><code>iks_scrape</code> can’t use any API to get the price, but luckily there is a constant URL (<a href="http://www.iks-kb.cz/web/fondy_denni_hodnoty.html" class="uri">http://www.iks-kb.cz/web/fondy_denni_hodnoty.html</a>) where you can find the data. The incredibly useful <code>mechanize</code> gem parses the HTML like a piece of cake.</p></li>
-<li><p>I use <code>BtcKit::BtcPrice</code> to get the pitiful state of my Bitcoin hoard. There’s again a file in my home which stores how many BTC do I have. I simply pull some recent CZK trades from the <a href="https://localbitcoins.com">LocalBitcoins</a> JSON API and compute an average. I tried various other providers for the data with varying success. LocalBitcoins is good enough for now.</p></li>
-<li><p>Stocks used to be handled by <code>Prvak::Finance::Stocks</code>. This is now a thin wrapper around <a href="https://github.com/MichalPokorny/worthy">worthy</a> (the Ruby implementation broke one day and I decided I want to learn a bit of Go instead :).</p>
-<p>Worthy loads a JSON file from my <code>~</code> that describes what stocks and foreign currencies do I own on my broker account:</p>
+<p><code>invested</code> stores the amount of CZK invested into investment funds.
+The <code>assets</code> hash is keyed by the name of a fund and values are numbers
+of investment certificates you hold.
+I then use a small gem of mine (<a href="https://github.com/MichalPokorny/iks_scrape">iks-scrape</a>)
+to get the value of those.</p>
+<p><code>iks_scrape</code> can’t use any API to get the price, but luckily there is a constant URL
+(<a href="http://www.iks-kb.cz/web/fondy_denni_hodnoty.html">http://www.iks-kb.cz/web/fondy_denni_hodnoty.html</a>)
+where you can find the data. The incredibly useful <code>mechanize</code> gem
+parses the HTML like a piece of cake.</p></li>
+<li><p>I use <code>BtcKit::BtcPrice</code> to get the pitiful state of my Bitcoin hoard.
+There’s again a file in my home which stores how many BTC do I have.
+I simply pull some recent CZK trades from
+the <a href="https://localbitcoins.com">LocalBitcoins</a> JSON API and compute an average.
+I tried various other providers for the data with varying success. LocalBitcoins
+is good enough for now.</p></li>
+<li><p>Stocks used to be handled by <code>Prvak::Finance::Stocks</code>. This is now a thin
+wrapper around <a href="https://github.com/MichalPokorny/worthy">worthy</a>
+(the Ruby implementation broke one day and I decided I want to learn a bit
+of Go instead :).</p>
+<p>Worthy loads a JSON file from my <code>~</code> that describes what stocks and foreign
+currencies do I own on my broker account:</p>
 <pre><code>{&quot;stocks&quot;: {&quot;MSFT&quot;: 123, &quot;AAPL&quot;: 456, ...}, &quot;currencies&quot;: {&quot;USD&quot;: 666, ...}}</code></pre>
-<p>The <a href="https://github.com/MichalPokorny/worthy/blob/master/src/github.com/MichalPokorny/worthy/yahoo_stock_api/yahoo_stock_api.go">yahoo_stock_api</a> module sends one batch request to the Yahoo finance API. The request format could use some readability improvements and it would be cool if the API decided on one error value instead of randomly using <code>N/A</code>, <code>1.0</code> or <code>0.0</code>, but if you use just the basic stuff, it’s solid.</p>
-<p>I only ask for the last closing price and for the tickers (to ensure the order of stocks is in sync).</p>
-<p>After we know how much money is the broker account worth, we just need to convert the various currencies to CZK and we are done. I use the very useful <a href="http://www.freecurrencyconverterapi.com">freecurrencyconverterapi.com</a> - the API is dead simple and does everything I need. <a href="https://github.com/MichalPokorny/worthy/blob/master/src/github.com/MichalPokorny/worthy/free_currency_converter/free_currency_converter.go">This Go module</a> calls what I need.</p></li>
-<li><p>Finally, there’s the euro account. It’s again stored in a file, and I convert to CZK again using <a href="http://www.freecurrencyconverterapi.com">freecurrencyconverterapi.com</a>.</p></li>
+<p>The <a href="https://github.com/MichalPokorny/worthy/blob/master/src/github.com/MichalPokorny/worthy/yahoo_stock_api/yahoo_stock_api.go">yahoo_stock_api</a>
+module sends one batch request to the Yahoo finance API. The request
+format could use some readability improvements and it would be cool if
+the API decided on one error value instead of randomly using <code>N/A</code>, <code>1.0</code>
+or <code>0.0</code>, but if you use just the basic stuff, it’s solid.</p>
+<p>I only ask for the last closing price and for the tickers (to ensure
+the order of stocks is in sync).</p>
+<p>After we know how much money is the broker account worth, we just need
+to convert the various currencies to CZK and we are done. I use
+the very useful
+<a href="http://www.freecurrencyconverterapi.com">freecurrencyconverterapi.com</a> -
+the API is dead simple and does everything I need.
+<a href="https://github.com/MichalPokorny/worthy/blob/master/src/github.com/MichalPokorny/worthy/free_currency_converter/free_currency_converter.go">This Go module</a> calls what I need.</p></li>
+<li><p>Finally, there’s the euro account. It’s again stored in a file,
+and I convert to CZK again using <a href="http://www.freecurrencyconverterapi.com">freecurrencyconverterapi.com</a>.</p></li>
 </ul>
 <h2>
 Using the data
 </h2>
-<p>The <code>net-worth-keeper</code> binary by default runs in an “interactive mode”, which asks the the <code>terminal-table</code> gem to print a summary of asset values (remember, I track each asset separately, not just the sum of everything). In addition to this, I also have a small Gnuplot file in <code>~prvak/misc/plot-net-worth.gnuplot</code>, which plots a stacked plot of asset values:</p>
+<p>The <code>net-worth-keeper</code> binary by default runs in an “interactive mode”,
+which asks the the <code>terminal-table</code> gem to print a summary of asset values
+(remember, I track each asset separately, not just the sum of everything).
+In addition to this, I also have a small
+Gnuplot file in <code>~prvak/misc/plot-net-worth.gnuplot</code>, which plots
+a stacked plot of asset values:</p>
 <pre><code>set datafile separator ','
 set xdata time
 set format x &quot;%d.%m&quot;
@@ -155,13 +240,32 @@ plot \
      &quot;&quot; u 1:4 w lines title 'KB účty', \
      &quot;&quot; u 1:7 w lines title 'Akcie', \
      &quot;&quot; u 1:8 w lines title 'EUR účet', \</code></pre>
-<p>I run it using in an interactive Gnuplot session. Sorry for not including the output - I’m not comfortable with giving it to everyone on the internet. If you squint just right, you can actually see some trends where they should be :)</p>
+<p>I run it using in an interactive Gnuplot session.
+Sorry for not including the output - I’m not comfortable with giving it
+to everyone on the internet. If you squint just right, you can actually see
+some trends where they should be :)</p>
 <h2>
 Final notes
 </h2>
-<p>I have recently started rewriting parts of the code to Go. There are many things I like about Go - like the syntax, the blazing speed of tools, the One True Formatting (<code>gofmt</code>), or the package management (imports + <code>go get</code>). On the other hand, it is <em>much</em> less annoying to write quick JSON/YAML parsers in Ruby than in Go, but I hope this is just a temporary rough edge. The language is also less mature, so some libraries don’t quite exist yet (like Mechanize). However, I have high hopes for Go.</p>
-<p>It would be nice to extend this system one day to track my “savings ratio”. The “savings ratio” is exactly what it says on the tin - how much money you save divided by how much money you earn (not including investment income). I hope to write one day about why I think tracking this value would be useful.</p>
-<p>This system has problems when I’m moving larger amounts of money through “asset boundaries” - for example, it takes some time for money to travel between bank accounts. One needs to remember to put the transaction in both places once it finishes. A similar problem arises when I expect to be reimbursed for an expense by an employer - I don’t want to record that as a wedge in my nice graphs, but I also don’t want to have large disagreements between my records and the real state of my accounts. I don’t think I can have both.</p>
+<p>I have recently started rewriting parts of the code to Go. There are many things
+I like about Go - like the syntax, the blazing speed of tools, the One True
+Formatting (<code>gofmt</code>), or the package management (imports + <code>go get</code>).
+On the other hand, it is <em>much</em> less annoying to write quick JSON/YAML parsers
+in Ruby than in Go, but I hope this is just a temporary rough edge.
+The language is also less mature, so some libraries don’t quite exist yet
+(like Mechanize).
+However, I have high hopes for Go.</p>
+<p>It would be nice to extend this system one day to track my “savings ratio”.
+The “savings ratio” is exactly what it says on the tin - how much money you save
+divided by how much money you earn (not including investment income).
+I hope to write one day about why I think tracking this value would be useful.</p>
+<p>This system has problems when I’m moving larger amounts of money through “asset
+boundaries” - for example, it takes some time for money to travel between
+bank accounts. One needs to remember to put the transaction in both places
+once it finishes. A similar problem arises when I expect to be reimbursed
+for an expense by an employer - I don’t want to record that as a wedge
+in my nice graphs, but I also don’t want to have large disagreements between
+my records and the real state of my accounts. I don’t think I can have both.</p>
 
 			</div>
 			<hr class="clearfix">

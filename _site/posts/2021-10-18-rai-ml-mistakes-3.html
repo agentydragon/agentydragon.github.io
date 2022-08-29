@@ -66,71 +66,176 @@
 <li><a href="../posts/2021-01-04-rai-ml-mistakes-2.html">Part 2 on Lunar Landing</a></li>
 </ul>
 <h2 id="next-step-half-cheetah-td3-continuous-actions">Next step: half-cheetah, TD3, continuous actions</h2>
-<p>I’m not doing all that great emotionally, but I’m trying to keep learning RL, even if slowly. I made Cartpole and Lunar Landing environments work. Both of them have discrete actions. The next environment I went to try to learn was the <a href="https://www.endtoend.ai/envs/gym/mujoco/half-cheetah/">Half Cheetah</a>.</p>
+<p>I’m not doing all that great emotionally, but I’m trying to keep learning RL,
+even if slowly. I made Cartpole and Lunar Landing environments work. Both of
+them have discrete actions. The next environment I went to try to learn was the
+<a href="https://www.endtoend.ai/envs/gym/mujoco/half-cheetah/">Half Cheetah</a>.</p>
+<figure>
 <figure>
 <img src="../static/2021-10-18-standing.png" alt="Standing half-cheetah" />
+<figcaption aria-hidden="true">Standing half-cheetah</figcaption>
 </figure>
-<p>In this environment, you control a simple robot and are trying to teach it to run. You control it with continuous signals. I’m not sure what exactly they mean, probably something like force applied to joints. Continuous actions mean you need to use slightly different algorithms. I went to learn TD3 (twin delayed deep deterministic actor-critic), based on <a href="https://spinningup.openai.com/en/latest/algorithms/td3.html">OpenAI’s treatment in Spinning Up in Deep RL</a>. It was published in a 2018 paper called <a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods</a>.</p>
+</figure>
+<p>In this environment, you control a simple robot and are trying to teach it to
+run. You control it with continuous signals. I’m not sure what exactly they
+mean, probably something like force applied to joints. Continuous actions mean
+you need to use slightly different algorithms. I went to learn TD3 (twin delayed
+deep deterministic actor-critic), based on <a href="https://spinningup.openai.com/en/latest/algorithms/td3.html">OpenAI’s treatment in Spinning Up in
+Deep RL</a>. It was
+published in a 2018 paper called <a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in
+Actor-Critic Methods</a>.</p>
 <h3 id="sidenote-depending-on-mujoco-sucks">Sidenote: depending on MuJoCo sucks</h3>
-<p>The vanilla half-cheetah environment is written with MuJoCo. MuJoCo is a <em>commercial</em> physics simulator used for a lot of robotics environments like this. You need a license to run it. As of now (October 18, 2021), there is a free license available for everyone to run MuJoCo until the end of this month. But in general, closed-source dependencies for open research <em>suck</em>.</p>
-<p>There’s this open-source physics engine called <a href="https://pybullet.org/">Bullet</a>. I’ve played with it a bit in middle-high school when I was trying to write some 3D stuff. Turns out they have since made Python bindings, and implemented a bunch of OpenAI Gym environments. So you can now run lots of environments without MuJoCo :)</p>
-<p>To use the PyBullet environments, install the <code>pybullet</code> Python package and <code>import pybullet_envs</code>. The PyBullet repo has <a href="https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/__init__.py">the list of implemented environments</a>.</p>
+<p>The vanilla half-cheetah environment is written with MuJoCo. MuJoCo is a
+<em>commercial</em> physics simulator used for a lot of robotics environments like
+this. You need a license to run it. As of now (October 18, 2021), there is a
+free license available for everyone to run MuJoCo until the end of this month.
+But in general, closed-source dependencies for open research <em>suck</em>.</p>
+<p>There’s this open-source physics engine called <a href="https://pybullet.org/">Bullet</a>.
+I’ve played with it a bit in middle-high school when I was trying to write some
+3D stuff. Turns out they have since made Python bindings, and implemented a
+bunch of OpenAI Gym environments. So you can now run lots of environments
+without MuJoCo :)</p>
+<p>To use the PyBullet environments, install the <code>pybullet</code> Python package and
+<code>import pybullet_envs</code>. The PyBullet repo has <a href="https://github.com/bulletphysics/bullet3/blob/master/examples/pybullet/gym/pybullet_envs/__init__.py">the list of implemented
+environments</a>.</p>
 <h3 id="sidenote-2-actually-mujoco-is-now-open-source">Sidenote 2: Actually MuJoCo is now open-source</h3>
-<p>So, later on the same day I wrote this post, turns out DeepMind bought MuJoCo and made it open-source and free (at https://mujoco.org/). Good stuff :)</p>
+<p>So, later on the same day I wrote this post, turns out DeepMind bought MuJoCo
+and made it open-source and free (at https://mujoco.org/). Good stuff :)</p>
 <h2 id="td3-description">TD3 description</h2>
 <h3 id="q-learning">Q learning</h3>
 <p>To describe TD3 briefly, it’s similar to Q learning.</p>
-<p>In Q learning, you’re learning a function \(\hat{\mathrm{Q}}_\theta(s,a)\), and a policy \(\pi\). You update \(\theta\) to make \(\hat{\mathrm{Q}}_\theta(s,a)\) match closer to the actual Q function for the policy \(\pi\), and you also update the policy \(\pi\) to gradually improve. You can do this exactly if you have a small enough environment to hold all this in memory. The procedure you use to make \(\hat{\mathrm{Q}}_\theta\) approximate \(\mathrm{Q}_\pi\) is basically SARSA: you minimize the squared error between \(\hat{\mathrm{Q}}_\theta(s,a)\) and an estimator that converges to center on the actual \(\mathrm{Q}_\pi(s,a)\). In the finite case, that Q learning estimator for a transition \(s \xrightarrow{a} (r, s’)\) is \(r + \gamma \max_{a’} \hat{\mathrm{Q}}_\theta(s’,a’)\). In vanilla Q learning, the followed policy is \(\mathrm{greedy}(\hat{\mathrm{Q}})\), which is what that maximum does.</p>
-<p>But when you’re in a continuous action space, you can’t just \(\arg\max\) over all possible actions.</p>
+<p>In Q learning, you’re learning a function \(\hat{\mathrm{Q}}_\theta(s,a)\), and a
+policy \(\pi\). You update \(\theta\) to make \(\hat{\mathrm{Q}}_\theta(s,a)\)
+match closer to the actual Q function for the policy \(\pi\), and you also
+update the policy \(\pi\) to gradually improve. You can do this exactly if
+you have a small enough environment to hold all this in memory. The procedure
+you use to make \(\hat{\mathrm{Q}}_\theta\) approximate
+\(\mathrm{Q}_\pi\) is basically SARSA: you minimize the squared error
+between \(\hat{\mathrm{Q}}_\theta(s,a)\) and an estimator that converges to
+center on the actual \(\mathrm{Q}_\pi(s,a)\). In the finite case, that
+Q learning estimator for a transition \(s \xrightarrow{a} (r, s’)\) is
+\(r + \gamma \max_{a’} \hat{\mathrm{Q}}_\theta(s’,a’)\). In vanilla Q
+learning, the followed policy is \(\mathrm{greedy}(\hat{\mathrm{Q}})\),
+which is what that maximum does.</p>
+<p>But when you’re in a continuous action space, you can’t just \(\arg\max\)
+over all possible actions.</p>
 <h3 id="ddpg">DDPG</h3>
-<p>Enter DDPG (Deep Deterministic Policy Gradient), in which you maintain 2 networks: the <em>critic</em> \(\hat{\mathrm{Q}}_\theta(s,a)\) which approximates the Q value of the current policy, and the <em>actor</em> - a deterministic policy \(\pi_\varphi: \mathcal{S} \rightarrow \mathcal{A}\), which you improve based on the critic’s estimations.</p>
-<p>Run the agent with your current policy in a replay buffer, plus with some exploration (like a bit of Gaussian noise added to actions). Draw a batch from the replay buffer, and do an optimization step on the critic to minimize its Bellman error: <br /><span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
-\left[\hat{\mathrm{Q}}_\theta(s,a) - (r + \gamma \hat{\mathrm{Q}}_\theta(s', \pi_\varphi(s')))\right]^2 $$</span><br /> Then update the actor to choose actions that get better Q values on the same batch: <br /><span class="math display">$$\arg\max_\varphi \sum_{(s,a) \in \mathrm{batch}} \hat{\mathrm{Q}}_\theta(s,\pi_\varphi(s))$$</span><br /> The batch has to be drawn randomly. This is important, because if you draw a bunch of states that immediately follow each other, their predictions will end up pulling each other to explode towards infinity.</p>
-<p>To prevent similar feedback cycles between the actor and critic, you keep 2 copies of each: the <em>optimized</em> one and the <em>target</em> one. They start out as exact copies. When computing the Bellman targets for the critic, instead of using the <em>optimized</em> actor and critic, use the <em>target</em> ones: <br /><span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
-\left[\hat{\mathrm{Q}}_{\theta_\text{opt}}(s,a) - (r + \gamma \hat{\mathrm{Q}}_{\theta_\text{targ}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span><br /> And slowly <a href="https://paperswithcode.com/method/polyak-averaging">Polyak-average</a> the target networks towards the optimized one (with (\approx 0.05)): <br /><span class="math display">$$
+<p>Enter DDPG (Deep Deterministic Policy Gradient), in which you maintain 2
+networks: the <em>critic</em> \(\hat{\mathrm{Q}}_\theta(s,a)\) which approximates
+the Q value of the current policy, and the <em>actor</em> - a deterministic policy
+\(\pi_\varphi: \mathcal{S} \rightarrow \mathcal{A}\), which you improve
+based on the critic’s estimations.</p>
+<p>Run the agent with your current policy in a replay buffer, plus with some
+exploration (like a bit of Gaussian noise added to actions). Draw a batch from
+the replay buffer, and do an optimization step on the critic to minimize its
+Bellman error:
+<span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
+\left[\hat{\mathrm{Q}}_\theta(s,a) - (r + \gamma \hat{\mathrm{Q}}_\theta(s', \pi_\varphi(s')))\right]^2 $$</span>
+Then update the actor to choose actions that get better Q values on the same
+batch:
+<span class="math display">$$\arg\max_\varphi \sum_{(s,a) \in \mathrm{batch}} \hat{\mathrm{Q}}_\theta(s,\pi_\varphi(s))$$</span>
+The batch has to be drawn randomly. This is important, because if you draw a
+bunch of states that immediately follow each other, their predictions will end
+up pulling each other to explode towards infinity.</p>
+<p>To prevent similar feedback cycles between the actor and critic, you keep 2
+copies of each: the <em>optimized</em> one and the <em>target</em> one. They start out as
+exact copies. When computing the Bellman targets for the critic, instead of
+using the <em>optimized</em> actor and critic, use the <em>target</em> ones:
+<span class="math display">$$\arg\min_\theta \sum_{(s,a,r,s') \in \mathrm{batch}}
+\left[\hat{\mathrm{Q}}_{\theta_\text{opt}}(s,a) - (r + \gamma \hat{\mathrm{Q}}_{\theta_\text{targ}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span>
+And slowly <a href="https://paperswithcode.com/method/polyak-averaging">Polyak-average</a>
+the target networks towards the optimized one (with (\approx 0.05)):
+<span class="math display">$$
 \begin{align*}
 \theta_\text{targ} &amp; \gets \varrho \cdot \theta_\text{opt} + (1-\varrho) \cdot \theta_\text{targ} \\
 \varphi_\text{targ} &amp; \gets \varrho \cdot \varphi_\text{opt} + (1-\varrho) \cdot \varphi_\text{targ}
 \end{align*}
-$$</span><br /> By the way, I made up this a shorthand notation for this operation “update x towards y with update size (\alpha)”: <br /><span class="math display">$$\require{extpfeil}
+$$</span>
+By the way, I made up this a shorthand notation for this operation “update x towards
+y with update size (\alpha)”:
+<span class="math display">$$\require{extpfeil}
 \theta_\text{targ} \xmapsto{\varrho} \theta_\text{opt}, \varphi_\text{targ}
 \xmapsto{\varrho} \varphi_\text{opt}
-$$</span><br /></p>
+$$</span></p>
 <h3 id="td3">TD3</h3>
-<p>Twin Delayed Deep Deterministic Policy Gradient was introduced in a paper called <a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods</a>. Note the “function approximation error” part. This talks about the error inherent in how \(\hat{\mathrm{Q}}_\theta\) approximates the real \(\mathrm{Q}_\pi\). In particular, if in a state \(s\), the critic overestimates the Q value for some action \(a\), the actor’s optimization step will be incentivized to exploit that overestimation. But that doesn’t mean it’ll actually get a better result.</p>
+<p>Twin Delayed Deep Deterministic Policy Gradient was introduced in a paper called
+<a href="https://arxiv.org/abs/1802.09477">Addressing Function Approximation Error in Actor-Critic Methods</a>.
+Note the “function approximation error” part. This talks about the error
+inherent in how \(\hat{\mathrm{Q}}_\theta\) approximates the real
+\(\mathrm{Q}_\pi\). In particular, if in a state \(s\), the critic
+overestimates the Q value for some action \(a\), the actor’s optimization
+step will be incentivized to exploit that overestimation. But that doesn’t mean
+it’ll actually get a better result.</p>
 <p>TD3 adds 3 steps to address this:</p>
 <ol type="1">
-<li><em>Target policy smoothing</em>: in the Bellman update, instead of expecting to follow \(\pi_{\varphi_\text{targ}}\) exactly, add a bit of Gaussian noise to the chosen action. That way the policy can’t try to hit a small peak of overestimation by the critic.</li>
-<li><em>Twin critics</em>: train 2 critics, both to minimize the Bellman error. Optimize the policy to maximize one of them. Instead of setting critics’ targets based on one critic, choose the target based on the lesser of their two predictions. If you train 2 networks, they’re unlikely to overestimate the real Q function in the same place. <br /><span class="math display">$$\arg\min_\theta \sum_{i \in {1, 2}} \sum_{(s,a,r,s') \in \mathrm{batch}}
-\left[\hat{\mathrm{Q}}_{\theta_{i, \text{opt}}}(s,a) - (r + \gamma \min_{j\in {1, 2}}\hat{\mathrm{Q}}_{\theta_{j, \text{targ}}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span><br /></li>
-<li><em>Delayed policy updates</em>: update the policy just once per 2 batches (i.e., 2x slower than the critics).</li>
+<li><em>Target policy smoothing</em>: in the Bellman update, instead of expecting to
+follow \(\pi_{\varphi_\text{targ}}\) exactly, add a bit of Gaussian
+noise to the chosen action. That way the policy can’t try to hit a small peak
+of overestimation by the critic.</li>
+<li><em>Twin critics</em>: train 2 critics, both to minimize the Bellman error. Optimize
+the policy to maximize one of them. Instead of setting critics’ targets based
+on one critic, choose the target based on the lesser of their two
+predictions. If you train 2 networks, they’re unlikely to overestimate the
+real Q function in the same place.
+<span class="math display">$$\arg\min_\theta \sum_{i \in {1, 2}} \sum_{(s,a,r,s') \in \mathrm{batch}}
+\left[\hat{\mathrm{Q}}_{\theta_{i, \text{opt}}}(s,a) - (r + \gamma \min_{j\in {1, 2}}\hat{\mathrm{Q}}_{\theta_{j, \text{targ}}}(s', \pi_{\varphi_\text{targ}}(s')))\right]^2 $$</span></li>
+<li><em>Delayed policy updates</em>: update the policy just once per 2 batches (i.e.,
+2x slower than the critics).</li>
 </ol>
 <h2 id="rais-ml-mistake-5-multiplication-what-multiplication">Rai’s ML mistake #5: Multiplication? What multiplication?</h2>
-<p>The following happened over the course of ~6 weeks, as I gathered a few hours at a time of energy, will, etc. to work on this.</p>
-<p>So, I go and implement my algorithm and run it. On my first try, I implement it wrong because I misremember how to implement it. I go back to Spinning Up in Deep RL, smack myself on the forehead, and go fix it. Run it again.</p>
+<p>The following happened over the course of ~6 weeks, as I gathered a few hours at
+a time of energy, will, etc. to work on this.</p>
+<p>So, I go and implement my algorithm and run it. On my first try, I implement it
+wrong because I misremember how to implement it. I go back to Spinning Up in
+Deep RL, smack myself on the forehead, and go fix it. Run it again.</p>
 <p>It’s learning <em>something</em>. The average reward is going up. But slowly.</p>
 <figure>
+<figure>
 <img src="../static/2021-10-18-mean-reward.png" alt="Slowly increasing mean reward graph" />
+<figcaption aria-hidden="true">Slowly increasing mean reward graph</figcaption>
 </figure>
-<p>Then, over the next ~4 weeks, whenever I have some time, I try to bang my head against the keyboard some more. Tweak all the hyperparameters. Look up the hyperparameters they use in <a href="https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/td3.yml">rl-baselines3-zoo</a>. No dice. Repeat for a while, for all hyperparameters - critic learning rate, actor learning rate, actor delay, replay buffer size, batch size, Polyak rate, discount rate, initial random action steps. Rewrite the code twice-thrice. Still the same issue. Keep it training for several days. Does not help. Repeat a few times.</p>
+</figure>
+<p>Then, over the next ~4 weeks, whenever I have some time, I try to bang my head
+against the keyboard some more. Tweak all the hyperparameters. Look up the
+hyperparameters they use in <a href="https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/td3.yml">rl-baselines3-zoo</a>.
+No dice. Repeat for a while, for all hyperparameters - critic learning rate,
+actor learning rate, actor delay, replay buffer size, batch size, Polyak rate,
+discount rate, initial random action steps. Rewrite the code twice-thrice. Still
+the same issue. Keep it training for several days. Does not help. Repeat a few
+times.</p>
 <h3 id="thanks-god-theres-a-reference-implementation">Thanks God there’s a reference implementation</h3>
-<p>I wanted to implement this algorithm on my own, because I want to grok it. But I got to the end of my wits here, and started thinking: “hell, can this algorithm even <em>solve this environment</em>”? <a href="https://arxiv.org/abs/1802.09477">The paper</a> had graphs and results with the half-cheetah. But that was the MuJoCo half-cheetah. Maybe the PyBullet half-cheetah had a different reward scale and this was actually as good as it went?</p>
-<p>Unlikely. All my half-cheetah did in evaluation was stand upright without moving. Maybe sometimes kinda jump once.</p>
+<p>I wanted to implement this algorithm on my own, because I want to grok it.
+But I got to the end of my wits here, and started thinking: “hell, can this
+algorithm even <em>solve this environment</em>”? <a href="https://arxiv.org/abs/1802.09477">The paper</a> had graphs and
+results with the half-cheetah. But that was the MuJoCo half-cheetah. Maybe the
+PyBullet half-cheetah had a different reward scale and this was actually as good
+as it went?</p>
+<p>Unlikely. All my half-cheetah did in evaluation was stand upright without moving.
+Maybe sometimes kinda jump once.</p>
+<figure>
 <figure>
 <img src="../static/2021-10-18-standing.png" alt="Standing half-cheetah" />
+<figcaption aria-hidden="true">Standing half-cheetah</figcaption>
 </figure>
-<p>But yeah. Let’s run the reference implementation and see what it does. I start it for a few minutes, and…</p>
+</figure>
+<p>But yeah. Let’s run the reference implementation and see what it does. I start
+it for a few minutes, and…</p>
 <pre><code>...
 Total T: 109000 Episode Num: 109 Episode T: 1000 Reward: 938.893
 Total T: 110000 Episode Num: 110 Episode T: 1000 Reward: 987.304
 ---------------------------------------
 Evaluation over 10 episodes: 963.088
 ---------------------------------------</code></pre>
-<p>God dammit. I was getting <em>maybe</em>, on a <em>lucky episode</em>, like 300 at most, and that was <em>after millions of training steps</em>…</p>
+<p>God dammit. I was getting <em>maybe</em>, on a <em>lucky episode</em>, like 300 at most, and
+that was <em>after millions of training steps</em>…</p>
 <h3 id="does-it-just-not-work-because-of-tensorflow">Does it just not work because of Tensorflow?!</h3>
-<p>Okay, so I have code A which does not work (my code), and code B which does (reference implementation). I know what to do here. Align code A and code B together so that they’re similar, and then scour the diff line by line. Somewhere in there there’s my bug.</p>
+<p>Okay, so I have code A which does not work (my code), and code B which does
+(reference implementation). I know what to do here. Align code A and code B
+together so that they’re similar, and then scour the diff line by line.
+Somewhere in there there’s my bug.</p>
 <p>I refactor my code, rename variables, etc., until the diff is small.</p>
-<p>Now the only diff I see is basically me using Tensorflow and the reference implementation using PyTorch. Stuff like this:</p>
+<p>Now the only diff I see is basically me using Tensorflow and the reference
+implementation using PyTorch. Stuff like this:</p>
 <pre><code>2,3c3,7
 &lt; import tensorflow as tf
 &lt; from tensorflow.keras import layers as tfkl
@@ -145,77 +250,130 @@ Evaluation over 10 episodes: 963.088
 &gt;         state = torch.FloatTensor(state.reshape(1, -1)).to(device)
 &gt;         return self.actor(state).cpu().data.numpy().flatten()</code></pre>
 <p>And yet, my code doesn’t work, and their code does.</p>
-<p>I bang my head against this for maybe 2 more days. So, where can the differences be?</p>
-<p>Maybe different action scaling. I align action scaling like they do. Instead of “sigmoid, then rescale from 0 to 1 into <code>action_space.low</code> to <code>action_space.high</code>”, I do their “tanh, then multiply by <code>action_space.high</code>”. Those should be basically the same thing, but I do it anyway just to be safe. Still doesn’t work.</p>
-<p>Maybe different initialization. Unlikely, but possible. Their code uses Torch’s <a href="https://pytorch.org/docs/stable/generated/torch.nn.Linear.html">Linear</a>. It initializes weights and biases both randomly from \(\text{Uniform}([\pm \sqrt{\frac{1}{\text{input size}} }])\). I use TensorFlow/Keras’s <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense">Dense</a>. It uses <a href="https://www.tensorflow.org/api_docs/python/tf/keras/initializers/GlorotUniform">Xavier uniform initialization</a> (aka Glorot initialization, named … after someone named Xavier Glorot) by default, which draws from \(\text{Uniform}([\pm \sqrt{\frac{6}{\text{input size} + \text{output size} } }])\). And TensorFlow initializes biases to zero. Okay. I rewrite the TensorFlow initialization to do the same thing as Torch. Still the same. God dammit.</p>
-<p>Does the ADAM optimizer in TensorFlow and PyTorch work differently? … Maybe. I’m gonna shelve the idea of stepping through it for later.</p>
+<p>I bang my head against this for maybe 2 more days. So, where can the differences
+be?</p>
+<p>Maybe different action scaling. I align action scaling like they do. Instead of
+“sigmoid, then rescale from 0 to 1 into <code>action_space.low</code> to
+<code>action_space.high</code>”, I do their “tanh, then multiply by
+<code>action_space.high</code>”. Those should be basically the same thing, but I do it
+anyway just to be safe. Still doesn’t work.</p>
+<p>Maybe different initialization. Unlikely, but possible.
+Their code uses Torch’s <a href="https://pytorch.org/docs/stable/generated/torch.nn.Linear.html">Linear</a>.
+It initializes weights and biases both randomly from
+\(\text{Uniform}([\pm \sqrt{\frac{1}{\text{input size}} }])\).
+I use TensorFlow/Keras’s <a href="https://www.tensorflow.org/api_docs/python/tf/keras/layers/Dense">Dense</a>.
+It uses <a href="https://www.tensorflow.org/api_docs/python/tf/keras/initializers/GlorotUniform">Xavier uniform initialization</a>
+(aka Glorot initialization, named … after someone named Xavier Glorot)
+by default, which draws from
+\(\text{Uniform}([\pm \sqrt{\frac{6}{\text{input size} + \text{output size} } }])\).
+And TensorFlow initializes biases to zero.
+Okay. I rewrite the TensorFlow initialization to do the same thing as Torch.
+Still the same. God dammit.</p>
+<p>Does the ADAM optimizer in TensorFlow and PyTorch work differently? … Maybe.
+I’m gonna shelve the idea of stepping through it for later.</p>
 <h3 id="copy-the-whole-goddamn-setup">Copy the whole goddamn setup</h3>
-<p>I decide that I’ll copy even more of their code. Okay, this is unlikely, but what if there’s something wrong with how I initialize the environment or something? I copy their <code>main.py</code>, switch it to TensorFlow, and use their <code>utils.py</code>.</p>
+<p>I decide that I’ll copy even more of their code. Okay, this is unlikely, but
+what if there’s something wrong with how I initialize the environment or
+something? I copy their <code>main.py</code>, switch it to TensorFlow, and use their
+<code>utils.py</code>.</p>
 <p>And now it works, and I scream.</p>
-<p>It’s the <code>utils.py</code> that did it. <a href="https://github.com/sfujim/TD3/blob/master/utils.py">That file in their repo</a> implements the replay buffer. I didn’t pore over my implementation in detail, because … hey, it’s the simplest part. How would I mess up a replay buffer?</p>
-<p>Their replay buffer exists in RAM, and has NumPy arrays. It uses NumPy’s randomness. I use TensorFlow variables and TensorFlow’s <a href="https://www.tensorflow.org/api_docs/python/tf/random/Generator"><code>tf.random.Generator</code></a>.</p>
+<p>It’s the <code>utils.py</code> that did it. <a href="https://github.com/sfujim/TD3/blob/master/utils.py">That file in their repo</a>
+implements the replay buffer. I didn’t pore over my implementation in detail,
+because … hey, it’s the simplest part. How would I mess up a replay buffer?</p>
+<p>Their replay buffer exists in RAM, and has NumPy arrays. It uses NumPy’s
+randomness. I use TensorFlow variables and TensorFlow’s <a href="https://www.tensorflow.org/api_docs/python/tf/random/Generator"><code>tf.random.Generator</code></a>.</p>
 <p>After some work, I find the culprit lines.</p>
-<p>Here’s how my code stores the replay buffer’s rewards and “is this the final state” flag:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">class</span> ReplayBuffer:</a>
-<a class="sourceLine" id="cb3-2" data-line-number="2">    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</a>
-<a class="sourceLine" id="cb3-3" data-line-number="3">	<span class="co"># ... snip ...</span></a>
-<a class="sourceLine" id="cb3-4" data-line-number="4">        <span class="va">self</span>.reward <span class="op">=</span> tf.Variable(tf.zeros((max_size, )), dtype<span class="op">=</span>tf.float32)</a>
-<a class="sourceLine" id="cb3-5" data-line-number="5">        <span class="va">self</span>.not_done <span class="op">=</span> tf.Variable(tf.zeros((max_size, ), dtype<span class="op">=</span>tf.float32),</a>
-<a class="sourceLine" id="cb3-6" data-line-number="6">                                    dtype<span class="op">=</span>tf.float32)</a></code></pre></div>
+<p>Here’s how my code stores the replay buffer’s rewards and “is this the final
+state” flag:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>	<span class="co"># ... snip ...</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reward <span class="op">=</span> tf.Variable(tf.zeros((max_size, )), dtype<span class="op">=</span>tf.float32)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.not_done <span class="op">=</span> tf.Variable(tf.zeros((max_size, ), dtype<span class="op">=</span>tf.float32),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>                                    dtype<span class="op">=</span>tf.float32)</span></code></pre></div>
 <p>And this is how they do it:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">class</span> ReplayBuffer(<span class="bu">object</span>):</a>
-<a class="sourceLine" id="cb4-2" data-line-number="2">    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</a>
-<a class="sourceLine" id="cb4-3" data-line-number="3">	<span class="co"># ... snip ...</span></a>
-<a class="sourceLine" id="cb4-4" data-line-number="4">        <span class="va">self</span>.reward <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</a>
-<a class="sourceLine" id="cb4-5" data-line-number="5">        <span class="va">self</span>.not_done <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</a></code></pre></div>
-<p>What’s the difference? I have a vector, a 1-dimensional tensor. They have a 2-dimensional tensor, with second dimension 1.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ReplayBuffer(<span class="bu">object</span>):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, state_dim, action_dim, max_size<span class="op">=</span><span class="bu">int</span>(<span class="fl">1e6</span>)):</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>	<span class="co"># ... snip ...</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.reward <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.not_done <span class="op">=</span> np.zeros((max_size, <span class="dv">1</span>))</span></code></pre></div>
+<p>What’s the difference? I have a vector, a 1-dimensional tensor. They have a
+2-dimensional tensor, with second dimension 1.</p>
 <h3 id="and-of-course-its-goddamn-tensor-shapes.">And of course it’s goddamn tensor shapes.</h3>
 <p>And of course it’s goddamn tensor shapes.</p>
-<p>On its own, it doesn’t matter whether I have the replay buffer shaped like I had it, or like they did.</p>
-<p>What matters is what happens when I combine it with this code which computes the target Q values:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co"># Select action according to policy and add clipped noise</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2">noise <span class="op">=</span> tf.random.normal(shape<span class="op">=</span>action.shape) <span class="op">*</span> <span class="va">self</span>.policy_noise</a>
-<a class="sourceLine" id="cb5-3" data-line-number="3">noise <span class="op">=</span> tf.clip_by_value(noise, <span class="op">-</span><span class="va">self</span>.noise_clip, <span class="va">self</span>.noise_clip)</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5">next_action <span class="op">=</span> (<span class="va">self</span>.actor_target(next_state) <span class="op">+</span> noise)</a>
-<a class="sourceLine" id="cb5-6" data-line-number="6">next_action <span class="op">=</span> tf.clip_by_value(next_action, <span class="op">-</span><span class="va">self</span>.max_action,</a>
-<a class="sourceLine" id="cb5-7" data-line-number="7">			       <span class="va">self</span>.max_action)</a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co"># Compute the target Q value</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10">target_Q1, target_Q2 <span class="op">=</span> <span class="va">self</span>.critic_target((next_state, next_action))</a>
-<a class="sourceLine" id="cb5-11" data-line-number="11">target_Q <span class="op">=</span> tf.math.minimum(target_Q1, target_Q2)</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12">target_Q <span class="op">=</span> reward <span class="op">+</span> not_done <span class="op">*</span> <span class="va">self</span>.discount <span class="op">*</span> target_Q</a></code></pre></div>
-<p>TD3 maintains 2 critics. <code>critic_target</code> is a Keras model, which contains two stacks of feed-forward layers. At the end, they have a <code>q_value = tf.keras.layers.Dense(1, ...)</code>, and then the whole model returns the tuple <code>(q1_value, q2_value)</code>.</p>
+<p>On its own, it doesn’t matter whether I have the replay buffer shaped like I had
+it, or like they did.</p>
+<p>What matters is what happens when I combine it with this code which computes
+the target Q values:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select action according to policy and add clipped noise</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> tf.random.normal(shape<span class="op">=</span>action.shape) <span class="op">*</span> <span class="va">self</span>.policy_noise</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>noise <span class="op">=</span> tf.clip_by_value(noise, <span class="op">-</span><span class="va">self</span>.noise_clip, <span class="va">self</span>.noise_clip)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>next_action <span class="op">=</span> (<span class="va">self</span>.actor_target(next_state) <span class="op">+</span> noise)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>next_action <span class="op">=</span> tf.clip_by_value(next_action, <span class="op">-</span><span class="va">self</span>.max_action,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>			       <span class="va">self</span>.max_action)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the target Q value</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>target_Q1, target_Q2 <span class="op">=</span> <span class="va">self</span>.critic_target((next_state, next_action))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>target_Q <span class="op">=</span> tf.math.minimum(target_Q1, target_Q2)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>target_Q <span class="op">=</span> reward <span class="op">+</span> not_done <span class="op">*</span> <span class="va">self</span>.discount <span class="op">*</span> target_Q</span></code></pre></div>
+<p>TD3 maintains 2 critics. <code>critic_target</code> is a Keras model, which contains two
+stacks of feed-forward layers. At the end, they have a
+<code>q_value = tf.keras.layers.Dense(1, ...)</code>, and then the whole model returns the
+tuple <code>(q1_value, q2_value)</code>.</p>
 <p>With that in mind, what’s the shape of <code>target_Q1</code>?</p>
-<p>No, it’s not <span class="math inline">(batch size)</span>. It’s <span class="math inline">(batch size, 1)</span>. Because of course there’s the last dimension of size 1 - if your model has more than 1 output node, you need to stack them.</p>
+<p>No, it’s not <span class="math inline">(batch size)</span>. It’s <span class="math inline">(batch size,1)</span>. Because
+of course there’s the last dimension of size 1 - if your model has more than 1
+output node, you need to stack them.</p>
 <p>What’s the shape of <code>not_done</code>?</p>
-<p>With my replay buffer, it was <span class="math inline">(batch size)</span>. One scalar per experience in batch, right? With the reference implementation’s replay buffer, it was <span class="math inline">(batch size, 1)</span>.</p>
-<p>Consider the line <code>target_Q = reward + not_done * self.discount * target_Q</code>, where <code>target_Q</code> has shape <span class="math inline">(batch size, 1)</span> and, as established for my code, <code>not_done</code> has shape <span class="math inline">(batch size)</span>. What’s the shape of the computed expression?</p>
-<p>If you answered <span class="math inline">(batch size, batch size)</span>, I guess you win. And that was not intended. I wanted it to be <span class="math inline">(batch size)</span> - one target Q value for one replay experience in batch.</p>
+<p>With my replay buffer, it was <span class="math inline">(batch size)</span>. One scalar per experience
+in batch, right? With the reference implementation’s replay buffer, it was
+<span class="math inline">(batch size,1)</span>.</p>
+<p>Consider the line <code>target_Q = reward + not_done * self.discount * target_Q</code>,
+where <code>target_Q</code> has shape <span class="math inline">(batch size,1)</span> and, as established for my
+code, <code>not_done</code> has shape <span class="math inline">(batch size)</span>. What’s the shape of the
+computed expression?</p>
+<p>If you answered <span class="math inline">(batch size,batch size)</span>, I guess you win.
+And that was not intended. I wanted it to be <span class="math inline">(batch size)</span> - one
+target Q value for one replay experience in batch.</p>
 <p>What happens next with this <code>target_Q</code>?</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="at">@tf.function</span></a>
-<a class="sourceLine" id="cb6-2" data-line-number="2"><span class="kw">def</span> _mse(x, y):</a>
-<a class="sourceLine" id="cb6-3" data-line-number="3">    <span class="cf">return</span> tf.reduce_mean(tf.math.squared_difference(x, y))</a>
-<a class="sourceLine" id="cb6-4" data-line-number="4"></a>
-<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</a>
-<a class="sourceLine" id="cb6-6" data-line-number="6">    <span class="co"># Get current Q estimates</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7">    current_Q1, current_Q2 <span class="op">=</span> <span class="va">self</span>.critic((state, action))</a>
-<a class="sourceLine" id="cb6-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb6-9" data-line-number="9">    <span class="co"># Compute critic loss</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10">    critic_loss <span class="op">=</span> (_mse(current_Q1, target_Q) <span class="op">+</span></a>
-<a class="sourceLine" id="cb6-11" data-line-number="11">		   _mse(current_Q2, target_Q))</a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"></a>
-<a class="sourceLine" id="cb6-13" data-line-number="13"><span class="co"># Optimize the critic</span></a>
-<a class="sourceLine" id="cb6-14" data-line-number="14"><span class="va">self</span>.critic_optimizer.minimize(</a>
-<a class="sourceLine" id="cb6-15" data-line-number="15">    critic_loss, tape<span class="op">=</span>tape, var_list<span class="op">=</span><span class="va">self</span>.critic.trainable_variables)</a></code></pre></div>
-<p>… Great. <code>current_Q1</code> / <code>current_Q2</code> have shapes <span class="math inline">(batch size, 1)</span>, which is compatible with <span class="math inline">(batch size, batch size)</span>. So they get auto-broadcast… and <code>reduce_mean</code> gladly reduces the matrix of squared errors to a scalar mean. Awesome. Thank you. I’m so glad Autobroadcast Man and Default Options Girl arrived and saved the day.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _mse(x, y):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> tf.reduce_mean(tf.math.squared_difference(x, y))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get current Q estimates</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    current_Q1, current_Q2 <span class="op">=</span> <span class="va">self</span>.critic((state, action))</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute critic loss</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    critic_loss <span class="op">=</span> (_mse(current_Q1, target_Q) <span class="op">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>		   _mse(current_Q2, target_Q))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Optimize the critic</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="va">self</span>.critic_optimizer.minimize(</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    critic_loss, tape<span class="op">=</span>tape, var_list<span class="op">=</span><span class="va">self</span>.critic.trainable_variables)</span></code></pre></div>
+<p>… Great. <code>current_Q1</code> / <code>current_Q2</code> have shapes <span class="math inline">(batch size,1)</span>,
+which is compatible with <span class="math inline">(batch size,batch size)</span>. So they get
+auto-broadcast… and <code>reduce_mean</code> gladly reduces the matrix of squared errors
+to a scalar mean. Awesome. Thank you. I’m so glad Autobroadcast Man and Default
+Options Girl arrived and saved the day.</p>
 <h3 id="learnings">Learnings</h3>
 <p>So what did I learn today?</p>
 <p>It’s always, <em>always</em>, <strong>ALWAYS</strong> those goddamn tensor shapes.</p>
-<p>Put <a href="https://www.tensorflow.org/api_docs/python/tf/debugging/assert_shapes"><code>tf.debugging.assert_shapes</code></a> f***ing <strong>everywhere</strong>.</p>
-<p>And probably write unit tests, too. I probably won’t be bothered to do that anyway because writing unit tests for code that has complex optimizers and neural nets is annoying.</p>
-<p>And maybe I should be using operators that don’t auto-broadcast, or something that doesn’t allow me to mistakenly vector-vector-to-matrix multiply when I mean to vector-vector-elementwise multiply.</p>
-<p>I’m not done being annoyed and sour about this but I’m done ranting about it here. Ciao, see you next time I kill a few weeks on another mistake this stupid. This is the point of all those “Rai’s ML mistakes” posts. I write these algorithms so I can grok them, and I headsmash the keyboard this way because I hope now I’ll remember with a bit more clarity and immediacy: “It’s always the goddamn tensor shapes”.</p>
+<p>Put <a href="https://www.tensorflow.org/api_docs/python/tf/debugging/assert_shapes"><code>tf.debugging.assert_shapes</code></a>
+f***ing <strong>everywhere</strong>.</p>
+<p>And probably write unit tests, too. I probably won’t be bothered to do that
+anyway because writing unit tests for code that has complex optimizers and
+neural nets is annoying.</p>
+<p>And maybe I should be using operators that don’t auto-broadcast, or something
+that doesn’t allow me to mistakenly vector-vector-to-matrix multiply when I
+mean to vector-vector-elementwise multiply.</p>
+<p>I’m not done being annoyed and sour about this but I’m done ranting about it
+here. Ciao, see you next time I kill a few weeks on another mistake this stupid.
+This is the point of all those “Rai’s ML mistakes” posts. I write these
+algorithms so I can grok them, and I headsmash the keyboard this way because
+I hope now I’ll remember with a bit more clarity and immediacy: “It’s always the
+goddamn tensor shapes”.</p>
 <p>My fixed code is <a href="https://gitlab.com/agentydragon/rl-experiments/-/merge_requests/8">on my GitLab</a>, and here’s the obligatory scoot-scoot:</p>
 <figure>
 <video controls loop autoplay>
@@ -226,7 +384,8 @@ Evaluation over 10 episodes: 963.088
 </div>
 </figure>
 <h3 id="update-mujoco-half-cheetah">Update: MuJoCo half-cheetah</h3>
-<p>So, since MuJoCo is now open-source, I tried it and got the MuJoCo environment <code>HalfCheetah-v2</code> also working. Nice :)</p>
+<p>So, since MuJoCo is now open-source, I tried it and got the MuJoCo environment
+<code>HalfCheetah-v2</code> also working. Nice :)</p>
 <figure>
 <video controls loop autoplay>
 <source src="../static/2021-10-19-half-cheetah-mujoco.mp4" type="video/mp4">

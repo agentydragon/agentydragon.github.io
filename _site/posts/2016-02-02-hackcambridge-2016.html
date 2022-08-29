@@ -60,26 +60,58 @@
     Posted on 2016-02-02
 </div>
 
-<p>Last weekend, I went to <a href="https://hackcambridge.com">HackCambridge</a> with <a href="http://hudecekpetr.cz">Petr</a> to hack on things. Some things could be organized a bit better (like the WiFi at the main venue being hilariously broken), but we ended up having a lot of fun. Luckily, a bunch of my homies from Dropbox also happen to study in Cambridge and it was great to catch up with them.</p>
-<p>We built a cool game. It’s called <a href="https://deadlockempire.github.io"><em>The Deadlock Empire</em></a> and it lets you <em>slay dragons and learn concurrency</em> - what could me more awesome?!?!</p>
+<p>Last weekend, I went to <a href="https://hackcambridge.com">HackCambridge</a> with
+<a href="http://hudecekpetr.cz">Petr</a> to hack on things. Some things could be organized
+a bit better (like the WiFi at the main venue being hilariously broken), but we
+ended up having a lot of fun. Luckily, a bunch of my homies from Dropbox
+also happen to study in Cambridge and it was great to catch up with them.</p>
+<p>We built a cool game. It’s called <a href="https://deadlockempire.github.io"><em>The Deadlock Empire</em></a>
+and it lets you <em>slay dragons and learn concurrency</em> - what could me more
+awesome?!?!</p>
 <p>Just look at this presentation!</p>
 <div style="text-align: center;">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/eZp1qSF06uM?start=2847" frameborder="0" allowfullscreen>
 </iframe>
 </div>
-<p>It’s at <a href="https://deadlockempire.github.io" class="uri">https://deadlockempire.github.io</a>. You can laugh at our poor coding practices on GitHub (<a href="https://github.com/deadlockempire/deadlockempire.github.io">deadlockempire/deadlockempire.github.io</a>).</p>
-<p>The Deadlock Empire has a sequence of challenges for practicing concurrent thinking. Each challenge gives you several threads, each running their own source code in C#, and your objective is to play <em>the mischievous Scheduler</em>: take seemingly-innocent parallel code and run it so that it breaks.</p>
-<p>You can step each thread line-by-line (and undo your steps), and some non-atomic instructions can be expanded into atomic parts (i.e., <code>i = i + 1</code> translates to a separate load and store). Sometimes, you have to do this to properly crack the challenges, like in <a href="http://deadlockempire.github.io/#T2-Expansion">Tutorial 2: Non-Atomic Instructions</a>.</p>
-<p>If you feel bored by how simple the first challenges are, scroll down a bit. The <em>Deadlock Empire</em> quest at the bottom should keep you busy for a while :)</p>
-<p>I think it took us around 18 hours of actual work to write <em>The Deadlock Empire</em>: both of us had a bit of shut-eye early morning and we didn’t have enough time by the end to start working on the really ambitious features, so the last few hours were just a commit here and there, fixing up a font or an obscure bug.</p>
-<p>There aren’t many shiny technologies: it’s plain HTML5 and JavaScript with jQuery, Bootstrap, and a few other things. The game has a simple “internal virtual machine” that executes simple instructions, like “increment this global variable”, “lock this lock and block this thread”, and so on. We used pseudo-C# as the challenge language mostly because of our familiarity with its ideas about concurrency, but it would be straightforward to write in pseudo-Java instead.</p>
-<p>In the upcoming days, we’ll add more synchronization primitives and polish the experience. We want this game to be more fun, educational and useful.</p>
-<p>I now have a favorite bookstore. Next door from their regular store, Cambridge University Press sells their damaged books. (Even through the only damage I found on them was the red ‘DAMAGED’ stamp at the front page.) Awesome books on advanced mathematics and CS, philosophy, sociology, biology. For 3 pounds a paperback or 7 pounds a hardcover. People grab them by the stack. Note to self: bring big suitcase next time.</p>
+<p>It’s at <a href="https://deadlockempire.github.io">https://deadlockempire.github.io</a>.
+You can laugh at our poor coding practices on GitHub (<a href="https://github.com/deadlockempire/deadlockempire.github.io">deadlockempire/deadlockempire.github.io</a>).</p>
+<p>The Deadlock Empire has a sequence of challenges for practicing concurrent
+thinking. Each challenge gives you several threads, each running their own
+source code in C#, and your objective is to play <em>the mischievous Scheduler</em>:
+take seemingly-innocent parallel code and run it so that it breaks.</p>
+<p>You can step each thread line-by-line (and undo your steps), and some
+non-atomic instructions can be expanded into atomic parts (i.e., <code>i = i + 1</code>
+translates to a separate load and store). Sometimes, you have to do this to
+properly crack the challenges, like in
+<a href="http://deadlockempire.github.io/#T2-Expansion">Tutorial 2: Non-Atomic Instructions</a>.</p>
+<p>If you feel bored by how simple the first challenges are, scroll down
+a bit. The <em>Deadlock Empire</em> quest at the bottom should keep you busy for a
+while :)</p>
+<p>I think it took us around 18 hours of actual work to write <em>The Deadlock Empire</em>:
+both of us had a bit of shut-eye early morning and we didn’t have enough time
+by the end to start working on the really ambitious features, so the last few
+hours were just a commit here and there, fixing up a font or an obscure bug.</p>
+<p>There aren’t many shiny technologies: it’s plain HTML5 and JavaScript
+with jQuery, Bootstrap, and a few other things. The game has a simple
+“internal virtual machine” that executes simple instructions, like “increment
+this global variable”, “lock this lock and block this thread”, and so on.
+We used pseudo-C# as the challenge language mostly because of our familiarity
+with its ideas about concurrency, but it would be straightforward to write in
+pseudo-Java instead.</p>
+<p>In the upcoming days, we’ll add more synchronization primitives and polish the
+experience. We want this game to be more fun, educational and useful.</p>
+<p>I now have a favorite bookstore. Next door from their regular store, Cambridge
+University Press sells their damaged books. (Even through the only damage
+I found on them was the red ‘DAMAGED’ stamp at the front page.) Awesome books
+on advanced mathematics and CS, philosophy, sociology, biology. For 3 pounds
+a paperback or 7 pounds a hardcover. People grab them by the stack. Note to
+self: bring big suitcase next time.</p>
 <p>Also:</p>
 <div style="font-weight: bold;">
 <p>WE WON THE HACKATHON!!! HOOORAY!!!!1111</p>
 </div>
-<p>We also won the <em>Best Hack in Gaming/VR</em> award (judged by Improbable) and <em>Bloomberg’s Favorite Hack</em>.</p>
+<p>We also won the <em>Best Hack in Gaming/VR</em> award (judged by Improbable) and
+<em>Bloomberg’s Favorite Hack</em>.</p>
 
 			</div>
 			<hr class="clearfix">

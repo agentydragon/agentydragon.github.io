@@ -60,12 +60,23 @@
     Posted on 2018-03-24
 </div>
 
-<p>This has been plaguing me for a few days (I just got a new Lenovo X1 Yoga laptop), and I think I now figured it out. The Synaptics touchpad driver has a <code>CoastingSpeed</code> option (see <a href="http://manpages.ubuntu.com/manpages/xenial/man4/synaptics.4.html">man 4 synaptics</a>).</p>
-<p>The issue is that when I start two-finger scrolling on a webpage, the driver interprets that to mean “oh and when I take my fingers off the touchpad, please continue scrolling for a few more seconds in the same direction, while slowing down until you stop scrolling”.</p>
-<p>Guess what? When you press Ctrl in Chrome and the touchpad driver keeps sending the “ooh we’re scrolling!” message, Chrome starts changing the font size, which is what “Ctrl + scroll” does.</p>
+<p>This has been plaguing me for a few days (I just got a new Lenovo X1 Yoga
+laptop), and I think I now figured it out. The Synaptics touchpad driver has
+a <code>CoastingSpeed</code> option (see <a href="http://manpages.ubuntu.com/manpages/xenial/man4/synaptics.4.html">man 4 synaptics</a>).</p>
+<p>The issue is that when I start two-finger scrolling on a webpage, the driver
+interprets that to mean “oh and when I take my fingers off the touchpad, please
+continue scrolling for a few more seconds in the same direction, while slowing
+down until you stop scrolling”.</p>
+<p>Guess what? When you press Ctrl in Chrome and the touchpad driver keeps sending
+the “ooh we’re scrolling!” message, Chrome starts changing the font size, which
+is what “Ctrl + scroll” does.</p>
 <p>Quoting from the manual:</p>
-<p>Your finger needs to produce this many scrolls per second in order to start coasting. The default is 20 which should prevent you from starting coasting unintentionally. 0 disables coasting. Property: “Synaptics Coasting Speed”</p>
-<p>I found a command at <a href="https://help.ubuntu.com/community/SynapticsTouchpad">the Ubuntu community wiki article about Synaptics touchpads</a> which disables this: <code>synclient CoastingSpeed=0</code>. But I guess that won’t stay between restarts.</p>
+<p>Your finger needs to produce this many scrolls per second in order to start
+coasting. The default is 20 which should prevent you from starting coasting
+unintentionally. 0 disables coasting. Property: “Synaptics Coasting Speed”</p>
+<p>I found a command at <a href="https://help.ubuntu.com/community/SynapticsTouchpad">the Ubuntu community wiki article about Synaptics touchpads</a>
+which disables this: <code>synclient CoastingSpeed=0</code>.
+But I guess that won’t stay between restarts.</p>
 <p>I’ll add this to a new file in <code>/etc/X11/xorg.conf.d/99-custom.conf</code>:</p>
 <pre><code>Section &quot;InputClass&quot;
   # Disable annoying &quot;zoom after two-finger scroll&quot; in Chrome.
@@ -73,7 +84,8 @@
   MatchDriver &quot;synaptics&quot;
   Option &quot;CoastingSpeed&quot; &quot;0&quot;
 EndSection</code></pre>
-<p>And I’ll report back if that doesn’t work. (So if this text is still here, you can assume it did and I was too lazy to update this post :p)</p>
+<p>And I’ll report back if that doesn’t work. (So if this text is still here, you
+can assume it did and I was too lazy to update this post :p)</p>
 
 			</div>
 			<hr class="clearfix">

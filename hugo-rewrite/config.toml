@@ -1,0 +1,7 @@
+baseURL = 'http://example.org/'
+languageCode = 'en-us'
+title = 'My New Hugo Site'
+theme = "ananke"
+
+# seems to do what i want: https://gohugo.io/content-management/urls/#ugly-urls
+urlyurls = true

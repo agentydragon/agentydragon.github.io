@@ -1,0 +1,4 @@
+```
+cd agentydragon
+zola serve
+```

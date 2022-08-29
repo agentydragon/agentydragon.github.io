@@ -81,7 +81,7 @@ But to learn a fair policy, it took the agent about 10 000 episodes, and the
 per-episode total reward over time made a spiky ugly graph:
 
 <figure>
-<img src="/static/2020-12-31-total_reward.svg" style="height: 400px;"
+<img src="/2020-12-31-total_reward.svg" style="height: 400px;"
      title="Total reward per episode graph">
 </figure>
 
@@ -146,7 +146,7 @@ The symptom is that the policy is not improving. The total reward per episode
 is just oscillating.
 
 <figure>
-<img src="/static/2020-sticker-hmm.png" title="Hmm">
+<img src="/2020-sticker-hmm.png" title="Hmm">
 </figure>
 
 ## The problem
@@ -206,7 +206,7 @@ I looked at this code basically non-stop for 2 hours, and I realized the error
 when I took a break and talked with a friend.
 
 <figure>
-<img src="/static/2020-sticker-ded.png" title="_(x.x)_   <-- ded">
+<img src="/2020-sticker-ded.png" title="_(x.x)_   <-- ded">
 </figure>
 
 ## Pet peeve #47: math typesetting
@@ -269,5 +269,5 @@ often have a large table at the front which explains used conventions, like
 </figure>
 
 <figure>
-<img src="/static/2020-sticker-mlem.png" title="Mlem!">
+<img src="/2020-sticker-mlem.png" title="Mlem!">
 </figure>

@@ -15,7 +15,7 @@ them have discrete actions. The next environment I went to try to learn was the
 [Half Cheetah](https://www.endtoend.ai/envs/gym/mujoco/half-cheetah/).
 
 <figure>
-![Standing half-cheetah](/static/2021-10-18-standing.png)
+![Standing half-cheetah](/2021-10-18-standing.png)
 </figure>
 
 In this environment, you control a simple robot and are trying to teach it to

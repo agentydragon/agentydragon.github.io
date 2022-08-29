@@ -109,7 +109,7 @@ how to learn from this :/
 ## *Forgetting when learned too much‽‽*
 
 <figure>
-<img src="/static/2020-12-31-total_reward.svg" style="height: 400px;"
+<img src="/2020-12-31-total_reward.svg" style="height: 400px;"
      title="Total reward per episode graph">
 <div>
 [*𝄞 ♫ Look at this graaaph♫  𝄻*](https://www.youtube.com/watch?v=sIlNIVXpIns)

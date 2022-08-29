@@ -20,7 +20,7 @@ script over it.
 
 My use of this technique lets me produce a pretty graph that looks like this:
 <figure>
-<img src="/static/2016-09-22-thesis-tracking-graph.png">
+<img src="/2016-09-22-thesis-tracking-graph.png">
 </figure>
 
 Other really nice uses of this technique include asking:

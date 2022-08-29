@@ -115,11 +115,11 @@ my favorite songs. Synchronicity.)
 <div>
 Fig. 1a: Me, uncertain about the future and detached:
 </div>
-<img src="/static/2016-06-18-detached.jpg">
+<img src="/2016-06-18-detached.jpg">
 <div>
 Fig. 1b: Compare to happy me a few weeks later:
 </div>
-<img src="/static/2016-06-18-happy.jpg">
+<img src="/2016-06-18-happy.jpg">
 </figure>
 
 I think the most common reason I go detached is that I feel I'm being left out

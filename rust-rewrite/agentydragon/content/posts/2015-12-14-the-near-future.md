@@ -12,7 +12,7 @@ Republic). That may not sound all that short; you can get a lot of fun done
 in that time. However, consider the following:
 
 <figure>
-<img src="/static/2015-12-14-advent.png">
+<img src="/2015-12-14-advent.png">
 <div>
 [Gist on GitHub](https://gist.github.com/MichalPokorny/7e25a433b37851d9243c)
 </div>

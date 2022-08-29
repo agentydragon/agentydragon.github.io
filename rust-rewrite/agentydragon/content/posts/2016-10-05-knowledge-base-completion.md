@@ -18,7 +18,7 @@ entities (e.g., <code>Patricia Churchland **studied at** University of
 Oxford</code>).
 
 <figure>
-<img src="/static/2016-10-05-kg.png">
+<img src="/2016-10-05-kg.png">
 <div>A small neighbourhood of <code>Patricia Churchland</code> in a hypothetical
 knowledge base</div>
 </figure>
@@ -32,7 +32,7 @@ Churchland, find all edges going from that node labeled **studied at**, and
 print the labels of nodes they point at." Look:
 
 <figure>
-<img src="/static/2016-10-05-churchland.png">
+<img src="/2016-10-05-churchland.png">
 <div>How Google uses knowledge bases</div>
 </figure>
 
@@ -137,7 +137,7 @@ strengths and weaknesses, so combining them gets you a system that can
 predict more facts.
 
 <figure>
-<img src="/static/2016-10-05-knowledge-vault.png">
+<img src="/2016-10-05-knowledge-vault.png">
 <div>Simplified Knowledge Vault architecture</div>
 </figure>
 

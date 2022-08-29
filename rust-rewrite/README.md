@@ -1,4 +1,0 @@
-```
-cd agentydragon
-zola serve
-```

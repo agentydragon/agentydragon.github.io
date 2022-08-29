@@ -1,0 +1,18 @@
+site:
+  title: cobalt blog
+  description: Blog Posts Go Here
+  base_url: https://agentydragon.com
+
+# TODO
+#syntax_highlight:
+#  theme: "base16-ocean.dark"
+#  enabled: true
+
+posts:
+  dir: "news"
+  rss: rss.xml
+  drafts_dir: "_drafts"
+  default:
+    published_date: "2020-03-14 01:59:26 -0500"
+    layout: post.liquid
+    permalink: /news/{{year}}/{{month}}/{{slug}}/

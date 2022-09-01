@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>~agentydragon/Rai's ML mistakes, part 2 of ∞</title>
+		<link href="http://fonts.googleapis.com/css?family=PT+Serif" rel="stylesheet" type="text/css">
+		<link href="http://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="../css/default.css">
+		<link rel="stylesheet" type="text/css" href="../css/syntax.css">
+		<link rel="favourite icon" type="image/png" href="../images/favicon.png">
+		<link rel="alternate" type="application/rss+xml" title="RSS feed for agentydragon.com" href="../rss.xml">
+		<link rel="alternate" type="application/atom+xml" title="Atom feed for agentydragon.com" href="../atom.xml">
+		<!-- Dollars below doubled in template because of Hakyll. -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+		<!--
+		<script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML"></script>
+		<script type="text/x-mathjax-config">
+		  MathJax.Hub.Config({
+		    extensions: ["tex2jax.js"],
+		    jax: ["input/TeX", "output/HTML-CSS"],
+		    tex2jax: {
+		      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+		      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+		      processEscapes: true
+		    },
+		    "HTML-CSS": { fonts: ["TeX"] }
+		  });
+		</script>
+		-->
+	</head>
+	<body>
+		<!--
+		  Copy of #fixed_header, just takes up horizontal space to keep
+		  page content in place when scrolling.
+		-->
+		<header>
+			<a href="../" class="logo">~agentydragon/</a>
+
+			<a href="../">Home</a>
+			<a href="../archive.html">Archive</a>
+			<a href="https://trilium.agentydragon.com/share/">Trilium Notes</a>
+			<a href="../about.html">About</a>
+		</header>
+
+		<header id="fixed_header">
+			<a href="../" class="logo">~agentydragon/</a>
+
+			<a href="../">Home</a>
+			<a href="../archive.html">Archive</a>
+			<a href="https://trilium.agentydragon.com/share/">Trilium Notes</a>
+			<a href="../about.html">About</a>
+		</header>
+
+		<div id="content">
+			<h1>Rai's ML mistakes, part 2 of ∞</h1>
+
+			<div id="articles">
+			<div class="info">
+    Posted on 2021-01-04
+</div>
+
+<p>Continuing my list of ML mistakes from <a href="../posts/2020-12-31-cartpole-q-learning.html">last
+time</a>, here’s:</p>
+<h1 id="rais-ml-mistake-4-too-much-autograd">Rai’s ML mistake #4: Too much autograd</h1>
+<p>So here I am, writing an agent for
+<a href="https://gym.openai.com/envs/LunarLander-v2/">LunarLander-v2</a>.
+I’m using Q-learning. I approximate <span class="math inline"><em>q</em><sub>*</sub>(<em>s</em>,<em>a</em>)</span> as
+<span class="math inline">q̂<sub><em>w</em></sub>(<em>s</em>,<em>a</em>)</span> with a neural network, taking a vector representing
+the state, and outputting one approximate action value per output.
+The neural network is trained to minimize squared TD error on the policy the
+agent’s running, which is <span class="math inline"><em>ε</em></span>-greedy with respect to
+<span class="math inline">q̂</span>:
+<span class="math display">$$
+\begin{align*}
+\require{extpfeil}
+\ell(w) &amp;= \mathop{\mathbb{E}}\limits_{(S \xrightarrow{A} R,S') \sim \mathrm{greedy}(\mathrm{\hat{q}}_w)}
+\left[ \left(\mathrm{\hat{q}}_w(S, A) - (R + \gamma \max_{A'} \mathrm{\hat{q}}_w(S',A')) \right)^2 \right] \\
+\text{output } &amp;\arg\min_w \ell(w)
+\end{align*}
+$$</span></p>
+<h2 id="not-quite-off-policy">Not quite off-policy</h2>
+<p>One note about the “policity” of this method.</p>
+<p>Tabular Q-learning without function approximation is off-policy - you learn
+about <span class="math inline"><em>π</em><sub>*</sub></span> from experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)</span> sampled from any
+(sane™) policy. You just keep updating <span class="math inline">q̂(<em>S</em>,<em>A</em>)</span> towards
+<span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub>q̂(<em>S</em>′,<em>A</em>′)</span>, and to <span class="math inline">max </span> is there because you want
+to learn about the optimal policy.</p>
+<p>But note that in <span class="math inline">ℓ(<em>w</em>)</span>, the experience <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)</span> is
+sampled from the policy <span class="math inline">greedy(q̂<sub><em>w</em></sub>)</span>.
+We need to expect <em>over a policy</em>, because we’re using function approximation,
+so presumably we cannot learn a <span class="math inline"><em>w</em></span> which would make <span class="math inline">q̂<sub><em>w</em></sub></span>
+exactly fit <span class="math inline"><em>q</em><sub>*</sub></span>. So we have to pick out battles for how well do we
+approximate <span class="math inline"><em>q</em><sub>*</sub></span> - we care about approximating it closely for
+states and actions actually visited by the estimation policy.</p>
+<p>Instead of assuming that we can sample <span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)</span> from
+<span class="math inline">greedy(q̂<sub><em>w</em></sub>)</span> (so that we can approximate the expected
+squared TD error over it), I guess you could use the general importance sampling
+recipe to get rid of that:
+<span class="math display">$$\mathop{\mathbb{E}}_\limits{X\sim \pi}[\mathrm{f}(X)] =
+\mathop{\mathbb{E}}_\limits{X\sim b}\left[\mathrm{f}(X) \cdot \frac{\pi(X)}{b(X)}\right]$$</span></p>
+<h2 id="semi-gradient">Semi-gradient</h2>
+<p>So, we want to minimize <span class="math inline">ℓ</span>.</p>
+<p>Note that <span class="math inline">ℓ</span> depends on <span class="math inline"><em>w</em></span> (via <span class="math inline">q̂<sub><em>w</em></sub></span>) in 3 places:</p>
+<ol type="1">
+<li>In <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span>, which we are trying to nudge to move to the
+right place,</li>
+<li>in <span class="math inline"><em>R</em> + <em>γ</em>max<sub><em>A</em>′</sub>q̂<sub><em>w</em></sub>(<em>S</em>′,<em>A</em>′)</span>, which is a sample
+from a distribution centered on
+<span class="math inline"><em>q</em><sub>greedy(q̂<sub><em>w</em></sub>)</sub>(<em>S</em>,<em>A</em>)</span>,</li>
+<li>and in the distribution we’re taking the expectation on.</li>
+</ol>
+<p>In practice, we hold (2) and (3) constant, and in one optimization step, we
+wiggle <span class="math inline"><em>w</em></span> only to move <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span> closer to targets.
+That means that in our gradient, we are ignoring the dependency of (2) and (3)
+on the <span class="math inline"><em>w</em></span> that we are optimizing, which makes this not a full gradient method,
+but instead a <em>semi-gradient</em> method.</p>
+<h2 id="experience-replay">Experience replay</h2>
+<p>My first shot at this agent just learned from 1 step (sampled from
+<span class="math inline"><em>ε</em></span>-greedy policy for <span class="math inline">q̂<sub><em>w</em></sub></span>) at a time. It worked
+in the sense that it ended up learning a policy close enough to “solving the
+environment”. (The environment says the “solved reward” is 200. I got maybe like
+150-180 over 100 episodes, so not quite there, but it’s close enough for me to
+say “meh, I’ll wiggle a few hyperparameters and get there”.)</p>
+<p>But to learn a fair policy, it took the agent about 10 000 episodes, and the
+per-episode total reward over time made a spiky ugly graph:</p>
+<figure>
+<img src="../static/2020-12-31-total_reward.svg" style="height: 400px;" title="Total reward per episode graph">
+</figure>
+<p>I don’t like that it takes all of 10 000 episodes, and I don’t like how spiky
+and ugly the chart is.</p>
+<p>Experience replay means we store a bunch of experience
+<span class="math inline">(<em>S</em>→<sub><em>A</em></sub><em>R</em>,<em>S</em>′)<sub>1, 2, …</sub></span> in a buffer, and instead of updating
+<span class="math inline"><em>w</em></span> by some gradient-based optimization method (I used ADAM) to minimize squared
+TD error one step at a time, we update it to minimize squared TD error over the
+whole buffer, a bunch of steps at a time.</p>
+<p>Experience replay should make learning more sample-efficient (so it should need
+less than 10 000 episodes). Also, it should reduce one source of “spikiness
+and ugliness” in the chart, because the chart will be doing step updates on
+a larger batch. Making the batch larger should reduce the variance of the
+updates.</p>
+<h2 id="broken-code">Broken code</h2>
+<p>So, here’s how I initially implemented one step of the update.
+<code>self.experience_{prestates, actions, rewards, poststates, done}</code> holds
+the experience buffer (<span class="math inline"><em>S</em>, <em>A</em>, <em>R</em>, <em>S</em>′</span> respectively for observed transition
+<span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>, plus flag to signal end of episode).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> q_update(<span class="va">self</span>):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># \max_{A'} \hat{q}(S', A')</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    best_next_action_value <span class="op">=</span> tf.reduce_max(</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If episode ends after this step, the environment will only give us</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># state S' is best_next_action_value.</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    next_state_value <span class="op">=</span> tf.where(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.experience_done,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        tf.zeros_like(best_next_action_value),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        best_next_action_value)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># actions.</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># S_i --(A_i)--&gt; R_i, S'_i, done_i.</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> tf.stack(</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        values_of_selected_actions, targets)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</span></code></pre></div>
+<p>What’s wrong here?</p>
+<p>The symptom is that the policy is not improving. The total reward per episode
+is just oscillating.</p>
+<figure>
+<img src="../static/2020-sticker-hmm.png" title="Hmm">
+</figure>
+<h2 id="the-problem">The problem</h2>
+<p>Remember how I said it’s a <em>semi-gradient</em> method?</p>
+<p>Here’s the fix:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> q_update(<span class="va">self</span>):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># \max_{A'} \hat{q}(S', A')</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  best_next_action_value <span class="op">=</span> tf.reduce_max(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.q_net(<span class="va">self</span>.experience_poststates), axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If episode ends after this step, the environment will only give us</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># one step of reward and nothing more. Otherwise, the value of the next</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># state S' is best_next_action_value.</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  next_state_value <span class="op">=</span> tf.where(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.experience_done,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      tf.zeros_like(best_next_action_value),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>      best_next_action_value)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  targets <span class="op">=</span> <span class="va">self</span>.experience_rewards <span class="op">+</span> <span class="va">self</span>.discount_rate <span class="op">*</span> next_state_value</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># For all states S_i in the experience buffer, compute Q(S_i, *) for all</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># actions.</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    next_action_values <span class="op">=</span> <span class="va">self</span>.q_net(<span class="va">self</span>.experience_prestates)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select Q(S_i, A_i) where A_i corresponds to the recorded experience</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># S_i --(A_i)--&gt; R_i, S'_i, done_i.</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    indices <span class="op">=</span> tf.stack(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      (tf.<span class="bu">range</span>(<span class="va">self</span>.experience_buffer_size), <span class="va">self</span>.experience_actions),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    values_of_selected_actions <span class="op">=</span> tf.gather_nd(next_action_values, indices)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> tf.keras.losses.MeanSquaredError()(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        values_of_selected_actions, targets)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  grad <span class="op">=</span> tape.gradient(loss, <span class="va">self</span>.q_net.trainable_variables)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="va">self</span>.optimizer.apply_gradients(<span class="bu">zip</span>(grad, <span class="va">self</span>.q_net.trainable_variables))</span></code></pre></div>
+<p>So, what was the problem?</p>
+<p>The code calls the Q network twice: once to compute the targets (<span class="math inline"><em>R</em> + <em>γ</em> ⋅ max<sub><em>A</em>′</sub>q̂<sub><em>w</em></sub>(<em>S</em>′,<em>A</em>′)</span>), once to compute
+<span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span>. Then, we will compute a loss, and we will take its
+partial <em>“semi-derivative”</em> with respect to <span class="math inline"><em>w</em></span>, and apply the gradient to
+bring <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span> closer to the target.</p>
+<p>The problem was: I also put the target computation into <code>GradientTape</code> scope,
+so the optimization was given the freedom to change not just
+<span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>,<em>A</em>)</span>, but <em>also</em> <span class="math inline">q̂<sub><em>w</em></sub>(<em>S</em>′,<em>A</em>′)</span>.
+So the fix was just to move computing the targets out of the <code>GradientTape</code>
+scope.</p>
+<p>I looked at this code basically non-stop for 2 hours, and I realized the error
+when I took a break and talked with a friend.</p>
+<figure>
+<img src="../static/2020-sticker-ded.png" title="_(x.x)_   <-- ded">
+</figure>
+<h2 id="pet-peeve-47-math-typesetting">Pet peeve #47: math typesetting</h2>
+<p><em>The full list of previous 46 pet peeves will be provided on request, subject
+to a reasonable processing fee.</em></p>
+<h3 id="mathjax-hat-and-mathrm">MathJax, <code>\hat</code> and <code>\mathrm</code></h3>
+<p><span class="math inline">q̂</span> is a function (of <span class="math inline"><em>w</em>, <em>S</em>, <em>A</em></span>), not a variable, so it
+shouldn’t be typeset in italic. I tried using <code>\hat{\mathrm{q}}_w</code>. I believe
+that works in LaTeX but turns out that MathJax is not willing to render it
+(<span class="math inline">$\hat{\mathrm{q}}$</span>). But <code>\mathrm{\hat{q}}</code> is perfectly fine:
+<span class="math inline">q̂</span>. But <code>\mathrm{\hat{q}}_w</code> is perfectly fine:
+<span class="math inline">q̂<sub><em>w</em></sub></span>.</p>
+<h3 id="mathjax-and-inline-xrightarrow">MathJax and inline <code>\xrightarrow</code></h3>
+<p>Also, my MathJax doesn’t seem to understand <code>\xrightarrow</code> in inline equations.
+That’s a shame, because <code>S \xrightarrow{A} R, S'</code> is more readable than
+<code>S \rightarrow_A R, S'</code> (<span class="math inline"><em>S</em>→<sub><em>A</em></sub><em>R</em>, <em>S</em>′</span>), which I used here instead
+(in inline equations). It looks like this:
+<span class="math display">$$S \xrightarrow{A} R, S'$$</span>
+Let me know if you know what’s up with those MathJax things.
+I wonder if it’s MathJax being wrong, or me sucking at LaTeX.</p>
+<h3 id="why-im-a-math-typesetting-snob">Why I’m a math typesetting snob</h3>
+<p>Typesetting things that aren’t variables as if they were variables really bugs
+me, because it makes the formulas really ugly. And the font you use to typeset
+a math thing is a very useful hint for the reader about what sort of object it
+is. I learned a bit about it when volunteering as a
+<a href="https://ksp.mff.cuni.cz/">KSP</a> organizer - KSP is full of math snobs. Compare:
+<span class="math display">$$
+\begin{align*}
+\mathrm{Loss}(w) = \sum_i (\mathrm{f}(x_i) - y_i)^2 \\
+Loss(w) = \sum_i (f(x_i) - y_i)^2
+\end{align*}$$</span>
+In the second one, it takes a bit of processing to understand that <span class="math inline"><em>L</em><em>o</em><em>s</em><em>s</em></span> is
+not a multiplication (<span class="math inline"><em>L</em> ⋅ <em>o</em> ⋅ <em>s</em> ⋅ <em>s</em></span>), and that <span class="math inline"><em>f</em>(<em>x</em><sub><em>i</em></sub>)</span> is
+function application.</p>
+<p>If you want to read more, you can take a look at <a href="https://en.wikipedia.org/wiki/Typographical_conventions_in_mathematical_formulae">Typographical conventions in mathematical
+formulae on Wikipedia</a>.
+Or maybe some LaTeX / TeX books or reference material might have a lot of
+explanations, like “use this in these situations”. And also good math books
+often have a large table at the front which explains used conventions, like
+“<span class="math inline"><strong>w</strong></span> is a vector, <span class="math inline">X</span> is a matrix, <span class="math inline">f</span> is a function,
+…”</p>
+<figure>
+<img src="https://imgs.xkcd.com/comics/kerning.png" style="height: 400px;" title="XKCD 1015 (Kerning)">
+<div>
+<p><a href="https://xkcd.com/1015/">https://xkcd.com/1015/</a>
+<br>
+Now you know about ugly errors in math typesetting, and if you Google it,
+also about bad kerning. You’re welcome, pass it along.</p>
+</div>
+</figure>
+<figure>
+<img src="../static/2020-sticker-mlem.png" title="Mlem!">
+</figure>
+
+			</div>
+			<hr class="clearfix">
+		</div>
+
+		<footer>
+			<p>
+				The <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/">CC BY-NC-SA 3.0</a>
+				license applies unless otherwise specified.
+			</p>
+
+			<p>
+				Site proudly generated by
+				<a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+			</p>
+		</footer>
+
+		<!-- Google Analytics tracking -->
+		<script>
+			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+			ga('create', 'UA-17386731-5', 'auto');
+			ga('send', 'pageview');
+		</script>
+	</body>
+</html>

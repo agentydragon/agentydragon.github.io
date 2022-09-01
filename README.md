@@ -1,46 +1,6 @@
-My homepage. Everything is CC BY-NC-SA 3.0.
+ARCHIVED
+===
 
-To build:
-
-    $ sass css/default.scss > css/default.css
-    $ stack build
-    $ stack exec site build
-
-To push:
-
-    $ git subtree push --prefix _site origin master
-
-To convert a Jupyter notebook into Markdown:
-
-```
-sudo apt install jupyter-nbconvert
-jupyter-nbconvert --to markdown --template basic <...>.ipynb
-```
-
-# Syntax highlighting
-
-See: https://pandoc.org/MANUAL.html#syntax-highlighting
-
-It uses [skylighting](https://github.com/jgm/skylighting) library under the hood.
-
-```
-pandoc --list-highlighted-languages
-```
-
-```
-stack install --flag skylighting-core:executable skylighting-core
-```
-
-```
-skylighting --help
-```
-
-# Upgrades
-
-Might need:
-
-```bash
-$ stack upgrade
-```
-
-Maybe try to upgrade resolver in `stack.yaml`.
+Right now this repo is only used to deploy my webpage on GitHub Pages.
+I've merged my website into my ducktape monorepo at
+https://gitlab.com/agentydragon/ducktape, which I hope to publish soon.
